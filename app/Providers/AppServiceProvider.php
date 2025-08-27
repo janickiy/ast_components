@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -11,7 +12,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $loader = \Illuminate\Foundation\AliasLoader::getInstance();
+        $loader->alias('PermissionsHelper', \App\Helpers\PermissionsHelper::class);
     }
 
     /**
@@ -22,3 +24,4 @@ class AppServiceProvider extends ServiceProvider
         //
     }
 }
+
