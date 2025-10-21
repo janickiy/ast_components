@@ -16,7 +16,7 @@ class CategoryController extends Controller
      */
     public function index(): View
     {
-        return view('category.index')->with('title', 'Категория подписчиков');
+        return view('cp.category.index')->with('title', 'Категория подписчиков');
     }
 
     /**
@@ -24,7 +24,7 @@ class CategoryController extends Controller
      */
     public function create(): View
     {
-        return view('category.create_edit')->with('title', 'Добавление категории');
+        return view('cp.category.create_edit')->with('title', 'Добавление категории');
     }
 
     /**
@@ -48,7 +48,7 @@ class CategoryController extends Controller
 
         if (!$row) abort(404);
 
-        return view('category.create_edit', compact('row'))->with('title', 'Редактирование категории');
+        return view('cp.category.create_edit', compact('row'))->with('title', 'Редактирование категории');
     }
 
     /**

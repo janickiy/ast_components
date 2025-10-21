@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
+use App\Http\Requests\Users\StoreRequest;
+use App\Http\Requests\Users\EditRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Http\Request;
-use App\Http\Requests\Users\StoreRequest;
-use App\Http\Requests\Users\EditRequest;
-use Hash;
+use Illuminate\Support\Facades\Hash;
 
 class UsersController extends Controller
 {
@@ -18,7 +19,7 @@ class UsersController extends Controller
      */
     public function index(): View
     {
-        return view('users.index')->with('title', 'Пользователи');
+        return view('cp.users.index')->with('title', 'Пользователи');
     }
 
     /**
@@ -32,7 +33,7 @@ class UsersController extends Controller
             'editor' => 'Редактор',
         ];
 
-        return view('users.create_edit', compact('options'))->with('title', 'Добавить пользователя');
+        return view('cp.users.create_edit', compact('options'))->with('title', 'Добавить пользователя');
     }
 
     /**
@@ -43,7 +44,7 @@ class UsersController extends Controller
     {
         User::create(array_merge($request->all(), ['password' => Hash::make($request->password)]));
 
-        return redirect()->route('admin.users.index')->with('success', 'Информация успешно добавлена!');
+        return redirect()->route('cp.users.index')->with('success', 'Информация успешно добавлена!');
     }
 
     /**
@@ -62,7 +63,7 @@ class UsersController extends Controller
             'editor' => 'Редактор',
         ];
 
-        return view('users.create_edit', compact('user', 'options'))->with('title', 'Редактировать пользователя');
+        return view('cp.users.create_edit', compact('user', 'options'))->with('title', 'Редактировать пользователя');
     }
 
     /**
@@ -86,7 +87,7 @@ class UsersController extends Controller
 
         $user->save();
 
-        return redirect()->route('admin.users.index')->with('success', 'Данные успешно обновлены!');
+        return redirect()->route('cp.users.index')->with('success', 'Данные успешно обновлены!');
     }
 
     /**

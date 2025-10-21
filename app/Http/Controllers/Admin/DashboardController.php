@@ -11,6 +11,6 @@ class DashboardController extends Controller
      */
     public function index(): View
     {
-        return view('dashboard.index')->with('title', 'Главная');
+        return view('cp.dashboard.index')->with('title', 'Главная');
     }
 }

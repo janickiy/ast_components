@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\{
     AuthController,
     CategoryController,
+    FeedbackController,
     DashboardController,
     DataTableController,
     UsersController,
@@ -34,6 +35,8 @@ Route::group(['prefix' => 'category'], function () {
     Route::put('update', [CategoryController::class, 'update'])->name('admin.category.update')->middleware(['permission:admin|moderator']);
     Route::post('destroy', [CategoryController::class, 'destroy'])->name('admin.category.destroy')->middleware(['permission:admin|moderator']);
 });
+
+Route::get('feedback',FeedbackController::class)->name('cp.feedback.index');
 
 Route::group(['prefix' => 'users'], function () {
     Route::get('', [UsersController::class, 'index'])->name('admin.users.index');
