@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\{
     AuthController,
     CategoryController,
     FeedbackController,
+    NewsController,
     DashboardController,
     DataTableController,
     UsersController,
@@ -36,7 +37,17 @@ Route::group(['prefix' => 'category'], function () {
     Route::post('destroy', [CategoryController::class, 'destroy'])->name('admin.category.destroy')->middleware(['permission:admin|moderator']);
 });
 
-Route::get('feedback',FeedbackController::class)->name('cp.feedback.index');
+Route::get('feedback',FeedbackController::class)->name('admin.feedback.index');
+
+Route::group(['prefix' => 'news'], function () {
+    Route::get('', [NewsController::class, 'index'])->name('admin.news.index');
+    Route::get('create', [NewsController::class, 'create'])->name('admin.news.create');
+    Route::post('store', [NewsController::class, 'store'])->name('admin.news.store');
+    Route::get('edit/{id}', [NewsController::class, 'edit'])->name('admin.news.edit')->where('id', '[0-9]+');
+    Route::put('update', [NewsController::class, 'update'])->name('admin.news.update');
+    Route::post('destroy', [NewsController::class, 'destroy'])->name('admin.news.destroy');
+});
+
 
 Route::group(['prefix' => 'users'], function () {
     Route::get('', [UsersController::class, 'index'])->name('admin.users.index');
@@ -49,5 +60,6 @@ Route::group(['prefix' => 'users'], function () {
 
 Route::group(['prefix' => 'datatable'], function () {
     Route::any('category', [DataTableController::class, 'category'])->name('admin.datatable.category');
+    Route::any('feedback', [DataTableController::class, 'feedback'])->name('admin.datatable.feedback');
     Route::any('users', [DataTableController::class, 'users'])->name('admin.datatable.users');
 });

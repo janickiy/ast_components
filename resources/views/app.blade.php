@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}">
+<html lang="ru-ru">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,7 +9,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
 
     <!-- Font Awesome -->
     {!! Html::style('/plugins/fontawesome-free/css/all.min.css') !!}
@@ -66,7 +67,8 @@
                     <a data-id="en" href="javascript:void(0);" class="dropdown-item select-lang ">
                         <i class="flag-icon flag-icon-us mr-2"></i> English
                     </a>
-                    <a data-id="ru" href="javascript:void(0);" class="dropdown-item select-lang " alt="Русский (Russian)">
+                    <a data-id="ru" href="javascript:void(0);" class="dropdown-item select-lang "
+                       alt="Русский (Russian)">
                         <i class="flag-icon flag-icon-ru mr-2"></i> Русский (Russian)
                     </a>
                 </div>
@@ -112,29 +114,78 @@
                          with font-awesome or any other icon font library -->
 
                     <li class="nav-item">
-                        <a href="{{ route('admin.dashboard.index') }}" class="nav-link{{ Request::is('dashboard*') ? ' active' : '' }}"
-                           title="dashboard">
-                            <i class="nav-icon fas fa-envelope"></i>
-                            <p>dashboard</p>
+                        <a href="{{ route('admin.dashboard.index') }}"
+                           class="nav-link{{ Request::is('dashboard*') ? ' active' : '' }}"
+                           title="Главная">
+                            <i class="nav-icon fas fa-home"></i>
+                            <p>Главная</p>
                         </a>
                     </li>
 
+
+
                     <li class="nav-item">
-                        <a href="{{ route('admin.category.index') }}" class="nav-link{{ Request::is('category*') ? ' active' : '' }}"
-                           title="категории">
-                            <i class="nav-icon fas fa-list"></i>
-                            <p>категории</p>
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-file"></i>
+                            <p>
+                                Контент
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
                         </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.news.index') }}"
+                                   class="nav-link{{ Request::is('news*') ? ' active' : '' }}"
+                                   title="Новости">
+                                    <i class="nav-icon fas fa-"></i>
+                                    <p>Меню</p>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="{{ route('admin.news.index') }}"
+                                   class="nav-link{{ Request::is('news*') ? ' active' : '' }}"
+                                   title="Новости">
+                                    <i class="nav-icon fas fa-list"></i>
+                                    <p>Страницы и разделы</p>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="{{ route('admin.news.index') }}"
+                                   class="nav-link{{ Request::is('news*') ? ' active' : '' }}"
+                                   title="Новости">
+                                    <i class="nav-icon fas fa-list"></i>
+                                    <p>Новости</p>
+                                </a>
+                            </li>
+
+
+                        </ul>
                     </li>
 
 
                     @if(PermissionsHelper::has_permission('admin|moderator'))
 
                         <li class="nav-item">
-                            <a href="{{ route('admin.category.index') }}" class="nav-link{{ Request::is('category*') ? ' active' : '' }}"
-                               title="категории">
+                            <a href="{{ route('admin.feedback.index') }}"
+                               class="nav-link{{ Request::is('feedback*') ? ' active' : '' }}"
+                               title="Сообщения с сайта">
+                                <i class="nav-icon fas fa-envelope"></i>
+                                <p>Сообщения с сайта</p>
+                            </a>
+                        </li>
+
+                    @endif
+
+                    @if(PermissionsHelper::has_permission('admin|moderator'))
+
+                        <li class="nav-item">
+                            <a href="{{ route('admin.category.index') }}"
+                               class="nav-link{{ Request::is('category*') ? ' active' : '' }}"
+                               title="Категории">
                                 <i class="nav-icon fas fa-list"></i>
-                                <p>категории</p>
+                                <p>Категории</p>
                             </a>
                         </li>
 
@@ -143,7 +194,8 @@
                     @if(PermissionsHelper::has_permission('admin'))
 
                         <li class="nav-item">
-                            <a href="{{ route('admin.users.index') }}" class="nav-link{{ Request::is('users*') ? ' active' : '' }}"
+                            <a href="{{ route('admin.users.index') }}"
+                               class="nav-link{{ Request::is('users*') ? ' active' : '' }}"
                                title="пользователи">
                                 <i class="nav-icon fas fa-users"></i>
                                 <p>пользователи</p>
@@ -190,7 +242,7 @@
         <div class="float-right d-none d-sm-block">
             <b></b>
         </div>
-        <strong>&copy; {{ date('Y') }}</strong>
+        <strong>&copy; {{ date('Y') }} АСТ Компонентс</strong>
     </footer>
 
     <!-- Control Sidebar -->

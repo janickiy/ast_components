@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Users;
+namespace App\Http\Requests\Admin\Category;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -22,10 +22,7 @@ class EditRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'login' => 'required|max:255|unique:users,login,' . $this->id,
             'name' => 'required',
-            'password' => 'min:6|nullable',
-            'password_again' => 'min:6|same:password|nullable',
         ];
     }
 }

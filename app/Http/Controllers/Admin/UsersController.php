@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Requests\Admin\Users\EditRequest;
+use App\Http\Requests\Admin\Users\StoreRequest;
 use App\Models\User;
-use App\Http\Requests\Users\StoreRequest;
-use App\Http\Requests\Users\EditRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
-use Illuminate\Support\Facades\Auth;
-
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\View\View;
 
 class UsersController extends Controller
 {

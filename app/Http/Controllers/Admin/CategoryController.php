@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Requests\Admin\Category\EditRequest;
+use App\Http\Requests\Admin\Category\StoreRequest;
 use App\Models\Category;
-use App\Http\Requests\Category\StoreRequest;
-use App\Http\Requests\Category\EditRequest;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 
 class CategoryController extends Controller
 {
