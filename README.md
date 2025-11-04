@@ -18,7 +18,7 @@ http://домен/cp
 - MySQL >= 5.6 или MariaDB >= 10.2
 - Composer
 - URL rewrite enabled
-- PHP >= 7.2
+- PHP >= 8.2
 - BCMath PHP Extension
 - Ctype PHP Extension
 - Fileinfo PHP extension
