@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\{
     DashboardController,
     DataTableController,
     UsersController,
+    SettingsController,
 };
 
 /*
@@ -37,7 +38,7 @@ Route::group(['prefix' => 'category'], function () {
     Route::post('destroy', [CategoryController::class, 'destroy'])->name('admin.category.destroy')->middleware(['permission:admin|moderator']);
 });
 
-Route::get('feedback',FeedbackController::class)->name('admin.feedback.index');
+Route::get('feedback', FeedbackController::class)->name('admin.feedback.index');
 
 Route::group(['prefix' => 'news'], function () {
     Route::get('', [NewsController::class, 'index'])->name('admin.news.index');
@@ -48,18 +49,31 @@ Route::group(['prefix' => 'news'], function () {
     Route::post('destroy', [NewsController::class, 'destroy'])->name('admin.news.destroy');
 });
 
+Route::middleware(['permission:admin'])->group(function () {
+    Route::group(['prefix' => 'users'], function () {
+        Route::get('', [UsersController::class, 'index'])->name('admin.users.index');
+        Route::get('create', [UsersController::class, 'create'])->name('admin.users.create');
+        Route::post('store', [UsersController::class, 'store'])->name('admin.users.store');
+        Route::get('edit/{id}', [UsersController::class, 'edit'])->name('admin.users.edit')->where('id', '[0-9]+');
+        Route::put('update', [UsersController::class, 'update'])->name('admin.users.update');
+        Route::delete('destroy', [UsersController::class, 'destroy'])->name('admin.users.destroy')->where('id', '[0-9]+');
+    });
+});
 
-Route::group(['prefix' => 'users'], function () {
-    Route::get('', [UsersController::class, 'index'])->name('admin.users.index');
-    Route::get('create', [UsersController::class, 'create'])->name('admin.users.create');
-    Route::post('store', [UsersController::class, 'store'])->name('admin.users.store');
-    Route::get('edit/{id}', [UsersController::class, 'edit'])->name('admin.users.edit')->where('id', '[0-9]+');
-    Route::put('update', [UsersController::class, 'update'])->name('admin.users.update');
-    Route::delete('destroy', [UsersController::class, 'destroy'])->name('admin.users.destroy')->where('id', '[0-9]+');
+Route::middleware(['permission:admin'])->group(function () {
+    Route::group(['prefix' => 'settings'], function () {
+        Route::get('', [SettingsController::class, 'index'])->name('admin.settings.index');
+        Route::get('create/{type}', [SettingsController::class, 'create'])->name('admin.settings.create');
+        Route::post('store', [SettingsController::class, 'store'])->name('admin.settings.store');
+        Route::get('edit/{id}', [SettingsController::class, 'edit'])->name('admin.settings.edit')->where('id', '[0-9]+');
+        Route::put('update', [SettingsController::class, 'update'])->name('admin.settings.update');
+        Route::post('destroy', [SettingsController::class, 'destroy'])->name('admin.settings.destroy');
+    });
 });
 
 Route::group(['prefix' => 'datatable'], function () {
     Route::any('category', [DataTableController::class, 'category'])->name('admin.datatable.category');
     Route::any('feedback', [DataTableController::class, 'feedback'])->name('admin.datatable.feedback');
     Route::any('users', [DataTableController::class, 'users'])->name('admin.datatable.users');
+    Route::any('', [DataTableController::class, ''])->name('admin.datatable.');
 });

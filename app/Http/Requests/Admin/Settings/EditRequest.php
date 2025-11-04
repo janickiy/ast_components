@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Admin\Category;
+namespace App\Http\Requests\Admin\Settings;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -17,13 +17,14 @@ class EditRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array
      */
     public function rules(): array
     {
         return [
-            'name' => 'required',
-            'id' => 'required|integer|exists:category,id',
+            'value' => $this->type == 'FILE' ? 'nullable' : 'required',
+            'key_cd' => 'required|max:255|unique:settings,key_cd,' . $this->id,
+            'id' => 'required|integer|exists:settings,id',
         ];
     }
 }

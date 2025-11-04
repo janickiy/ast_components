@@ -2,15 +2,24 @@
 
 namespace App\Http\Controllers\Admin;
 
+
+use App\Repositories\CategoryRepository;
 use App\Http\Requests\Admin\Category\EditRequest;
 use App\Http\Requests\Admin\Category\StoreRequest;
-use App\Models\Category;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class CategoryController extends Controller
 {
+    private CategoryRepository $categoryRepository;
+
+    public function __construct(CategoryRepository $categoryRepository)
+    {
+        $this->categoryRepository = $categoryRepository;
+        parent::__construct();
+    }
+
     /**
      * @return View
      */
@@ -33,7 +42,7 @@ class CategoryController extends Controller
      */
     public function store(StoreRequest $request): RedirectResponse
     {
-        Category::create($request->all());
+        $this->categoryRepository->create($request->all());
 
         return redirect()->route('category.index')->with('success', 'Информация успешно добавлена');
     }
@@ -44,9 +53,7 @@ class CategoryController extends Controller
      */
     public function edit(int $id): View
     {
-        $row = Category::find($id);
-
-        if (!$row) abort(404);
+        $row = $this->categoryRepository->find($id);
 
         return view('cp.category.create_edit', compact('row'))->with('title', 'Редактирование категории');
     }
@@ -57,13 +64,7 @@ class CategoryController extends Controller
      */
     public function update(EditRequest $request): RedirectResponse
     {
-        $row = Category::find($request->id);
-
-        if (!$row) abort(404);
-
-        $row->name = $request->input('name');
-
-        $row->save();
+        $this->categoryRepository->update($request->id, $request->all());
 
         return redirect()->route('category.index')->with('success', 'Данные обновлены');
     }
@@ -74,6 +75,6 @@ class CategoryController extends Controller
      */
     public function destroy(Request $request): void
     {
-        Category::find($request->id)->delete();
+        $this->categoryRepository->delete($request->id);
     }
 }

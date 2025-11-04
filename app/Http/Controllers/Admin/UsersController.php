@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+
+use App\Models\User;
+use App\Repositories\UserRepository;
 use App\Http\Requests\Admin\Users\EditRequest;
 use App\Http\Requests\Admin\Users\StoreRequest;
-use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,6 +15,14 @@ use Illuminate\View\View;
 
 class UsersController extends Controller
 {
+    private UserRepository $userRepository;
+
+    public function __construct(UserRepository $userRepository)
+    {
+        $this->userRepository = $userRepository;
+        parent::__construct();
+    }
+
     /**
      * @return View
      */
@@ -26,11 +36,7 @@ class UsersController extends Controller
      */
     public function create(): View
     {
-        $options = [
-            'admin' => 'Админ',
-            'moderator' => 'Модератор',
-            'editor' => 'Редактор',
-        ];
+        $options = User::getOption();
 
         return view('cp.users.create_edit', compact('options'))->with('title', 'Добавить пользователя');
     }
@@ -41,7 +47,7 @@ class UsersController extends Controller
      */
     public function store(StoreRequest $request): RedirectResponse
     {
-        User::create(array_merge($request->all(), ['password' => Hash::make($request->password)]));
+        $this->userRepository->create(array_merge($request->all(), ['password' => Hash::make($request->password)]));
 
         return redirect()->route('cp.users.index')->with('success', 'Информация успешно добавлена!');
     }
@@ -52,15 +58,11 @@ class UsersController extends Controller
      */
     public function edit(int $id): View
     {
-        $user = User::find($id);
+        $user = $this->userRepository->find($id);
 
         if (!$user) abort(404);
 
-        $options = [
-            'admin' => 'Админ',
-            'moderator' => 'Модератор',
-            'editor' => 'Редактор',
-        ];
+        $options = User::getOption();
 
         return view('cp.users.create_edit', compact('user', 'options'))->with('title', 'Редактировать пользователя');
     }
@@ -71,20 +73,7 @@ class UsersController extends Controller
      */
     public function update(Request $request): RedirectResponse
     {
-        $user = User::find($request->id);
-
-        if (!$user) abort(404);
-
-        $user->login = $request->input('login');
-        $user->name = $request->input('name');
-
-        if (!empty($request->role)) $user->role = $request->input('role');
-
-        if (!empty($request->password)) {
-            $user->password = Hash::make($request->password);
-        }
-
-        $user->save();
+        $this->userRepository->update($request->id, $request->all());
 
         return redirect()->route('cp.users.index')->with('success', 'Данные успешно обновлены!');
     }
@@ -95,6 +84,6 @@ class UsersController extends Controller
      */
     public function destroy(Request $request): void
     {
-        if ($request->id !== Auth::id()) User::find($request->id)->delete();
+        if ($request->id !== Auth::id()) $this->userRepository->delete($request->id);
     }
 }

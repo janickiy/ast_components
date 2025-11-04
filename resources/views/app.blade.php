@@ -196,9 +196,9 @@
                         <li class="nav-item">
                             <a href="{{ route('admin.users.index') }}"
                                class="nav-link{{ Request::is('users*') ? ' active' : '' }}"
-                               title="пользователи">
+                               title="Пользователи">
                                 <i class="nav-icon fas fa-users"></i>
-                                <p>пользователи</p>
+                                <p>Пользователи</p>
                             </a>
                         </li>
 

@@ -9,6 +9,11 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
+    public const ROLE_ADMIN = 'admin';
+    public const ROLE_MODERATOR = 'moderator';
+    public const ROLE_EDITOR = 'editor';
+
+
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
@@ -45,6 +50,18 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public static function getOption(): array
+    {
+        return [
+            self::ROLE_ADMIN     => 'Админ',
+            self::ROLE_MODERATOR => 'Модератор',
+            self::ROLE_EDITOR    => 'Редактор',
         ];
     }
 }

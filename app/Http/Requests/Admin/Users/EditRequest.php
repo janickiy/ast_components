@@ -26,6 +26,7 @@ class EditRequest extends FormRequest
             'name' => 'required',
             'password' => 'min:6|nullable',
             'password_again' => 'min:6|same:password|nullable',
+            'id' => 'required|integer|exists:users,id',
         ];
     }
 }
