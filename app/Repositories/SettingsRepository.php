@@ -30,9 +30,26 @@ class SettingsRepository extends BaseRepository
         $settings = $this->model->find($id);
 
         if ($settings) {
-            $settings->name = $data['name'];
+            $settings->key_cd = $data['key_cd'] ?? null;
+            $settings->name = $data['name'] ;
+            $settings->display_value = $data['display_value'] ?? null;
+            $settings->value = $data['value'] ?? null;
+            $settings->published = $data['published'];
             $settings->save();
         }
         return null;
+    }
+
+    /**
+     * @param int $id
+     * @return void
+     */
+    public function remove(int $id): void
+    {
+        $settings = $this->model->find($id);
+
+        if ($settings) {
+            $settings->remove();
+        }
     }
 }

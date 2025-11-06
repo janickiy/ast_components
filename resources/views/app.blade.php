@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Админ панель }} | @yield('title')</title>
+    <title>Админ панель | @yield('title')</title>
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -51,28 +51,6 @@
 
         <!-- Right navbar links -->
         <ul class="navbar-nav ml-auto">
-            <li class="nav-item dropdown">
-
-                @if( Config::get('app.locale') == 'ru')
-                    <a class="nav-link" data-toggle="dropdown" href="javascript:void(0);">
-                        <i class="flag-icon flag-icon-ru"></i>
-                    </a>
-                @else
-                    <a class="nav-link" data-toggle="dropdown" href="javascript:void(0);">
-                        <i class="flag-icon flag-icon-us"></i>
-                    </a>
-                @endif
-
-                <div class="dropdown-menu dropdown-menu-right p-0">
-                    <a data-id="en" href="javascript:void(0);" class="dropdown-item select-lang ">
-                        <i class="flag-icon flag-icon-us mr-2"></i> English
-                    </a>
-                    <a data-id="ru" href="javascript:void(0);" class="dropdown-item select-lang "
-                       alt="Русский (Russian)">
-                        <i class="flag-icon flag-icon-ru mr-2"></i> Русский (Russian)
-                    </a>
-                </div>
-            </li>
 
             <!-- Notifications Dropdown Menu -->
             <li class="nav-item">
@@ -89,7 +67,7 @@
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
         <!-- Brand Logo -->
         <a href="{{ route('admin.dashboard.index') }}" class="brand-link">
-            <img src="../../dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+            <img src="{{ url('/dist/img/AdminLTELogo.png') }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
                  style="opacity: .8">
             <span class="brand-text font-weight-light">AdminLTE 3</span>
         </a>
@@ -164,6 +142,30 @@
                         </ul>
                     </li>
 
+                    @if(PermissionsHelper::has_permission('admin|moderator'))
+
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-file"></i>
+                            <p>
+                                Продукция
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.category.index') }}"
+                                   class="nav-link{{ Request::is('category*') ? ' active' : '' }}"
+                                   title="Каталог">
+                                    <i class="nav-icon fas fa-"></i>
+                                    <p>Каталог</p>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+
+                    @endif
 
                     @if(PermissionsHelper::has_permission('admin|moderator'))
 
@@ -178,18 +180,6 @@
 
                     @endif
 
-                    @if(PermissionsHelper::has_permission('admin|moderator'))
-
-                        <li class="nav-item">
-                            <a href="{{ route('admin.category.index') }}"
-                               class="nav-link{{ Request::is('category*') ? ' active' : '' }}"
-                               title="Категории">
-                                <i class="nav-icon fas fa-list"></i>
-                                <p>Категории</p>
-                            </a>
-                        </li>
-
-                    @endif
 
                     @if(PermissionsHelper::has_permission('admin'))
 
@@ -199,6 +189,19 @@
                                title="Пользователи">
                                 <i class="nav-icon fas fa-users"></i>
                                 <p>Пользователи</p>
+                            </a>
+                        </li>
+
+                    @endif
+
+                    @if(PermissionsHelper::has_permission(Auth::user()->role,'admin'))
+
+                        <li class="nav-item">
+                            <a href="{{ route('admin.settings.index') }}"
+                               class="nav-link{{ Request::is('cp/settings*') ? ' active' : '' }}"
+                               title="Настройки">
+                                <i class="nav-icon fas fa-cogs"></i>
+                                <p>Настройки</p>
                             </a>
                         </li>
 
@@ -260,9 +263,6 @@
 
 {!! Html::script('/plugins/sweetalert2/sweetalert2.min.js') !!}
 {!! Html::script('/plugins/toastr/toastr.min.js') !!}
-
-<!-- Cookie -->
-{!! Html::script('/plugins/cookie/jquery.cookie.js') !!}
 
 <!-- AdminLTE App -->
 {!! Html::script('/dist/js/adminlte.min.js') !!}

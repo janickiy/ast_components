@@ -25,7 +25,7 @@ class CategoryController extends Controller
      */
     public function index(): View
     {
-        return view('cp.category.index')->with('title', 'Категория подписчиков');
+        return view('cp.category.index')->with('title', 'Каталог');
     }
 
     /**
@@ -44,7 +44,7 @@ class CategoryController extends Controller
     {
         $this->categoryRepository->create($request->all());
 
-        return redirect()->route('category.index')->with('success', 'Информация успешно добавлена');
+        return redirect()->route('admin.category.index')->with('success', 'Информация успешно добавлена');
     }
 
     /**
@@ -66,7 +66,7 @@ class CategoryController extends Controller
     {
         $this->categoryRepository->update($request->id, $request->all());
 
-        return redirect()->route('category.index')->with('success', 'Данные обновлены');
+        return redirect()->route('admin.category.index')->with('success', 'Данные обновлены');
     }
 
     /**

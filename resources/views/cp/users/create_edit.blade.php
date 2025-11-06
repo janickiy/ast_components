@@ -78,7 +78,7 @@
 
                                 <div class="form-group">
 
-                                    {!! Form::label('password_again', 'павтор пароля') !!}
+                                    {!! Form::label('password_again', 'повтор пароля') !!}
 
                                     {!! Form::password('password_again', ['class' => 'form-control']) !!}
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Category;
 use App\Models\User;
 use App\Models\Feedback;
+use App\Models\Settings;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -67,11 +68,28 @@ class DataTableController extends Controller
      */
     public function feedback(): JsonResponse
     {
-        $row = Feedback::query()->delete();
+        $row = Feedback::query();
 
         return Datatables::of($row)
             ->addColumn('actions', function ($row) {
                 $editBtn = '<a title="редактировать" class="btn btn-xs btn-primary"  href="' . URL::route('admin.feedback.edit', ['id' => $row->id]) . '"><span  class="fa fa-edit"></span></a> &nbsp;';
+                $deleteBtn = '<a title="удалить" class="btn btn-xs btn-danger deleteRow" id="' . $row->id . '"><span class="fa fa-trash"></span></a>';
+
+                return '<div class="nobr"> ' . $editBtn . $deleteBtn . '</div>';
+            })
+            ->rawColumns(['actions'])->make(true);
+    }
+
+    /**
+     * @return JsonResponse
+     */
+    public function settings(): JsonResponse
+    {
+        $row = Settings::query();
+
+        return Datatables::of($row)
+            ->addColumn('actions', function ($row) {
+                $editBtn = '<a title="редактировать" class="btn btn-xs btn-primary"  href="' . URL::route('admin.settings.edit', ['id' => $row->id]) . '"><span  class="fa fa-edit"></span></a> &nbsp;';
                 $deleteBtn = '<a title="удалить" class="btn btn-xs btn-danger deleteRow" id="' . $row->id . '"><span class="fa fa-trash"></span></a>';
 
                 return '<div class="nobr"> ' . $editBtn . $deleteBtn . '</div>';

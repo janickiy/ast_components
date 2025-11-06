@@ -27,15 +27,33 @@
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <div class="pb-3">
-                                    <a href="{{ route('admin.category.create') }}" class="btn btn-info btn-sm pull-left">
-                                        <span class="fa fa-plus"> &nbsp;</span> добавить
-                                    </a>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <a href="{{ route('admin.settings.create', ['type' => 'TEXT']) }}"
+                                               class="btn btn-info btn-sm pull-left">
+                                                <span class="fa fa-plus"> &nbsp;</span> Добавить Text параметр
+                                            </a><br><br>
+                                            <a href="{{ route('admin.settings.create', ['type' => 'HTML']) }}"
+                                               class="btn btn-info btn-sm pull-left">
+                                                <span class="fa fa-plus"> &nbsp;</span> Добавить HTML параметр
+                                            </a><br><br>
+                                            <a href="{{ route('admin.settings.create', ['type' => 'FILE']) }}"
+                                               class="btn btn-info btn-sm pull-left">
+                                                <span class="fa fa-plus"> &nbsp;</span> Добавить File параметр
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <table id="itemList" class="table table-bordered table-striped">
                                     <thead>
                                     <tr>
-                                        <th>имя</th>
+                                        <th>Параметр</th>
+                                        <th>Название</th>
+                                        <th>Значение</th>
+                                        <th>Описание</th>
+                                        <th>Тип</th>
+                                        <th>Публиковать</th>
                                         <th style="width: 10%">действия</th>
                                     </tr>
                                     </thead>
@@ -101,11 +119,16 @@
                         "autoWidth": true,
                         'serverSide': true,
                         'ajax': {
-                            url: '{{ route('admin.datatable.category') }}'
+                            url: '{{ route('admin.datatable.settings') }}'
                         },
                         'columns': [
+                            {data: 'key_cd', name: 'key_cd'},
                             {data: 'name', name: 'name'},
-                            {data: 'action', name: 'action', orderable: false, searchable: false}
+                            {data: 'value', name: 'value'},
+                            {data: 'display_value', name: 'display_value'},
+                            {data: 'type', name: 'type'},
+                            {data: 'published', name: 'published', searchable: false},
+                            {data: 'actions', name: 'actions', orderable: false, searchable: false},}
                         ]
                     });
 
@@ -127,7 +150,7 @@
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 $.ajax({
-                                    url: '{{ route('admin.category.destroy') }}',
+                                    url: '{{ route('admin.settings.destroy') }}',
                                     type: "POST",
                                     dataType: "html",
                                     data: {id: rowid},
