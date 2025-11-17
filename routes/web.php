@@ -77,7 +77,7 @@ Route::group(['prefix' => 'cp'], function () {
         Route::any('category', [DataTableController::class, 'category'])->name('admin.datatable.category');
         Route::any('feedback', [DataTableController::class, 'feedback'])->name('admin.datatable.feedback');
         Route::any('users', [DataTableController::class, 'users'])->name('admin.datatable.users')->middleware(['permission:admin']);
-        Route::any('settings', [DataTableController::class, 'settings'])->name('admin.datatable.settings')->middleware(['permission:admin']);
+        Route::any('settings', [DataTableController::class, 'settings'])->name('admin.datatable.settings');
     });
 
 });

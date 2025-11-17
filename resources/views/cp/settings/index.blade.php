@@ -128,7 +128,7 @@
                             {data: 'display_value', name: 'display_value'},
                             {data: 'type', name: 'type'},
                             {data: 'published', name: 'published', searchable: false},
-                            {data: 'actions', name: 'actions', orderable: false, searchable: false},}
+                            {data: 'actions', name: 'actions', orderable: false, searchable: false},
                         ]
                     });
 

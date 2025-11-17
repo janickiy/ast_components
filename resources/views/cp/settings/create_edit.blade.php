@@ -54,6 +54,25 @@
 
                             <div class="form-group">
 
+                                {!! Form::label('name', 'Название') !!}
+
+                                @if(isset($row))
+
+                                    {!! Form::text('name', old('name', $row->name ?? null), ['class' => 'form-control']) !!}
+
+                                @else
+
+                                    {!! Form::text('name', old('key_cd', $row->name ?? null), ['class' => 'form-control']) !!}
+
+                                @endif
+
+                                @if ($errors->has('name'))
+                                    <p class="text-danger">{{ $errors->first('name') }}</p>
+                                @endif
+                            </div>
+
+                            <div class="form-group">
+
                                 {!! Form::label('type', 'Тип*') !!}
 
                                 {!! Form::text('type', old('type', isset($row) ? $row->type : $type), ['class' => 'form-control', 'readonly']) !!}
@@ -70,10 +89,21 @@
 
                                     {!! Form::label('value', 'Файл* (jpg,png,txt,doc,docx,pdf,xls,xlsx,odt,ods,pdf)') !!}
 
+                                    <div class="input-group">
+                                        <div class="custom-file">
+                                            {!! Form::file('value',  [ 'class' => 'custom-file-input']) !!}
+
+                                            {!! Form::label('value', 'Выберите файл*', ['class' => 'custom-file-label']) !!}
+                                        </div>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">Обзор...</span>
+                                        </div>
+                                    </div>
+
                                 @elseif (isset($row) && $row->type == 'HTML' || $type == 'HTML')
                                     {!! Form::label('value', 'Значение*') !!}
 
-                                    {!! Form::textarea('value', old('value', $row->value ?? null), ['rows' => "3", 'placeholder' => "", 'class' => 'form-control']) !!}
+                                    {!! Form::textarea('value', old('value', $row->value ?? null), ['rows' => "3", 'placeholder' => "",  'id' => 'summernote', 'style' => "display: none;"]) !!}
 
                                 @else
 
@@ -85,6 +115,18 @@
 
                                 @if ($errors->has('value'))
                                     <p class="text-danger">{{ $errors->first('value') }}</p>
+                                @endif
+
+                            </div>
+
+                            <div class="form-check">
+
+                                {!! Form::checkbox('published', 1, isset($row) ? ($row->published === true ? 1 : 0): 1, ['class' => 'form-check-input']) !!}
+
+                                {!! Form::label('published', 'Публиковать', ['class' => 'form-check-label']) !!}
+
+                                @if ($errors->has('published'))
+                                    <p class="text-danger">{{ $errors->first('published') }}</p>
                                 @endif
 
                             </div>
@@ -132,7 +174,7 @@
     <script>
         $(function () {
             // Summernote
-            $('#body').summernote();
+            $('#summernote').summernote()
             bsCustomFileInput.init();
         })
 

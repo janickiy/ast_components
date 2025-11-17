@@ -105,7 +105,7 @@
                         },
                         'columns': [
                             {data: 'name', name: 'name'},
-                            {data: 'action', name: 'action', orderable: false, searchable: false}
+                            {data: 'actions', name: 'action', orderable: false, searchable: false}
                         ]
                     });
 

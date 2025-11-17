@@ -82,6 +82,7 @@ class DataTableController extends Controller
 
     /**
      * @return JsonResponse
+     * @throws \Exception
      */
     public function settings(): JsonResponse
     {
@@ -93,6 +94,9 @@ class DataTableController extends Controller
                 $deleteBtn = '<a title="удалить" class="btn btn-xs btn-danger deleteRow" id="' . $row->id . '"><span class="fa fa-trash"></span></a>';
 
                 return '<div class="nobr"> ' . $editBtn . $deleteBtn . '</div>';
+            })
+            ->editColumn('published', function ($row) {
+                return $row->published == 1 ? 'да' : 'нет';
             })
             ->rawColumns(['actions'])->make(true);
     }
