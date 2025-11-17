@@ -119,6 +119,18 @@
 
                             </div>
 
+                            <div class="form-group">
+
+                                {!! Form::label('display_value', 'Описание') !!}
+
+                                {!! Form::textarea('display_value', old('display_value', $row->display_value ?? null), ['rows' => "3", 'placeholder' => "Описание", 'class' => 'form-control']) !!}
+
+                                @if ($errors->has('display_value'))
+                                    <p class="text-danger">{{ $errors->first('display_value') }}</p>
+                                @endif
+
+                            </div>
+
                             <div class="form-check">
 
                                 {!! Form::checkbox('published', 1, isset($row) ? ($row->published === true ? 1 : 0): 1, ['class' => 'form-check-input']) !!}

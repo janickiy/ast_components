@@ -106,7 +106,7 @@ class SettingsController extends Controller
             $res = $this->settingsService->updateFile($settings, $request);
 
             if ($res === false) {
-                return redirect()->route('cp.settings.index')->with('error', 'Не удалось сохранить файл!');
+                return redirect()->route('admin.settings.index')->with('error', 'Не удалось сохранить файл!');
             }
         }
 
@@ -115,7 +115,7 @@ class SettingsController extends Controller
             'published' => $published,
         ]));
 
-        return redirect()->route('cp.settings.index')->with('success', 'Данные обновлены');
+        return redirect()->route('admin.settings.index')->with('success', 'Данные обновлены');
     }
 
     /**
