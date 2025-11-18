@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Admin\Category;
+namespace App\Http\Requests\Admin\Catalog;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -23,6 +23,8 @@ class StoreRequest extends FormRequest
     {
         return [
             'name' => 'required',
+            'slug' => 'required|unique:catalog',
+            'parent_id' => 'integer'
         ];
     }
 }

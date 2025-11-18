@@ -3,7 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\{
     AuthController,
-    CategoryController,
+    AjaxController,
+    CatalogController,
     FeedbackController,
     NewsController,
     DashboardController,
@@ -31,13 +32,13 @@ Route::group(['prefix' => 'cp'], function () {
 
     Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard.index');
 
-    Route::group(['prefix' => 'category'], function () {
-        Route::get('', [CategoryController::class, 'index'])->name('admin.category.index')->middleware(['permission:admin|moderator']);
-        Route::get('create', [CategoryController::class, 'create'])->name('admin.category.create')->middleware(['permission:admin|moderator']);
-        Route::post('store', [CategoryController::class, 'store'])->name('admin.category.store')->middleware(['permission:admin|moderator']);
-        Route::get('edit/{id}', [CategoryController::class, 'edit'])->name('admin.category.edit')->where('id', '[0-9]+')->middleware(['permission:admin|moderator']);
-        Route::put('update', [CategoryController::class, 'update'])->name('admin.category.update')->middleware(['permission:admin|moderator']);
-        Route::post('destroy', [CategoryController::class, 'destroy'])->name('admin.category.destroy')->middleware(['permission:admin|moderator']);
+    Route::group(['prefix' => 'catalog'], function () {
+        Route::get('', [CatalogController::class, 'index'])->name('admin.catalog.index')->middleware(['permission:admin|moderator']);
+        Route::get('create', [CatalogController::class, 'create'])->name('admin.catalog.create')->middleware(['permission:admin|moderator']);
+        Route::post('store', [CatalogController::class, 'store'])->name('admin.catalog.store')->middleware(['permission:admin|moderator']);
+        Route::get('edit/{id}', [CatalogController::class, 'edit'])->name('admin.catalog.edit')->where('id', '[0-9]+')->middleware(['permission:admin|moderator']);
+        Route::put('update', [CatalogController::class, 'update'])->name('admin.catalog.update')->middleware(['permission:admin|moderator']);
+        Route::post('destroy', [CatalogController::class, 'destroy'])->name('admin.catalog.destroy')->middleware(['permission:admin|moderator']);
     });
 
     Route::get('feedback', FeedbackController::class)->name('admin.feedback.index');
@@ -72,6 +73,8 @@ Route::group(['prefix' => 'cp'], function () {
             Route::post('destroy', [SettingsController::class, 'destroy'])->name('admin.settings.destroy');
         });
     });
+
+    Route::any('ajax', AjaxController::class)->name('admin.ajax');
 
     Route::group(['prefix' => 'datatable'], function () {
         Route::any('category', [DataTableController::class, 'category'])->name('admin.datatable.category');

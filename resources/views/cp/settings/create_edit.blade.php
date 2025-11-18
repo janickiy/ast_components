@@ -71,6 +71,8 @@
                                 @endif
                             </div>
 
+
+
                             <div class="form-group">
 
                                 {!! Form::label('type', 'Тип*') !!}

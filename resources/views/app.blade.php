@@ -154,7 +154,7 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="{{ route('admin.category.index') }}"
+                                <a href="{{ route('admin.catalog.index') }}"
                                    class="nav-link{{ Request::is('category*') ? ' active' : '' }}"
                                    title="Каталог">
                                     <i class="nav-icon fas fa-"></i>

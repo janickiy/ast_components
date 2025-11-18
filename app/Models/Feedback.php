@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\StringHelper;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
