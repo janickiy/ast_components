@@ -162,6 +162,15 @@
                                 </a>
                             </li>
 
+                            <li class="nav-item">
+                                <a href="{{ route('admin.products.index') }}"
+                                   class="nav-link{{ Request::is('products*') ? ' active' : '' }}"
+                                   title="Продукция">
+                                    <i class="nav-icon fas fa-"></i>
+                                    <p>Продукция</p>
+                                </a>
+                            </li>
+
                         </ul>
                     </li>
 

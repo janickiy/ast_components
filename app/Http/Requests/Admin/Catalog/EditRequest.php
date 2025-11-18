@@ -22,7 +22,7 @@ class EditRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => 'required|integer|exists:settings,id',
+            'id'   => 'required|integer|exists:settings,id',
             'name' => 'required',
             'slug' => 'required|unique:catalog,slug,' . $this->id,
             'parent_id' => 'integer'

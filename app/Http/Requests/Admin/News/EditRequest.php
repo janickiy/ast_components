@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Admin\News;
 
-class EditRequest
+use Illuminate\Foundation\Http\FormRequest;
+
+class EditRequest extends FormRequest
 {
 
 }

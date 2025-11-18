@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\{
     AjaxController,
     CatalogController,
     FeedbackController,
+    ProductsController,
     NewsController,
     DashboardController,
     DataTableController,
@@ -74,10 +75,21 @@ Route::group(['prefix' => 'cp'], function () {
         });
     });
 
+    Route::group(['prefix' => 'products'], function () {
+        Route::get('', [ProductsController::class, 'index'])->name('admin.products.index');
+        Route::get('create', [ProductsController::class, 'create'])->name('admin.products.create');
+        Route::post('store', [ProductsController::class, 'store'])->name('admin.products.store');
+        Route::get('edit/{id}', [ProductsController::class, 'edit'])->name('admin.products.edit')->where('id', '[0-9]+');
+        Route::put('update', [ProductsController::class, 'update'])->name('admin.products.update');
+        Route::post('destroy', [ProductsController::class, 'destroy'])->name('admin.products.destroy');
+    });
+
+
     Route::any('ajax', AjaxController::class)->name('admin.ajax');
 
     Route::group(['prefix' => 'datatable'], function () {
         Route::any('category', [DataTableController::class, 'category'])->name('admin.datatable.category');
+        Route::any('products', [DataTableController::class, 'products'])->name('admin.datatable.products');
         Route::any('feedback', [DataTableController::class, 'feedback'])->name('admin.datatable.feedback');
         Route::any('users', [DataTableController::class, 'users'])->name('admin.datatable.users')->middleware(['permission:admin']);
         Route::any('settings', [DataTableController::class, 'settings'])->name('admin.datatable.settings');

@@ -43,7 +43,7 @@
 
                                 @else
 
-                                    {!! Form::text('key_cd', old('key_cd', $row->key_cd ?? null), ['class' => 'form-control']) !!}
+                                    {!! Form::text('key_cd', old('key_cd'), ['class' => 'form-control']) !!}
 
                                 @endif
 
@@ -62,7 +62,7 @@
 
                                 @else
 
-                                    {!! Form::text('name', old('key_cd', $row->name ?? null), ['class' => 'form-control']) !!}
+                                    {!! Form::text('name', old('key_cd'), ['class' => 'form-control']) !!}
 
                                 @endif
 
@@ -70,8 +70,6 @@
                                     <p class="text-danger">{{ $errors->first('name') }}</p>
                                 @endif
                             </div>
-
-
 
                             <div class="form-group">
 
@@ -111,7 +109,7 @@
 
                                     {!! Form::label('value', 'Значение*') !!}
 
-                                    {!! Form::text('value', old('value', $row->value ?? null), ['class' => 'form-control']) !!}
+                                    {!! Form::text('value', old('value'), ['class' => 'form-control']) !!}
 
                                 @endif
 
@@ -191,7 +189,6 @@
             $('#summernote').summernote()
             bsCustomFileInput.init();
         })
-
     </script>
 
 @endsection

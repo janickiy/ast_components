@@ -188,7 +188,6 @@
                 }
                 console.log(html);
             });
-
         });
     </script>
 

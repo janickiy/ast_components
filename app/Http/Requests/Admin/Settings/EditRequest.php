@@ -22,9 +22,9 @@ class EditRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'value' => $this->type == 'FILE' ? 'nullable' : 'required',
+            'value'  => $this->type == 'FILE' ? 'nullable' : 'required',
             'key_cd' => 'required|max:255|unique:settings,key_cd,' . $this->id,
-            'id' => 'required|integer|exists:settings,id',
+            'id'     => 'required|integer|exists:settings,id',
         ];
     }
 }
