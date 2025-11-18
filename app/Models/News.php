@@ -28,8 +28,7 @@ class News extends Model
     ];
 
     /**
-     * @param string $lang
-     * @return mixed
+     * @return string
      */
     public function excerpt(): string
     {
@@ -37,14 +36,21 @@ class News extends Model
         $content = preg_replace("/<img(.*?)>/si", "", $content);
         $content = preg_replace('/(<.*?>)|(&.*?;)/', '', $content)  ;
 
-        return StringHelper::shortText($content,500);
+        return StringHelper::shortText($content, 500);
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getImage()
+    public function getImage(): string
     {
-        return Storage::disk('public')->url('app/public/news/' . $this->image);
+        return Storage::disk('public')->url('news/' . $this->image);
+    }
+
+    public function scopeRemove(): void
+    {
+        if (Storage::disk('public')->exists('news/' . $this->image) === true) Storage::disk('public')->delete('news/' . $this->image);
+
+        $this->delete();
     }
 }

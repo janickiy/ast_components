@@ -15,8 +15,14 @@ use Illuminate\View\View;
 
 class UsersController extends Controller
 {
+    /**
+     * @var UserRepository
+     */
     private UserRepository $userRepository;
 
+    /**
+     * @param UserRepository $userRepository
+     */
     public function __construct(UserRepository $userRepository)
     {
         $this->userRepository = $userRepository;

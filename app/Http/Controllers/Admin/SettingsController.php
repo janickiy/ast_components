@@ -16,6 +16,10 @@ class SettingsController extends Controller
 
     private SettingsRepository $settingsRepository;
 
+    /**
+     * @param SettingsService $settingsService
+     * @param SettingsRepository $settingsRepository
+     */
     public function __construct(SettingsService $settingsService, SettingsRepository $settingsRepository)
     {
         $this->settingsService = $settingsService;
@@ -43,7 +47,6 @@ class SettingsController extends Controller
     /**
      * @param StoreRequest $request
      * @return RedirectResponse
-     * @throws \Symfony\Component\HttpFoundation\File\Exception\FileException
      */
     public function store(StoreRequest $request): RedirectResponse
     {
@@ -72,9 +75,6 @@ class SettingsController extends Controller
     /**
      * @param int $id
      * @return View
-     * @throws \Illuminate\Http\Exceptions\HttpResponseException
-     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
-     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
     public function edit(int $id): View
     {
@@ -90,7 +90,6 @@ class SettingsController extends Controller
     /**
      * @param EditRequest $request
      * @return RedirectResponse
-     * @throws \Symfony\Component\HttpFoundation\File\Exception\FileException
      */
     public function update(EditRequest $request): RedirectResponse
     {

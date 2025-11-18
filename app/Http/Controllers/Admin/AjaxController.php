@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\{Catalog, Pages, Products, Services};
+use App\Models\{Catalog, Pages, Products, News};
 use App\Helpers\StringHelper;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -27,9 +27,9 @@ class AjaxController extends Controller
 
                     return response()->json(['slug' => $slug]);
 
-                case 'get_services_slug':
+                case 'get_news_slug':
                     $slug = StringHelper::slug(trim($request->title));
-                    $count = Services::where('slug', 'LIKE', $slug)->count();
+                    $count = News::where('slug', 'LIKE', $slug)->count();
                     $slug = $count > 0 ? substr($slug, 0, -1) . ($count + 1) : $slug;
 
                     return response()->json(['slug' => $slug]);

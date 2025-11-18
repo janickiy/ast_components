@@ -77,8 +77,6 @@ class Catalog extends Model
         return (int)Products::where('catalog_id', $this->id)->where('published', 1)->count();
     }
 
-
-
     /**
      * @param int $parent_id
      * @return void
@@ -96,7 +94,6 @@ class Catalog extends Model
         }
 
         self::removeCatalog($parent);
-
     }
 
     /**
@@ -132,7 +129,7 @@ class Catalog extends Model
     {
         $ids = [];
 
-        foreach ($category->children as $row) {
+        foreach ($category->children ?? [] as $row) {
             $ids[] = $row->id;
             $ids = array_merge($ids, self::getChildren($row));
         }
@@ -184,7 +181,7 @@ class Catalog extends Model
      * @param array $catalogs
      * @param int $parent_id
      * @param bool $only_parent
-     * @return string|null
+     * @return string
      */
     public static function buildTree(array $catalogs, int $parent_id, bool $only_parent = false): string
     {
