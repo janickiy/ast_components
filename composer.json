@@ -14,7 +14,7 @@
         "janickiy/laravel-menu": "^2.0",
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.2",
-        "laravel/tinker": "^2.10.1",
+        "laravel/tinker": "^2.10",
         "spatie/laravel-sitemap": "^7.3",
         "yajra/laravel-datatables-buttons": "^12.1",
         "yajra/laravel-datatables-html": "^12.0"
