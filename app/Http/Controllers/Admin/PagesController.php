@@ -76,6 +76,9 @@ class PagesController extends Controller
     public function edit(int $id): View
     {
         $row = $this->pageRepository->find($id);
+
+        if (!$row) abort(404);
+
         $options = $this->pageRepository->getOption();
 
         return view('cp.pages.create_edit', compact('row', 'options'))->with('title', 'Редактирование раздела');

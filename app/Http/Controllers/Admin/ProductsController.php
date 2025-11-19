@@ -94,6 +94,9 @@ class ProductsController extends Controller
     public function edit(int $id): View
     {
         $row = $this->productRepository->find($id);
+
+        if (!$row) abort(404);
+
         $options = Catalog::getOption();
         $maxUploadFileSize = StringHelper::maxUploadFileSize();
 

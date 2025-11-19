@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Feedback;
 use App\Models\Products;
 use App\Models\Settings;
+use App\Models\Seo;
 use App\Models\Manufacturers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
@@ -49,6 +50,23 @@ class DataTableController extends Controller
                 $deleteBtn = '<a title="удалить" class="btn btn-xs btn-danger deleteRow" id="' . $row->id . '"><span class="fa fa-trash"></span></a>';
 
                 return '<div class="nobr"> ' . $editBtn . $deleteBtn . '</div>';
+            })
+            ->rawColumns(['actions'])->make(true);
+    }
+
+    /**
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function seo(): JsonResponse
+    {
+        $row = Seo::query();
+
+        return Datatables::of($row)
+            ->addColumn('actions', function ($row) {
+                $editBtn = '<a title="редактировать" class="btn btn-xs btn-primary"  href="' . URL::route('admin.seo.edit', ['id' => $row->id]) . '"><span  class="fa fa-edit"></span></a>';
+
+                return '<div class="nobr"> ' . $editBtn . '</div>';
             })
             ->rawColumns(['actions'])->make(true);
     }

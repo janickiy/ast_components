@@ -83,6 +83,9 @@ class ManufacturersController extends Controller
     public function edit(int $id): View
     {
         $row = $this->manufacturerRepository->find($id);
+
+        if (!$row) abort(404);
+
         $maxUploadFileSize = StringHelper::maxUploadFileSize();
 
         return view('cp.manufacturers.create_edit', compact('row', 'maxUploadFileSize'))->with('title', 'Редактирование производителя');

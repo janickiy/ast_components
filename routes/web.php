@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\{
     MenuController,
     UsersController,
     SettingsController,
+    SeoController,
 };
 
 /*
@@ -67,6 +68,14 @@ Route::group(['prefix' => 'cp'], function () {
         Route::post('destroy', [NewsController::class, 'destroy'])->name('admin.news.destroy');
     });
 
+    Route::middleware(['permission:admin|moderator'])->group(function () {
+        Route::group(['prefix' => 'seo'], function () {
+            Route::get('', [SeoController::class, 'index'])->name('admin.seo.index');
+            Route::get('edit/{id}', [SeoController::class, 'edit'])->name('admin.seo.edit')->where('id', '[0-9]+');
+            Route::put('update', [SeoController::class, 'update'])->name('admin.seo.update');
+        });
+    });
+
     Route::middleware(['permission:admin'])->group(function () {
         Route::group(['prefix' => 'users'], function () {
             Route::get('', [UsersController::class, 'index'])->name('admin.users.index');
@@ -117,6 +126,6 @@ Route::group(['prefix' => 'cp'], function () {
         Route::any('users', [DataTableController::class, 'users'])->name('admin.datatable.users')->middleware(['permission:admin']);
         Route::any('settings', [DataTableController::class, 'settings'])->name('admin.datatable.settings')->middleware(['permission:admin']);
         Route::any('manufacturers', [DataTableController::class, 'manufacturers'])->name('admin.datatable.manufacturers');
+        Route::any('seo', [DataTableController::class, 'seo'])->name('admin.datatable.seo');
     });
-
 });

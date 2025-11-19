@@ -72,6 +72,8 @@ class CatalogController extends Controller
     {
         $row = $this->categoryRepository->find($id);
 
+        if (!$row) abort(404);
+
         $options = $this->categoryRepository->getOptions();
         $parent_id = $row->parent_id;
         unset($options[$id]);

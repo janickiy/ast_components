@@ -184,6 +184,33 @@
 
                     @if(PermissionsHelper::has_permission('admin|moderator'))
 
+                        <li class="nav-item{{ Request::is('cp/seo*') || Request::is('cp/manufacturers*')  || Request::is('cp/products*') ? ' active menu-open' : '' }}">
+                            <a href="#" class="nav-link{{ Request::is('cp/seo*') || Request::is('cp/manufacturers*')  || Request::is('cp/products*') ? ' active' : '' }}">
+                                <i class="nav-icon fas fa-file"></i>
+                                <p>
+                                    Seo
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.seo.index') }}"
+                                       class="nav-link{{ Request::is('cp/seo*') ? ' active' : '' }}"
+                                       title="Seo">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Seo</p>
+                                    </a>
+                                </li>
+
+
+
+                            </ul>
+                        </li>
+
+                    @endif
+
+                    @if(PermissionsHelper::has_permission('admin|moderator'))
+
                         <li class="nav-item">
                             <a href="{{ route('admin.feedback.index') }}"
                                class="nav-link{{ Request::is('cp/feedback*') ? ' active' : '' }}"

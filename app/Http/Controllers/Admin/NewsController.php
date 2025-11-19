@@ -24,6 +24,7 @@ class NewsController extends Controller
 
     /**
      * @param NewsRepository $newsRepository
+     * @param NewsService $newsService
      */
     public function __construct(NewsRepository $newsRepository, NewsService $newsService)
     {
@@ -75,6 +76,9 @@ class NewsController extends Controller
     public function edit(int $id): View
     {
         $row = $this->newsRepository->find($id);
+
+        if (!$row) abort(404);
+
         $maxUploadFileSize = StringHelper::maxUploadFileSize();
 
         return view('cp.news.create_edit', compact('row', 'maxUploadFileSize'))->with('title', 'Редактирование новости');
