@@ -4,9 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\Admin\Pages\EditRequest;
 use App\Http\Requests\Admin\Pages\StoreRequest;
-use App\Helpers\StringHelper;
 use App\Repositories\PagesRepository;
-use App\Services\PagesService;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -17,19 +15,13 @@ class PagesController extends Controller
      * @var PagesRepository
      */
     private PagesRepository $pageRepository;
-    /**
-     * @var PagesService
-     */
-    private PagesService $pageService;
 
     /**
      * @param PagesRepository $pageRepository
-     * @param PagesService $pageService
      */
-    public function __construct(PagesRepository $pageRepository, PagesService $pageService)
+    public function __construct(PagesRepository $pageRepository)
     {
         $this->pageRepository = $pageRepository;
-        $this->pageService = $pageService;
         parent::__construct();
     }
 
@@ -47,9 +39,8 @@ class PagesController extends Controller
     public function create(): View
     {
         $options = $this->pageRepository->getOption();
-        $maxUploadFileSize = StringHelper::maxUploadFileSize();
 
-        return view('cp.pages.create_edit', compact('options', 'maxUploadFileSize'))->with('title', 'Добавление раздела');
+        return view('cp.pages.create_edit', compact('options'))->with('title', 'Добавление раздела');
     }
 
     /**
@@ -58,10 +49,6 @@ class PagesController extends Controller
      */
     public function store(StoreRequest $request): RedirectResponse
     {
-        if ($request->hasFile('image')) {
-            $originName = $this->pageService->storeImage($request);
-        }
-
         $published = 0;
 
         if ($request->input('published')) {
@@ -75,7 +62,6 @@ class PagesController extends Controller
         }
 
         $this->pageRepository->create(array_merge(array_merge($request->all()), [
-            'image' => $originName ?? null,
             'published' => $published,
             'seo_sitemap' => $seo_sitemap,
         ]));
@@ -91,9 +77,8 @@ class PagesController extends Controller
     {
         $row = $this->pageRepository->find($id);
         $options = $this->pageRepository->getOption();
-        $maxUploadFileSize = StringHelper::maxUploadFileSize();
 
-        return view('cp.pages.create_edit', compact('row', 'options', 'maxUploadFileSize'))->with('title', 'Редактирование раздела');
+        return view('cp.pages.create_edit', compact('row', 'options'))->with('title', 'Редактирование раздела');
     }
 
     /**
@@ -102,19 +87,12 @@ class PagesController extends Controller
      */
     public function update(EditRequest $request): RedirectResponse
     {
-        $row = $this->pageRepository->find($request->input('id'));
-
-        if ($request->hasFile('image')) {
-            $originName = $this->pageService->updateImage($row, $request);
-        }
-
         $published = 0;
 
         if ($request->input('published')) {
             $published = 1;
         }
 
-        $row->published = $published;
         $main = 0;
 
         if ($request->input('main')) {
@@ -130,7 +108,6 @@ class PagesController extends Controller
         $this->pageRepository->update($request->id, array_merge($request->all(), [
             'main' => $main,
             'seo_sitemap' => $seo_sitemap,
-            'image' => $originName ?? null,
             'published' => $published,
         ]));
 
@@ -143,6 +120,6 @@ class PagesController extends Controller
      */
     public function destroy(Request $request): void
     {
-        $this->pageRepository->remove($request->id);
+        $this->pageRepository->delete($request->id);
     }
 }

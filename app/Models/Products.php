@@ -66,24 +66,24 @@ class Products extends Model
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getThumbnailUrl()
+    public function getThumbnailUrl(): string
     {
         return Storage::disk('public')->url('products/' . $this->thumbnail);
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getOriginUrl()
+    public function getOriginUrl(): string
     {
         return Storage::disk('public')->url('products/' . $this->origin);
     }
 
     /**
      * @param int $category_id
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function parameterByCategoryId(int $category_id): HasMany
     {
@@ -117,7 +117,6 @@ class Products extends Model
 
     /**
      * @return void
-     * @throws \Exception
      */
     public function scopeRemove(): void
     {

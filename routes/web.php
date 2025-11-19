@@ -5,13 +5,14 @@ use App\Http\Controllers\Admin\{
     AuthController,
     AjaxController,
     CatalogController,
+    DashboardController,
+    DataTableController,
     FeedbackController,
     PagesController,
     ProductsController,
+    ManufacturersController,
     NewsController,
     MenuController,
-    DashboardController,
-    DataTableController,
     UsersController,
     SettingsController,
 };
@@ -97,6 +98,14 @@ Route::group(['prefix' => 'cp'], function () {
         Route::post('destroy', [ProductsController::class, 'destroy'])->name('admin.products.destroy');
     });
 
+    Route::group(['prefix' => 'manufacturers'], function () {
+        Route::get('', [ManufacturersController::class, 'index'])->name('admin.manufacturers.index');
+        Route::get('create', [ManufacturersController::class, 'create'])->name('admin.manufacturers.create');
+        Route::post('store', [ManufacturersController::class, 'store'])->name('admin.manufacturers.store');
+        Route::get('edit/{id}', [ManufacturersController::class, 'edit'])->name('admin.manufacturers.edit')->where('id', '[0-9]+');
+        Route::put('update', [ManufacturersController::class, 'update'])->name('admin.manufacturers.update');
+        Route::post('destroy', [ManufacturersController::class, 'destroy'])->name('admin.manufacturers.destroy');
+    });
 
     Route::any('ajax', AjaxController::class)->name('admin.ajax');
 
@@ -106,7 +115,8 @@ Route::group(['prefix' => 'cp'], function () {
         Route::any('news', [DataTableController::class, 'news'])->name('admin.datatable.news');
         Route::any('feedback', [DataTableController::class, 'feedback'])->name('admin.datatable.feedback');
         Route::any('users', [DataTableController::class, 'users'])->name('admin.datatable.users')->middleware(['permission:admin']);
-        Route::any('settings', [DataTableController::class, 'settings'])->name('admin.datatable.settings');
+        Route::any('settings', [DataTableController::class, 'settings'])->name('admin.datatable.settings')->middleware(['permission:admin']);
+        Route::any('manufacturers', [DataTableController::class, 'manufacturers'])->name('admin.datatable.manufacturers');
     });
 
 });

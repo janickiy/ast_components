@@ -25,7 +25,7 @@
                     <header class="card card-primary">
 
                         <!-- form start -->
-                        {!! Form::open(['url' => isset($row) ? route('admin.news.update') : route('admin.news.store'), 'files' => true, 'method' => isset($row) ? 'put' : 'post']) !!}
+                        {!! Form::open(['url' => isset($row) ? route('admin.manufacturers.update') : route('admin.manufacturers.store'), 'files' => true, 'method' => isset($row) ? 'put' : 'post']) !!}
 
                         {!! isset($row) ? Form::hidden('id', $row->id) : '' !!}
 
@@ -47,24 +47,24 @@
 
                             <div class="form-group">
 
-                                {!! Form::label('preview', 'Краткое описание*') !!}
+                                {!! Form::label('description', 'Описание*') !!}
 
-                                {!! Form::textarea('preview', old('preview', isset($row) ? $row->preview : null), ['rows' => "3", 'class' => 'form-control']) !!}
+                                {!! Form::textarea('description', old('description', $row->description ?? null), ['rows' => "3", 'placeholder' => "Описание",  'id' => 'summernote', 'style' => "display: none;"]) !!}
 
-                                @if ($errors->has('preview'))
-                                    <p class="text-danger">{{ $errors->first('preview') }}</p>
+                                @if ($errors->has('description'))
+                                    <p class="text-danger">{{ $errors->first('description') }}</p>
                                 @endif
 
                             </div>
 
                             <div class="form-group">
 
-                                {!! Form::label('text', 'Содержание*') !!}
+                                {!! Form::label('country', 'Страна') !!}
 
-                                {!! Form::textarea('text', old('text', $row->description ?? null), ['rows' => "3", 'placeholder' => "Описание",  'id' => 'summernote', 'style' => "display: none;"]) !!}
+                                {!! Form::text('country', old('country', $row->country ?? null), ['class' => 'form-control']) !!}
 
-                                @if ($errors->has('text'))
-                                    <p class="text-danger">{{ $errors->first('text') }}</p>
+                                @if ($errors->has('country'))
+                                    <p class="text-danger">{{ $errors->first('country') }}</p>
                                 @endif
 
                             </div>
@@ -184,7 +184,7 @@
                             <button type="submit" class="btn btn-primary">
                                 {{ isset($row) ? 'редактировать' : 'добавить' }}
                             </button>
-                            <a class="btn btn-default float-sm-right" href="{{ route('admin.news.index') }}">
+                            <a class="btn btn-default float-sm-right" href="{{ route('admin.manufacturers.index') }}">
                                 назад
                             </a>
                         </div>
@@ -230,7 +230,7 @@
                         url: '{!! route('admin.ajax') !!}',
                         method: "POST",
                         data: {
-                            action: "get_news_slug",
+                            action: "get_manufacturer_slug",
                             name: name
                         },
                         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},

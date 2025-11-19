@@ -22,7 +22,6 @@ class StoreRequest
         return [
             'title' => 'required',
             'text'  => 'required',
-            'image' => 'image|mimes:jpeg,jpg,png,gif|max:2048|nullable',
             'slug'  => 'required|unique:pages',
             'main'  => 'integer|nullable'
         ];

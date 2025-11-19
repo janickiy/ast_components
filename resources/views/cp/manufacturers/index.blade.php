@@ -29,7 +29,7 @@
                                 <div class="pb-3">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <a href="{{ route('admin.pages.create') }}"
+                                            <a href="{{ route('admin.manufacturers.create') }}"
                                                class="btn btn-info btn-sm pull-left">
                                                 <span class="fa fa-plus"> &nbsp;</span> Добавить
                                             </a>
@@ -41,9 +41,8 @@
                                     <thead>
                                     <tr>
                                         <th>Название</th>
+                                        <th>Краткое описание</th>
                                         <th>ЧПУ</th>
-                                        <th>Главная</th>
-                                        <th>Опубликовано</th>
                                         <th>Создан</th>
                                         <th style="width: 10%">действия</th>
                                     </tr>
@@ -110,13 +109,12 @@
                         "autoWidth": true,
                         'serverSide': true,
                         'ajax': {
-                            url: '{{ route('admin.datatable.pages') }}'
+                            url: '{{ route('admin.datatable.manufacturers') }}'
                         },
                         'columns': [
                             {data: 'title', name: 'title'},
+                            {data: 'preview', name: 'preview'},
                             {data: 'slug', name: 'slug'},
-                            {data: 'main', name: 'main'},
-                            {data: 'published', name: 'published'},
                             {data: 'created_at', name: 'created_at'},
                             {data: 'actions', name: 'actions', orderable: false, searchable: false},
                         ]
@@ -140,7 +138,7 @@
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 $.ajax({
-                                    url: '{{ route('admin.pages.destroy') }}',
+                                    url: '{{ route('admin.manufacturers.destroy') }}',
                                     type: "POST",
                                     dataType: "html",
                                     data: {id: rowid},

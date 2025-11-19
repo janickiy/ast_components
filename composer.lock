@@ -1423,17 +1423,17 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/janickiy/laravel-menu.git",
-                "reference": "2cffa6c22fd1f172e089bd9d9470ec09a0abf761"
+                "reference": "6e7d405194c214fc7b40a08d766d98a31ca71b43"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/janickiy/laravel-menu/zipball/2cffa6c22fd1f172e089bd9d9470ec09a0abf761",
-                "reference": "2cffa6c22fd1f172e089bd9d9470ec09a0abf761",
+                "url": "https://api.github.com/repos/janickiy/laravel-menu/zipball/6e7d405194c214fc7b40a08d766d98a31ca71b43",
+                "reference": "6e7d405194c214fc7b40a08d766d98a31ca71b43",
                 "shasum": ""
             },
             "require": {
-                "illuminate/support": "5.* || 6.* || 7.* || 8.* || 9.* || 10.* || 11.* || 12.*",
-                "php": ">=7.2"
+                "illuminate/support": "8.* || 9.* || 10.* || 11.* || 12.*",
+                "php": ">=8.1"
             },
             "type": "library",
             "extra": {
@@ -1475,7 +1475,7 @@
                 "issues": "https://github.com/janickiy/laravel-menu/issues",
                 "source": "https://github.com/janickiy/laravel-menu/tree/2.0"
             },
-            "time": "2025-10-23T04:00:51+00:00"
+            "time": "2025-11-19T09:21:24+00:00"
         },
         {
             "name": "laravel/framework",

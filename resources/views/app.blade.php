@@ -100,10 +100,8 @@
                         </a>
                     </li>
 
-
-
-                    <li class="nav-item{{ Request::is('cp/news*') ||  Request::is('cp/pages*')  || Request::is('cp/manage-menus*') ? ' active menu-open' : '' }}">
-                        <a href="#" class="nav-link">
+                    <li class="nav-item{{ Request::is('cp/news*') || Request::is('cp/pages*')  || Request::is('cp/manage-menus*') ? ' menu-open' : '' }}">
+                        <a href="#" class="nav-link{{ Request::is('cp/news*') || Request::is('cp/pages*')  || Request::is('cp/manage-menus*') ? ' active' : '' }}">
                             <i class="nav-icon fas fa-file"></i>
                             <p>
                                 Контент
@@ -138,14 +136,13 @@
                                 </a>
                             </li>
 
-
                         </ul>
                     </li>
 
                     @if(PermissionsHelper::has_permission('admin|moderator'))
 
-                    <li class="nav-item">
-                        <a href="#" class="nav-link active">
+                    <li class="nav-item{{ Request::is('cp/catalog*') || Request::is('cp/manufacturers*')  || Request::is('cp/products*') ? ' active menu-open' : '' }}">
+                        <a href="#" class="nav-link{{ Request::is('cp/catalog*') || Request::is('cp/manufacturers*')  || Request::is('cp/products*') ? ' active' : '' }}">
                             <i class="nav-icon fas fa-file"></i>
                             <p>
                                 Продукция
@@ -159,6 +156,15 @@
                                    title="Каталог">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Каталог</p>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="{{ route('admin.manufacturers.index') }}"
+                                   class="nav-link{{ Request::is('cp/manufacturers*') ? ' active' : '' }}"
+                                   title="Производители">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Производители</p>
                                 </a>
                             </li>
 
@@ -186,9 +192,7 @@
                                 <p>Сообщения с сайта</p>
                             </a>
                         </li>
-
                     @endif
-
 
                     @if(PermissionsHelper::has_permission('admin'))
 

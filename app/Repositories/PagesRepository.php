@@ -68,17 +68,4 @@ class PagesRepository extends BaseRepository
 
         return $options;
     }
-
-    /**
-     * @param int $id
-     * @return void
-     */
-    public function remove(int $id): void
-    {
-        $page = $this->find($id);
-
-        if ($page) {
-            $page->remove();
-        }
-    }
 }

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Admin\Pages;
+namespace App\Http\Requests\Admin\Manufacturers;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class EditRequest extends FormRequest
+class StoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -17,16 +17,14 @@ class EditRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'id'    => 'required|integer|exists:pages,id',
-            'title' => 'required',
-            'text'  => 'required',
-            'slug'  => 'required|unique:pages,slug,' . $this->id,
-            'main'  => 'integer|nullable'
+            'name' => 'required',
+            'slug' => 'required|unique:catalog',
+
         ];
     }
 }

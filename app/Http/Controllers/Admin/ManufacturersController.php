@@ -1,0 +1,133 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Helpers\StringHelper;
+use App\Http\Requests\Admin\Manufacturers\EditRequest;
+use App\Http\Requests\Admin\Manufacturers\StoreRequest;
+use App\Repositories\ManufacturerRepository;
+use App\Services\ManufacturerService;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
+
+class ManufacturersController extends Controller
+{
+    /**
+     * @var ManufacturerRepository
+     */
+    public ManufacturerRepository $manufacturerRepository;
+
+    public ManufacturerService $manufacturerService;
+
+    public function __construct(ManufacturerRepository $manufacturerRepository, ManufacturerService $manufacturerService)
+    {
+        $this->manufacturerRepository = $manufacturerRepository;
+        $this->manufacturerService = $manufacturerService;
+        parent::__construct();
+    }
+
+    /**
+     * @return View
+     */
+    public function index(): View
+    {
+        return view('cp.manufacturers.index')->with('title', 'Производители');
+    }
+
+    /**
+     * @return View
+     */
+    public function create(): View
+    {
+        $maxUploadFileSize = StringHelper::maxUploadFileSize();
+
+        return view('cp.manufacturers.create_edit', compact('maxUploadFileSize'))->with('title', 'Добавление производителя');
+    }
+
+    /**
+     * @param StoreRequest $request
+     * @return RedirectResponse
+     */
+    public function store(StoreRequest $request): RedirectResponse
+    {
+        if ($request->hasFile('image')) {
+            $originName = $this->manufacturerService->storeImage($request);
+        }
+
+        $published = 0;
+
+        if ($request->input('published')) {
+            $published = 1;
+        }
+
+        $seo_sitemap = 0;
+
+        if ($request->input('seo_sitemap')) {
+            $seo_sitemap = 1;
+        }
+
+        $this->manufacturerRepository->create(array_merge(array_merge($request->all()), [
+            'image' => $originName ?? null,
+            'published' => $published,
+            'seo_sitemap' => $seo_sitemap,
+        ]));
+
+        return redirect()->route('admin.manufacturers.index')->with('success', 'Данные успешно добавлены');
+    }
+
+    /**
+     * @param int $id
+     * @return View
+     */
+    public function edit(int $id): View
+    {
+        $row = $this->manufacturerRepository->find($id);
+        $maxUploadFileSize = StringHelper::maxUploadFileSize();
+
+        return view('cp.manufacturers.create_edit', compact('row', 'maxUploadFileSize'))->with('title', 'Редактирование производителя');
+    }
+
+    /**
+     * @param EditRequest $request
+     * @return RedirectResponse
+     */
+    public function update(EditRequest $request): RedirectResponse
+    {
+        $row = $this->manufacturerRepository->find($request->input('id'));
+
+        if ($request->hasFile('image')) {
+            $originName = $this->manufacturerService->updateImage($row, $request);
+        }
+
+        $published = 0;
+
+        if ($request->input('published')) {
+            $published = 1;
+        }
+
+        $seo_sitemap = 0;
+
+        if ($request->input('seo_sitemap')) {
+            $seo_sitemap = 1;
+        }
+
+        $this->manufacturerRepository->update($request->id, array_merge($request->all(), [
+            'seo_sitemap' => $seo_sitemap,
+            'image' => $originName ?? null,
+            'published' => $published,
+        ]));
+
+        return redirect()->route('admin.manufacturers.index')->with('success', 'Данные успешно обновлены');
+    }
+
+    /**
+     * @param Request $request
+     * @return void
+     */
+    public function destroy(Request $request): void
+    {
+        $this->manufacturerRepository->remove($request->id);
+    }
+
+}
