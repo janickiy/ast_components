@@ -28,7 +28,7 @@
                             <div class="card-body">
                                 <div class="pb-3">
                                     <a href="{{ route('admin.users.create') }}" class="btn btn-info btn-sm pull-left">
-                                        <span class="fa fa-plus"> &nbsp;</span> добавить
+                                        <span class="fa fa-plus"> &nbsp;</span> Добавить
                                     </a>
                                 </div>
 
@@ -38,7 +38,7 @@
                                         <th>логин</th>
                                         <th>имя</th>
                                         <th>роль</th>
-                                        <th style="width: 10%">действия</th>
+                                        <th style="width: 10%">Действия</th>
                                     </tr>
                                     </thead>
                                     <tfoot>

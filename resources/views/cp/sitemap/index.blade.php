@@ -4,10 +4,6 @@
 
 @section('css')
 
-    <!-- DataTables -->
-    {!! Html::style('/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') !!}
-    {!! Html::style('/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') !!}
-    {!! Html::style('/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') !!}
 
 @endsection
 
@@ -26,13 +22,8 @@
                         <div class="card">
                             <!-- /.card-header -->
                             <div class="card-body">
-                                <div class="pb-3">
-                                    <a href="{{ route('admin.catalog.create') }}" class="btn btn-info btn-sm pull-left">
-                                        <span class="fa fa-plus"> &nbsp;</span> Добавить
-                                    </a>
-                                </div>
 
-                                {!! \App\Models\Catalog::buildTree($catalogsList,0) !!}
+                                <a class="btn btn-success" href="{{ route('admin.sitemap.export') }}" target="_blank" download="sitemap.xml">Выгрузить карту sitemap.xml</a>
 
                                 <!-- /.card-body -->
                             </div>
@@ -50,7 +41,6 @@
 @endsection
 
 @section('js')
-
 
 
 

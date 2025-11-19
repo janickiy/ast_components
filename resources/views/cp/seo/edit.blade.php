@@ -4,11 +4,6 @@
 
 @section('css')
 
-    <!-- summernote -->
-    {!! Html::style('/plugins/summernote/summernote-bs4.min.css') !!}
-    <!-- CodeMirror -->
-    {!! Html::style('/plugins/codemirror/codemirror.css') !!}
-    {!! Html::style('/plugins/codemirror/theme/monokai.css') !!}
 
 @endsection
 
@@ -25,7 +20,7 @@
                     <header class="card card-primary">
 
                         <!-- form start -->
-                        {!! Form::open(['url' => route('cp.seo.update'), 'method' => 'put']) !!}
+                        {!! Form::open(['url' => route('admin.seo.update'), 'method' => 'put']) !!}
 
                         {!! isset($row) ? Form::hidden('id', $row->id) : '' !!}
 
@@ -124,7 +119,7 @@
                             <button type="submit" class="btn btn-primary">
                                 {{ isset($row) ? 'редактировать' : 'добавить' }}
                             </button>
-                            <a class="btn btn-default float-sm-right" href="{{ route('admin.news.index') }}">
+                            <a class="btn btn-default float-sm-right" href="{{ route('admin.seo.index') }}">
                                 назад
                             </a>
                         </div>
@@ -145,46 +140,5 @@
 
 @section('js')
 
-    <!-- Summernote -->
-    {!! Html::script('/plugins/summernote/summernote-bs4.min.js') !!}
-
-    <!-- CodeMirror -->
-    {!! Html::script('/plugins/codemirror/codemirror.js') !!}
-    {!! Html::script('/plugins/codemirror/mode/css/css.js') !!}
-    {!! Html::script('/plugins/codemirror/mode/xml/xml.js') !!}
-    {!! Html::script('/plugins/codemirror/mode/htmlmixed/htmlmixed.js') !!}
-    {!! Html::script('/plugins/bs-custom-file-input/bs-custom-file-input.min.js') !!}
-    {!! Html::script('/plugins/bs-custom-file-input/bs-custom-file-input.min.js') !!}
-
-    <!-- Page specific script -->
-    <script>
-        $(document).ready(function () {
-            // Summernote
-            $('#summernote').summernote()
-            bsCustomFileInput.init();
-
-            $("#title").on("change keyup input click", function () {
-                if (this.value.length >= 2) {
-                    let name = this.value;
-                    let request = $.ajax({
-                        url: '{!! route('admin.ajax') !!}',
-                        method: "POST",
-                        data: {
-                            action: "get_news_slug",
-                            name: name
-                        },
-                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        dataType: "json"
-                    });
-                    request.done(function (data) {
-                        if (data.slug != null && data.slug !== '') {
-                            $("#slug").val(data.slug);
-                        }
-                    });
-                }
-                console.log(html);
-            });
-        });
-    </script>
 
 @endsection

@@ -44,7 +44,7 @@
                                         <th>Краткое описание</th>
                                         <th>ЧПУ</th>
                                         <th>Создан</th>
-                                        <th style="width: 10%">действия</th>
+                                        <th style="width: 10%">Действия</th>
                                     </tr>
                                     </thead>
                                     <tfoot>

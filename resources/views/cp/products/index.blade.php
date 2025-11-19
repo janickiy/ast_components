@@ -50,7 +50,7 @@
                                         <th>Цена</th>
                                         <th>Опубликован</th>
                                         <th>Добавлен</th>
-                                        <th style="width: 10%">действия</th>
+                                        <th style="width: 10%">Действия</th>
                                     </tr>
                                     </thead>
                                     <tfoot>

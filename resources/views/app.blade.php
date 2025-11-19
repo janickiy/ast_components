@@ -100,8 +100,8 @@
                         </a>
                     </li>
 
-                    <li class="nav-item{{ Request::is('cp/news*') || Request::is('cp/pages*')  || Request::is('cp/manage-menus*') ? ' menu-open' : '' }}">
-                        <a href="#" class="nav-link{{ Request::is('cp/news*') || Request::is('cp/pages*')  || Request::is('cp/manage-menus*') ? ' active' : '' }}">
+                    <li class="nav-item{{ Request::is('cp/content*') ? ' menu-open' : '' }}">
+                        <a href="#" class="nav-link{{ Request::is('cp/content*') ? ' active' : '' }}">
                             <i class="nav-icon fas fa-file"></i>
                             <p>
                                 Контент
@@ -111,7 +111,7 @@
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
                                 <a href="{{ route('admin.menu.index') }}"
-                                   class="nav-link{{ Request::is('cp/manage-menus*') ? ' active' : '' }}"
+                                   class="nav-link{{ Request::is('cp/content/manage-menus*') ? ' active' : '' }}"
                                    title="Меню">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Меню</p>
@@ -120,7 +120,7 @@
 
                             <li class="nav-item">
                                 <a href="{{ route('admin.pages.index') }}"
-                                   class="nav-link{{ Request::is('cp/pages*') ? ' active' : '' }}"
+                                   class="nav-link{{ Request::is('cp/content/pages*') ? ' active' : '' }}"
                                    title="Страницы и разделы">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Страницы и разделы</p>
@@ -129,7 +129,7 @@
 
                             <li class="nav-item">
                                 <a href="{{ route('admin.news.index') }}"
-                                   class="nav-link{{ Request::is('cp/news*') ? ' active' : '' }}"
+                                   class="nav-link{{ Request::is('cp/content/news*') ? ' active' : '' }}"
                                    title="Новости">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Новости</p>
@@ -141,8 +141,8 @@
 
                     @if(PermissionsHelper::has_permission('admin|moderator'))
 
-                    <li class="nav-item{{ Request::is('cp/catalog*') || Request::is('cp/manufacturers*')  || Request::is('cp/products*') ? ' active menu-open' : '' }}">
-                        <a href="#" class="nav-link{{ Request::is('cp/catalog*') || Request::is('cp/manufacturers*')  || Request::is('cp/products*') ? ' active' : '' }}">
+                    <li class="nav-item{{ Request::is('cp/goods*') ? ' active menu-open' : '' }}">
+                        <a href="#" class="nav-link{{ Request::is('cp/goods*') ? ' active' : '' }}">
                             <i class="nav-icon fas fa-file"></i>
                             <p>
                                 Продукция
@@ -152,7 +152,7 @@
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
                                 <a href="{{ route('admin.catalog.index') }}"
-                                   class="nav-link{{ Request::is('cp/catalog*') ? ' active' : '' }}"
+                                   class="nav-link{{ Request::is('cp/goods/catalog*') ? ' active' : '' }}"
                                    title="Каталог">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Каталог</p>
@@ -161,7 +161,7 @@
 
                             <li class="nav-item">
                                 <a href="{{ route('admin.manufacturers.index') }}"
-                                   class="nav-link{{ Request::is('cp/manufacturers*') ? ' active' : '' }}"
+                                   class="nav-link{{ Request::is('cp/goods/manufacturers*') ? ' active' : '' }}"
                                    title="Производители">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Производители</p>
@@ -170,7 +170,7 @@
 
                             <li class="nav-item">
                                 <a href="{{ route('admin.products.index') }}"
-                                   class="nav-link{{ Request::is('cp/products*') ? ' active' : '' }}"
+                                   class="nav-link{{ Request::is('cp/goods/products*') ? ' active' : '' }}"
                                    title="Продукция">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Продукция</p>
@@ -184,8 +184,8 @@
 
                     @if(PermissionsHelper::has_permission('admin|moderator'))
 
-                        <li class="nav-item{{ Request::is('cp/seo*') || Request::is('cp/manufacturers*')  || Request::is('cp/products*') ? ' active menu-open' : '' }}">
-                            <a href="#" class="nav-link{{ Request::is('cp/seo*') || Request::is('cp/manufacturers*')  || Request::is('cp/products*') ? ' active' : '' }}">
+                        <li class="nav-item{{ Request::is('cp/seo*') ? ' active menu-open' : '' }}">
+                            <a href="#" class="nav-link{{ Request::is('cp/seo*') ? ' active' : '' }}">
                                 <i class="nav-icon fas fa-file"></i>
                                 <p>
                                     Seo
@@ -195,14 +195,21 @@
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
                                     <a href="{{ route('admin.seo.index') }}"
-                                       class="nav-link{{ Request::is('cp/seo*') ? ' active' : '' }}"
+                                       class="nav-link{{ Request::is('cp/seo') ? ' active' : '' }}"
                                        title="Seo">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Seo</p>
                                     </a>
                                 </li>
 
-
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.sitemap.index') }}"
+                                       class="nav-link{{ Request::is('cp/seo/sitemap/*') ? ' active' : '' }}"
+                                       title="Карта сайта">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Карта сайта</p>
+                                    </a>
+                                </li>
 
                             </ul>
                         </li>

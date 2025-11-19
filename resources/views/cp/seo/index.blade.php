@@ -36,7 +36,7 @@
                                         <th>SEO Keyword</th>
                                         <th>SEO Description</th>
                                         <th>SEO Url canonical</th>
-                                        <th style="width: 10%">действия</th>
+                                        <th style="width: 10%">Действия</th>
                                     </tr>
                                     </thead>
                                     <tfoot>

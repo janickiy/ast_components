@@ -45,7 +45,7 @@
                                         <th>Главная</th>
                                         <th>Опубликовано</th>
                                         <th>Создан</th>
-                                        <th style="width: 10%">действия</th>
+                                        <th style="width: 10%">Действия</th>
                                     </tr>
                                     </thead>
                                     <tfoot>

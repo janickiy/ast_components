@@ -26,11 +26,6 @@
                         <div class="card">
                             <!-- /.card-header -->
                             <div class="card-body">
-                                <div class="pb-3">
-                                    <a href="{{ route('admin.catalog.create') }}" class="btn btn-info btn-sm pull-left">
-                                        <span class="fa fa-plus"> &nbsp;</span> добавить
-                                    </a>
-                                </div>
 
                                 <table id="itemList" class="table table-bordered table-striped">
                                     <thead>
@@ -47,15 +42,15 @@
                                     </tfoot>
                                 </table>
 
-                            <!-- /.card-body -->
+                                <!-- /.card-body -->
+                            </div>
+                            <!-- /.card -->
                         </div>
-                        <!-- /.card -->
+                        <!-- /.col -->
                     </div>
-                    <!-- /.col -->
+                    <!-- /.row -->
                 </div>
-                <!-- /.row -->
-            </div>
-            <!-- /.container-fluid -->
+                <!-- /.container-fluid -->
 
         </section>
         <!-- /.content -->
@@ -79,8 +74,7 @@
 
             <script>
 
-                $(function (){
-
+                $(function () {
                     $("#itemList").DataTable({
                         "oLanguage": {
                             "sLengthMenu": "Отображено _MENU_ записей на страницу",
@@ -104,7 +98,7 @@
                         "autoWidth": true,
                         'serverSide': true,
                         'ajax': {
-                            url: '{{ route('admin.datatable.category') }}'
+                            url: '{{ route('admin.datatable.feedback') }}'
                         },
                         'columns': [
                             {data: 'name', name: 'name'},
@@ -113,43 +107,6 @@
                             {data: 'ip', name: 'ip'},
                             {data: 'created_at', name: 'created_at'},
                         ]
-                    });
-
-                    $('#itemList').on('click', 'a.deleteRow', function () {
-                        let rowid = $(this).attr('id');
-                        Swal.fire({
-                            title: "Вы уверены?",
-                            text: "Вы не сможете восстановить эту информацию!",
-                            showCancelButton: true,
-                            icon: 'warning',
-                            cancelButtonText: "Отмена",
-                            confirmButtonText: "Да, удалить!",
-                            reverseButtons: true,
-                            confirmButtonColor: "#DD6B55",
-                            customClass: {
-                                actions: 'my-actions',
-                                cancelButton: 'order-1',
-                            },
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                $.ajax({
-                                    url: '{{ route('admin.catalog.destroy') }}',
-                                    type: "POST",
-                                    dataType: "html",
-                                    data: {id: rowid},
-                                    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                                    success: function () {
-                                        $("#rowid_" + rowid).remove();
-                                        Swal.fire("Сделано!", "Данные успешно удалены!", 'success');
-                                    },
-                                    error: function (xhr, ajaxOptions, thrownError) {
-                                        Swal.fire("Ошибка при удалении!", "Попробуйте еще раз", 'error');
-                                        console.log(ajaxOptions);
-                                        console.log(thrownError);
-                                    }
-                                });
-                            }
-                        });
                     });
                 });
 
