@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Http\Requests\Admin\Pages;
+
+class StoreRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules(): array
+    {
+        return [
+            'title' => 'required',
+            'text'  => 'required',
+            'image' => 'image|mimes:jpeg,jpg,png,gif|max:2048|nullable',
+            'slug'  => 'required|unique:pages',
+            'main'  => 'integer|nullable'
+        ];
+    }
+}

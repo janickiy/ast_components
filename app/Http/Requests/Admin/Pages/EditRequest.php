@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Admin\Products;
+namespace App\Http\Requests\Admin\Pages;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -22,14 +22,12 @@ class EditRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id'    => 'required|integer|exists:products,id',
+            'id'    => 'required|integer|exists:pages,id',
             'title' => 'required',
-            'description' => 'required',
-            'article'     => 'required|unique:products',
-            'n_number'    => 'required|integer',
-            'slug'  => 'required|unique:products',
+            'text'  => 'required',
             'image' => 'image|mimes:jpeg,jpg,png,gif|max:2048|nullable',
-            'catalog_id'  => 'integer|required|exists:catalog,id'
+            'slug'  => 'required|unique:pages,slug,' . $this->id,
+            'main'  => 'integer|nullable'
         ];
     }
 }

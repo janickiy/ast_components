@@ -87,13 +87,13 @@
             <!-- Sidebar Menu -->
             <nav class="mt-2">
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
-                    data-accordion="false">
+                    data-accordion="true">
                     <!-- Add icons to the links using the .nav-icon class
                          with font-awesome or any other icon font library -->
 
                     <li class="nav-item">
                         <a href="{{ route('admin.dashboard.index') }}"
-                           class="nav-link{{ Request::is('dashboard*') ? ' active' : '' }}"
+                           class="nav-link{{ Request::is('cp') ? ' active' : '' }}"
                            title="Главная">
                             <i class="nav-icon fas fa-home"></i>
                             <p>Главная</p>
@@ -102,7 +102,7 @@
 
 
 
-                    <li class="nav-item">
+                    <li class="nav-item{{ Request::is('cp/news*') ||  Request::is('cp/pages*')  || Request::is('cp/manage-menus*') ? ' active menu-open' : '' }}">
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-file"></i>
                             <p>
@@ -112,28 +112,28 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="{{ route('admin.news.index') }}"
-                                   class="nav-link{{ Request::is('news*') ? ' active' : '' }}"
-                                   title="Новости">
-                                    <i class="nav-icon fas fa-"></i>
+                                <a href="{{ route('admin.menu.index') }}"
+                                   class="nav-link{{ Request::is('cp/manage-menus*') ? ' active' : '' }}"
+                                   title="Меню">
+                                    <i class="far fa-circle nav-icon"></i>
                                     <p>Меню</p>
                                 </a>
                             </li>
 
                             <li class="nav-item">
-                                <a href="{{ route('admin.news.index') }}"
-                                   class="nav-link{{ Request::is('news*') ? ' active' : '' }}"
-                                   title="Новости">
-                                    <i class="nav-icon fas fa-list"></i>
+                                <a href="{{ route('admin.pages.index') }}"
+                                   class="nav-link{{ Request::is('cp/pages*') ? ' active' : '' }}"
+                                   title="Страницы и разделы">
+                                    <i class="far fa-circle nav-icon"></i>
                                     <p>Страницы и разделы</p>
                                 </a>
                             </li>
 
                             <li class="nav-item">
                                 <a href="{{ route('admin.news.index') }}"
-                                   class="nav-link{{ Request::is('news*') ? ' active' : '' }}"
+                                   class="nav-link{{ Request::is('cp/news*') ? ' active' : '' }}"
                                    title="Новости">
-                                    <i class="nav-icon fas fa-list"></i>
+                                    <i class="far fa-circle nav-icon"></i>
                                     <p>Новости</p>
                                 </a>
                             </li>
@@ -145,7 +145,7 @@
                     @if(PermissionsHelper::has_permission('admin|moderator'))
 
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="#" class="nav-link active">
                             <i class="nav-icon fas fa-file"></i>
                             <p>
                                 Продукция
@@ -155,18 +155,18 @@
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
                                 <a href="{{ route('admin.catalog.index') }}"
-                                   class="nav-link{{ Request::is('category*') ? ' active' : '' }}"
+                                   class="nav-link{{ Request::is('cp/catalog*') ? ' active' : '' }}"
                                    title="Каталог">
-                                    <i class="nav-icon fas fa-"></i>
+                                    <i class="far fa-circle nav-icon"></i>
                                     <p>Каталог</p>
                                 </a>
                             </li>
 
                             <li class="nav-item">
                                 <a href="{{ route('admin.products.index') }}"
-                                   class="nav-link{{ Request::is('products*') ? ' active' : '' }}"
+                                   class="nav-link{{ Request::is('cp/products*') ? ' active' : '' }}"
                                    title="Продукция">
-                                    <i class="nav-icon fas fa-"></i>
+                                    <i class="far fa-circle nav-icon"></i>
                                     <p>Продукция</p>
                                 </a>
                             </li>
@@ -180,7 +180,7 @@
 
                         <li class="nav-item">
                             <a href="{{ route('admin.feedback.index') }}"
-                               class="nav-link{{ Request::is('feedback*') ? ' active' : '' }}"
+                               class="nav-link{{ Request::is('cp/feedback*') ? ' active' : '' }}"
                                title="Сообщения с сайта">
                                 <i class="nav-icon fas fa-envelope"></i>
                                 <p>Сообщения с сайта</p>
@@ -194,7 +194,7 @@
 
                         <li class="nav-item">
                             <a href="{{ route('admin.users.index') }}"
-                               class="nav-link{{ Request::is('users*') ? ' active' : '' }}"
+                               class="nav-link{{ Request::is('cp/users*') ? ' active' : '' }}"
                                title="Пользователи">
                                 <i class="nav-icon fas fa-users"></i>
                                 <p>Пользователи</p>

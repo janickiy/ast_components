@@ -67,7 +67,7 @@ class ProductsController extends Controller
     public function store(StoreRequest $request): RedirectResponse
     {
         if ($request->hasFile('image')) {
-            $filename = $this->productService->storeFile($request);
+            $filename = $this->productService->storeImage($request);
             $fileNameToStore = 'origin_' . $filename;
             $thumbnailFileNameToStore = 'thumbnail_' . $filename;
         }
@@ -108,7 +108,7 @@ class ProductsController extends Controller
     {
         if ($request->hasFile('image')) {
             $product = $this->productRepository->find($request->id);
-            $filename = $this->productService->updateFile($product, $request);
+            $filename = $this->productService->updateImage($product, $request);
             $fileNameToStore = 'origin_' . $filename;
             $thumbnailFileNameToStore = 'thumbnail_' . $filename;
         }

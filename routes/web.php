@@ -6,8 +6,10 @@ use App\Http\Controllers\Admin\{
     AjaxController,
     CatalogController,
     FeedbackController,
+    PagesController,
     ProductsController,
     NewsController,
+    MenuController,
     DashboardController,
     DataTableController,
     UsersController,
@@ -32,6 +34,17 @@ Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 Route::group(['prefix' => 'cp'], function () {
 
     Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard.index');
+
+    Route::group(['prefix' => 'pages'], function () {
+        Route::get('', [PagesController::class, 'index'])->name('admin.pages.index');
+        Route::get('create', [PagesController::class, 'create'])->name('admin.pages.create');
+        Route::post('store', [PagesController::class, 'store'])->name('admin.pages.store');
+        Route::get('edit/{id}', [PagesController::class, 'edit'])->name('admin.pages.edit')->where('id', '[0-9]+');
+        Route::put('update', [PagesController::class, 'update'])->name('admin.pages.update');
+        Route::post('destroy', [PagesController::class, 'destroy'])->name('admin.pages.destroy');
+    });
+
+    Route::any('manage-menus', [MenuController::class, 'index'])->name('admin.menu.index')->middleware(['permission:admin|moderator']);
 
     Route::group(['prefix' => 'catalog'], function () {
         Route::get('', [CatalogController::class, 'index'])->name('admin.catalog.index')->middleware(['permission:admin|moderator']);

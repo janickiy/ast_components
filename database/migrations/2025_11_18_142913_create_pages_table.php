@@ -11,18 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('news', function (Blueprint $table) {
+        Schema::create('pages', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 255);
-            $table->text('preview');
+            $table->string('title');
             $table->text('text');
-            $table->string('image')->nullable();
             $table->string('slug')->unique();
-            $table->string('meta_title', 255)->nullable();
-            $table->text('meta_description')->nullable();
-            $table->string('meta_keywords', 255)->nullable();
-            $table->string('image_title', 80)->nullable();
-            $table->string('image_alt', 80)->nullable();
+            $table->tinyInteger('main')->default(0);
+            $table->boolean('published')->default(1);
+            $table->integer('parent_id')->default(0)->nullable();
+            $table->string('meta_title')->nullable();
+            $table->string('meta_description')->nullable();
+            $table->string('meta_keywords')->nullable();
             $table->string('seo_h1')->nullable();
             $table->string('seo_url_canonical')->nullable();
             $table->boolean('seo_sitemap')->default(1);
@@ -35,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('news');
+        Schema::dropIfExists('pages');
     }
 };

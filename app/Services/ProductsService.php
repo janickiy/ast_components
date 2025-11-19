@@ -12,7 +12,7 @@ class ProductsService
      * @param Request $request
      * @return string
      */
-    public function storeFile(Request $request): string
+    public function storeImage(Request $request): string
     {
         $extension = $request->file('image')->getClientOriginalExtension();
         $filename = time() . '.' . $extension;
@@ -35,7 +35,7 @@ class ProductsService
      * @param Request $request
      * @return string
      */
-    public function updateFile(Products $product, Request $request): string
+    public function updateImage(Products $product, Request $request): string
     {
         $image = $request->pic;
 
