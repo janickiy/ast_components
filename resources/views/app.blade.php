@@ -204,10 +204,19 @@
 
                                 <li class="nav-item">
                                     <a href="{{ route('admin.sitemap.index') }}"
-                                       class="nav-link{{ Request::is('cp/seo/sitemap/*') ? ' active' : '' }}"
+                                       class="nav-link{{ Request::is('cp/seo/sitemap*') ? ' active' : '' }}"
                                        title="Карта сайта">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Карта сайта</p>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.robots.edit') }}"
+                                       class="nav-link{{ Request::is('cp/seo/robots*') ? ' active' : '' }}"
+                                       title="Robots.txt">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Robots.txt</p>
                                     </a>
                                 </li>
 

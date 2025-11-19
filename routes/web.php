@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\{
     SettingsController,
     SeoController,
     SitemapController,
+    RobotsController,
 };
 
 /*
@@ -111,6 +112,12 @@ Route::group(['prefix' => 'cp'], function () {
             Route::group(['prefix' => 'sitemap'], function () {
                 Route::get('', [SitemapController::class, 'index'])->name('admin.sitemap.index');
                 Route::get('export', [SitemapController::class, 'export'])->name('admin.sitemap.export');
+            });
+
+            //robots txt
+            Route::group(['prefix' => 'robots'], function () {
+                Route::get('edit', [RobotsController::class, 'edit'])->name('admin.robots.edit');
+                Route::put('update', [RobotsController::class, 'update'])->name('admin.robots.update');
             });
         });
     });
