@@ -273,13 +273,13 @@
 
             $("#title").on("change keyup input click", function () {
                 if (this.value.length >= 2) {
-                    let name = this.value;
+                    let title = this.value;
                     let request = $.ajax({
                         url: '{!! route('admin.ajax') !!}',
                         method: "POST",
                         data: {
                             action: "get_products_slug",
-                            name: name
+                            title: title
                         },
                         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                         dataType: "json"

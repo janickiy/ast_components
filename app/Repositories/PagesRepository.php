@@ -12,15 +12,6 @@ class PagesRepository extends BaseRepository
     }
 
     /**
-     * @param array $data
-     * @return mixed
-     */
-    public function create(array $data): mixed
-    {
-        return $this->model->create($data);
-    }
-
-    /**
      * @param int $id
      * @param array $data
      * @return null
@@ -39,10 +30,6 @@ class PagesRepository extends BaseRepository
             $page->seo_h1 = $data['seo_h1'];
             $page->seo_url_canonical = $data['seo_url_canonical'];
             $page->published = $data['published'];
-
-            if ($data['image']) {
-                $page->image = $data['image'];
-            }
 
             if ($data['main'] === 1) {
                 Pages::where('main', 1)->update(['main' => 0]);

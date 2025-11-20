@@ -51,7 +51,7 @@ class SeoController extends Controller
      */
     public function update(Request $request): RedirectResponse
     {
-        $this->seoRepository->update($request->all());
+        $this->seoRepository->update($request->id, $request->all());
 
         return redirect()->route('admin.seo.index')->with('success', 'Данные успешно обновлены');
     }

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('n_number')->index('n_number');
             $table->string('thumbnail')->nullable();
             $table->string('origin')->nullable();
-            $table->integer('catalog_id')->index('catalog_id');
+            $table->unsignedBigInteger('catalog_id');
             $table->integer('price')->default(0);
             $table->string('meta_title')->nullable();
             $table->string('meta_description')->nullable();
@@ -32,6 +32,11 @@ return new class extends Migration
             $table->string('image_alt')->nullable();
             $table->boolean('published')->default(1);
             $table->timestamps();
+
+            $table->foreign('catalog_id')->references('id')->on('catalogs')->onDelete('cascade');
+
+
+
         });
     }
 

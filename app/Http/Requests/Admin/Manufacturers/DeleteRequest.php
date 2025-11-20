@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Admin\Catalog;
+namespace App\Http\Requests\Admin\Manufacturers;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreRequest extends FormRequest
+class DeleteRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,9 +22,7 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required',
-            'slug' => 'required|unique:catalogs',
-            'parent_id' => 'integer|nullable',
+            'id' => 'required|integer|exists:settings,id',
         ];
     }
 }

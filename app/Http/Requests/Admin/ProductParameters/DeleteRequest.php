@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Admin\Catalog;
+namespace App\Http\Requests\Admin\ProductParameters;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreRequest extends FormRequest
+class DeleteRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -17,14 +17,12 @@ class StoreRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array
      */
     public function rules(): array
     {
         return [
-            'name' => 'required',
-            'slug' => 'required|unique:catalogs',
-            'parent_id' => 'integer|nullable',
+            'id' => 'required|integer|exists:product_parameters,id',
         ];
     }
 }

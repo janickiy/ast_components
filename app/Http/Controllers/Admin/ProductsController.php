@@ -9,6 +9,7 @@ use App\Services\ProductsService;
 use App\Helpers\StringHelper;
 use App\Http\Requests\Admin\Products\EditRequest;
 use App\Http\Requests\Admin\Products\StoreRequest;
+use App\Http\Requests\Admin\Products\DeleteRequest;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -19,10 +20,12 @@ class ProductsController extends Controller
      * @var ProductsRepository
      */
     private ProductsRepository $productRepository;
+
     /**
      * @var ProductsService
      */
     private ProductsService $productService;
+
     /**
      * @var CatalogRepository
      */
@@ -66,6 +69,8 @@ class ProductsController extends Controller
      */
     public function store(StoreRequest $request): RedirectResponse
     {
+        $request->n_number = (int)$request->n_number;
+
         if ($request->hasFile('image')) {
             $filename = $this->productService->storeImage($request);
             $fileNameToStore = 'origin_' . $filename;
@@ -84,7 +89,7 @@ class ProductsController extends Controller
             'seo_sitemap' => $seo_sitemap,
         ]));
 
-        return redirect()->route('cp.products.index')->with('success', 'Информация успешно добавлена');
+        return redirect()->route('admin.products.index')->with('success', 'Информация успешно добавлена');
     }
 
     /**
@@ -135,14 +140,14 @@ class ProductsController extends Controller
             'origin' => $fileNameToStore ?? null,
         ]));
 
-        return redirect()->route('cp.products.index')->with('success', 'Данные обновлены');
+        return redirect()->route('admin.products.index')->with('success', 'Данные обновлены');
     }
 
     /**
-     * @param Request $request
+     * @param DeleteRequest $request
      * @return void
      */
-    public function destroy(Request $request): void
+    public function destroy(DeleteRequest $request): void
     {
         $this->productRepository->remove($request->id);
     }

@@ -37,7 +37,7 @@
 
                                 {!! Form::label('title', 'Название*') !!}
 
-                                {!! Form::text('title', old('title', $row->title ?? null), ['class' => 'form-control']) !!}
+                                {!! Form::text('title', old('title', $row->title ?? null), ['title' => 'title', 'class' => 'form-control']) !!}
 
                                 @if ($errors->has('title'))
                                     <p class="text-danger">{{ $errors->first('title') }}</p>
@@ -47,21 +47,9 @@
 
                             <div class="form-group">
 
-                                {!! Form::label('preview', 'Краткое описание*') !!}
-
-                                {!! Form::textarea('preview', old('preview', isset($row) ? $row->preview : null), ['rows' => "3", 'class' => 'form-control']) !!}
-
-                                @if ($errors->has('preview'))
-                                    <p class="text-danger">{{ $errors->first('preview') }}</p>
-                                @endif
-
-                            </div>
-
-                            <div class="form-group">
-
                                 {!! Form::label('text', 'Содержание*') !!}
 
-                                {!! Form::textarea('text', old('text', $row->text ?? null), ['rows' => "3", 'placeholder' => "Описание",  'id' => 'summernote', 'style' => "display: none;"]) !!}
+                                {!! Form::textarea('text', old('text', $row->text ?? null), ['rows' => "6", 'placeholder' => "Описание",  'id' => 'summernote', 'style' => "display: none;"]) !!}
 
                                 @if ($errors->has('text'))
                                     <p class="text-danger">{{ $errors->first('text') }}</p>
@@ -144,6 +132,18 @@
 
                             <div class="form-check">
 
+                                {!! Form::checkbox('main', 0, isset($row) ? ($row->main === true ? 1 : 0): 0, ['class' => 'form-check-input']) !!}
+
+                                {!! Form::label('main', 'Главная', ['class' => 'form-check-label']) !!}
+
+                                @if ($errors->has('main'))
+                                    <p class="text-danger">{{ $errors->first('main') }}</p>
+                                @endif
+
+                            </div>
+
+                            <div class="form-check">
+
                                 {!! Form::checkbox('seo_sitemap', 1, isset($row) ? ($row->seo_sitemap === true ? 1 : 0): 1, ['class' => 'form-check-input']) !!}
 
                                 {!! Form::label('seo_sitemap', 'Публиковать', ['class' => 'form-check-label']) !!}
@@ -202,13 +202,13 @@
 
             $("#title").on("change keyup input click", function () {
                 if (this.value.length >= 2) {
-                    let name = this.value;
+                    let title = this.value;
                     let request = $.ajax({
                         url: '{!! route('admin.ajax') !!}',
                         method: "POST",
                         data: {
                             action: "get_page_slug",
-                            name: name
+                            title: title
                         },
                         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                         dataType: "json"

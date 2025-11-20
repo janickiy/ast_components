@@ -11,22 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('manufacturers', function (Blueprint $table) {
+        Schema::create('catalogs', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 255);
-            $table->string('description');
-            $table->string('country', 100);
-            $table->string('image')->nullable();
-            $table->string('image_title')->nullable();
-            $table->string('image_alt')->nullable();
-            $table->string('slug')->unique();
+            $table->string('name');
             $table->string('meta_title')->nullable();
             $table->string('meta_description')->nullable();
             $table->string('meta_keywords')->nullable();
             $table->string('seo_h1')->nullable();
             $table->string('seo_url_canonical')->nullable();
             $table->boolean('seo_sitemap')->default(1);
-            $table->boolean('published')->default(1);
+            $table->string('slug')->unique();
+            $table->integer('parent_id')->default(0)->index('parent_id');
             $table->timestamps();
         });
     }
@@ -36,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('manufacturers');
+        Schema::dropIfExists('catalogs');
     }
 };

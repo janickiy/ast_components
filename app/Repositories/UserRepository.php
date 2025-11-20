@@ -13,15 +13,6 @@ class UserRepository extends BaseRepository
     }
 
     /**
-     * @param array $data
-     * @return mixed
-     */
-    public function create(array $data): mixed
-    {
-        return $this->model->create($data);
-    }
-
-    /**
      * @param int $id
      * @param array $data
      * @return mixed

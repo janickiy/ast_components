@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Admin\Catalog;
+namespace App\Http\Requests\Admin\ProductDocuments;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -17,14 +17,14 @@ class StoreRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array
      */
     public function rules(): array
     {
         return [
-            'name' => 'required',
-            'slug' => 'required|unique:catalogs',
-            'parent_id' => 'integer|nullable',
+            'file'       => 'required|file|mimes:jpg,png,doc,pdf,docx,txt,pdf,xls,xlsx,odt,ods',
+            'name'       => 'required',
+            'product_id' => 'required|integer|exists:products,id',
         ];
     }
 }

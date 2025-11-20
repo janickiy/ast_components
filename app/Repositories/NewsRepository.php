@@ -12,15 +12,6 @@ class NewsRepository extends BaseRepository
     }
 
     /**
-     * @param array $data
-     * @return mixed
-     */
-    public function create(array $data): mixed
-    {
-        return $this->model->create($data);
-    }
-
-    /**
      * @param int $id
      * @param array $data
      * @return null
@@ -39,6 +30,11 @@ class NewsRepository extends BaseRepository
             $news->slug = $data['slug'];
             $news->seo_h1 = $data['seo_h1'];
             $news->seo_url_canonical = $data['seo_url_canonical'];
+
+            if ($data['image']) {
+                $news->image = $data['image'];
+            }
+
             $news->image_title = $data['image_title'];
             $news->image_alt = $data['image_alt'];
             $news->save();

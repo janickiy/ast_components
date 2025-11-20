@@ -13,6 +13,15 @@ abstract class BaseRepository implements RepositoryInterface
         $this->model = $model;
     }
 
+    /**
+     * @param array $data
+     * @return mixed
+     */
+    public function create(array $data): mixed
+    {
+        return $this->model->create($data);
+    }
+
     public function all()
     {
         return $this->model->all();

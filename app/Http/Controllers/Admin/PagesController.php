@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\Admin\Pages\EditRequest;
 use App\Http\Requests\Admin\Pages\StoreRequest;
+use App\Http\Requests\Admin\Pages\DeleteRequest;
 use App\Repositories\PagesRepository;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 
 class PagesController extends Controller
 {
@@ -61,9 +61,16 @@ class PagesController extends Controller
             $seo_sitemap = 1;
         }
 
+        $main = 0;
+
+        if ($request->input('main')) {
+            $main = 1;
+        }
+
         $this->pageRepository->create(array_merge(array_merge($request->all()), [
             'published' => $published,
             'seo_sitemap' => $seo_sitemap,
+            'main' => $main,
         ]));
 
         return redirect()->route('admin.pages.index')->with('success', 'Данные успешно добавлены');
@@ -118,10 +125,10 @@ class PagesController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param DeleteRequest $request
      * @return void
      */
-    public function destroy(Request $request): void
+    public function destroy(DeleteRequest $request): void
     {
         $this->pageRepository->delete($request->id);
     }

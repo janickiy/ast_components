@@ -10,6 +10,8 @@ use App\Http\Controllers\Admin\{
     FeedbackController,
     PagesController,
     ProductsController,
+    ProductParametersController,
+    ProductDocumentsController,
     ManufacturersController,
     NewsController,
     MenuController,
@@ -74,7 +76,7 @@ Route::group(['prefix' => 'cp'], function () {
             Route::post('store', [CatalogController::class, 'store'])->name('admin.catalog.store')->middleware(['permission:admin|moderator']);
             Route::get('edit/{id}', [CatalogController::class, 'edit'])->name('admin.catalog.edit')->where('id', '[0-9]+')->middleware(['permission:admin|moderator']);
             Route::put('update', [CatalogController::class, 'update'])->name('admin.catalog.update')->middleware(['permission:admin|moderator']);
-            Route::post('destroy', [CatalogController::class, 'destroy'])->name('admin.catalog.destroy')->middleware(['permission:admin|moderator']);
+            Route::get('destroy/{id}', [CatalogController::class, 'destroy'])->name('admin.catalog.destroy')->where('id', '[0-9]+')->middleware(['permission:admin|moderator']);
         });
 
         //товары
@@ -85,6 +87,26 @@ Route::group(['prefix' => 'cp'], function () {
             Route::get('edit/{id}', [ProductsController::class, 'edit'])->name('admin.products.edit')->where('id', '[0-9]+');
             Route::put('update', [ProductsController::class, 'update'])->name('admin.products.update');
             Route::post('destroy', [ProductsController::class, 'destroy'])->name('admin.products.destroy');
+        });
+
+        //техническая характеристика
+        Route::group(['prefix' => 'product-parameters'], function () {
+            Route::get('{product_id}', [ProductParametersController::class, 'index'])->name('admin.product_parameters.index')->where('product_id', '[0-9]+');
+            Route::get('create/{product_id}', [ProductParametersController::class, 'create'])->name('admin.product_parameters.create')->where('product_id', '[0-9]+');
+            Route::post('store', [ProductParametersController::class, 'store'])->name('admin.product_parameters.store');
+            Route::get('edit/{id}', [ProductParametersController::class, 'edit'])->name('admin.product_parameters.edit')->where('id', '[0-9]+');
+            Route::put('update', [ProductParametersController::class, 'update'])->name('admin.product_parameters.update');
+            Route::post('destroy', [ProductParametersController::class, 'destroy'])->name('admin.product_parameters.destroy');
+        });
+
+        //техническая документация
+        Route::group(['prefix' => 'product-documents'], function () {
+            Route::get('{product_id}', [ProductDocumentsController::class, 'index'])->name('admin.product_documents.index')->where('product_id', '[0-9]+');
+            Route::get('create/{product_id}', [ProductDocumentsController::class, 'create'])->name('admin.product_documents.create')->where('product_id', '[0-9]+');
+            Route::post('store', [ProductDocumentsController::class, 'store'])->name('admin.product_documents.store');
+            Route::get('edit/{id}', [ProductDocumentsController::class, 'edit'])->name('admin.product_documents.edit')->where('id', '[0-9]+');
+            Route::put('update', [ProductDocumentsController::class, 'update'])->name('admin.product_documents.update');
+            Route::post('destroy', [ProductDocumentsController::class, 'destroy'])->name('admin.product_documents.destroy');
         });
 
         //производители
@@ -156,5 +178,8 @@ Route::group(['prefix' => 'cp'], function () {
         Route::any('settings', [DataTableController::class, 'settings'])->name('admin.datatable.settings')->middleware(['permission:admin']);
         Route::any('manufacturers', [DataTableController::class, 'manufacturers'])->name('admin.datatable.manufacturers');
         Route::any('seo', [DataTableController::class, 'seo'])->name('admin.datatable.seo')->middleware(['permission:admin']);
+        Route::any('product-documents/{product_id}', [DataTableController::class, 'productDocuments'])->name('admin.datatable.product_documents')->where('id', '[0-9]+');
+
+
     });
 });

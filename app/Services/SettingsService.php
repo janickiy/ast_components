@@ -11,7 +11,6 @@ class SettingsService
     /**
      * @param Request $request
      * @return false|string
-     * @throws \Symfony\Component\HttpFoundation\File\Exception\FileException
      */
     public function storeFile(Request $request): false|string
     {
@@ -29,7 +28,6 @@ class SettingsService
      * @param Settings $settings
      * @param Request $request
      * @return false|string
-     * @throws \Symfony\Component\HttpFoundation\File\Exception\FileException
      */
     public function updateFile(Settings $settings, Request $request): false|string
     {

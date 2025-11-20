@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Http\Requests\Admin\Users\EditRequest;
 use App\Http\Requests\Admin\Users\StoreRequest;
+use App\Http\Requests\Admin\Users\DeleteRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -85,10 +86,10 @@ class UsersController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param DeleteRequest $request
      * @return void
      */
-    public function destroy(Request $request): void
+    public function destroy(DeleteRequest $request): void
     {
         if ($request->id !== Auth::id()) $this->userRepository->delete($request->id);
     }

@@ -100,10 +100,12 @@ class CatalogController extends Controller
 
     /**
      * @param Request $request
-     * @return void
+     * @return RedirectResponse
      */
-    public function destroy(Request $request): void
+    public function destroy(Request $request): RedirectResponse
     {
         $this->categoryRepository->delete($request->id);
+
+        return redirect()->route('admin.catalog.index')->with('success', 'Данные успешно удалены!');
     }
 }

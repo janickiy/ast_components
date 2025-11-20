@@ -11,6 +11,7 @@ use App\Models\Products;
 use App\Models\Settings;
 use App\Models\Seo;
 use App\Models\Manufacturers;
+use App\Models\ProductDocuments;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -148,9 +149,9 @@ class DataTableController extends Controller
      */
     public function products(): JsonResponse
     {
-        $row = Products::selectRaw('products.id,products.title,products.article,products.n_number,products.price,products.published,products.catalog_id,products.slug,products.created_at,products.description,catalog.name AS catalog')
-            ->leftJoin('catalog', 'catalog.id', '=', 'products.catalog_id')
-            ->groupBy('catalog.name')
+        $row = Products::selectRaw('products.id,products.title,products.article,products.n_number,products.price,products.published,products.catalog_id,products.slug,products.created_at,products.description,catalogs.name AS catalog')
+            ->leftJoin('catalogs', 'catalogs.id', '=', 'products.catalog_id')
+            ->groupBy('catalogs.name')
             ->groupBy('products.id')
             ->groupBy('products.title')
             ->groupBy('products.catalog_id')
@@ -165,15 +166,15 @@ class DataTableController extends Controller
 
         return Datatables::of($row)
             ->addColumn('actions', function ($row) {
-                $editBtn = '<a title="редактировать" class="btn btn-xs btn-primary" href="' . URL::route('cp.products.edit', ['id' => $row->id]) . '"><span  class="fa fa-edit"></span></a> &nbsp;';
+                $editBtn = '<a title="редактировать" class="btn btn-xs btn-primary" href="' . URL::route('admin.products.edit', ['id' => $row->id]) . '"><span  class="fa fa-edit"></span></a> &nbsp;';
                 $deleteBtn = '<a title="удалить" class="btn btn-xs btn-danger deleteRow" id="' . $row->id . '"><span class="fa fa-trash"></span></a>';
 
                 return '<div class="nobr"> ' . $editBtn . $deleteBtn . '</div>';
             })
             ->editColumn('title', function ($row) {
                 $title = $row->title;
-                $title .= '<br><a href="' . URL::route('cp.product_documents.index', ['product_id' => $row->id]) . '">Техническая документация</a><br>';
-                $title .= '<br><a href="' . URL::route('cp.product_parameters.index', ['product_id' => $row->id]) . '">Технические характеристики</a><br>';
+                $title .= '<br><a href="' . URL::route('admin.product_documents.index', ['product_id' => $row->id]) . '">Техническая документация</a><br>';
+                $title .= '<br><a href="' . URL::route('admin.product_parameters.index', ['product_id' => $row->id]) . '">Технические характеристики</a><br>';
 
                 return $title;
             })
@@ -205,6 +206,25 @@ class DataTableController extends Controller
             })
             ->editColumn('published', function ($row) {
                 return $row->published == 1 ? 'да' : 'нет';
+            })
+            ->rawColumns(['actions'])->make(true);
+    }
+
+    /**
+     * @param int $product_id
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function productDocuments(int $product_id): JsonResponse
+    {
+        $row = ProductDocuments::where('product_id', $product_id);
+
+        return Datatables::of($row)
+            ->addColumn('actions', function ($row) {
+                $editBtn = '<a title="редактировать" class="btn btn-xs btn-primary"  href="' . URL::route('cp.product_documents.edit', ['id' => $row->id]) . '"><span  class="fa fa-edit"></span></a> &nbsp;';
+                $deleteBtn = '<a title="удалить" class="btn btn-xs btn-danger deleteRow" id="' . $row->id . '"><span class="fa fa-trash"></span></a>';
+
+                return '<div class="nobr"> ' . $editBtn . $deleteBtn . '</div>';
             })
             ->rawColumns(['actions'])->make(true);
     }

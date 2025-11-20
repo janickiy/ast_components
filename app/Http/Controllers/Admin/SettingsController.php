@@ -2,18 +2,24 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Services\SettingsService;
 use App\Repositories\SettingsRepository;
 use App\Http\Requests\Admin\Settings\StoreRequest;
 use App\Http\Requests\Admin\Settings\EditRequest;
+use App\Http\Requests\Admin\Settings\DeleteRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class SettingsController extends Controller
 {
+    /**
+     * @var SettingsService
+     */
     protected SettingsService $settingsService;
 
+    /**
+     * @var SettingsRepository
+     */
     private SettingsRepository $settingsRepository;
 
     /**
@@ -118,10 +124,10 @@ class SettingsController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param DeleteRequest $request
      * @return void
      */
-    public function destroy(Request $request): void
+    public function destroy(DeleteRequest $request): void
     {
         $this->settingsRepository->remove($request->id);
     }

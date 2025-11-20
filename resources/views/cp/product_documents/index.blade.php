@@ -23,30 +23,30 @@
                 <div class="row">
                     <div class="col-12">
 
+                        <a href="{{ route('admin.products.index') }}">
+                            Назад
+                        </a><br>
+
                         <div class="card">
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <div class="pb-3">
                                     <div class="row">
+
                                         <div class="col-md-12">
-                                            <a href="{{ route('admin.products.create') }}"
+                                            <a href="{{ route('admin.product_documents.create', ['product_id' => $product_id]) }}"
                                                class="btn btn-info btn-sm pull-left">
                                                 <span class="fa fa-plus"> &nbsp;</span> Добавить
                                             </a>
                                         </div>
                                     </div>
                                 </div>
-                                <table id="itemList" class="table table-striped table-bordered table-hover">
+
+                                <table id="itemList" class="table table-bordered table-striped">
                                     <thead>
                                     <tr>
-                                        <th>Название</th>
-                                        <th>Фото</th>
-                                        <th>Категория</th>
-                                        <th>Артикул</th>
-                                        <th>Номенклатурный номер</th>
-                                        <th>Slug</th>
-                                        <th>Опубликован</th>
-                                        <th>Добавлен</th>
+                                        <th>Документ</th>
+                                        <th>Описание</th>
                                         <th style="width: 10%">Действия</th>
                                     </tr>
                                     </thead>
@@ -55,15 +55,15 @@
                                     </tfoot>
                                 </table>
 
-                                <!-- /.card-body -->
-                            </div>
-                            <!-- /.card -->
+                            <!-- /.card-body -->
                         </div>
-                        <!-- /.col -->
+                        <!-- /.card -->
                     </div>
-                    <!-- /.row -->
+                    <!-- /.col -->
                 </div>
-                <!-- /.container-fluid -->
+                <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
 
         </section>
         <!-- /.content -->
@@ -84,11 +84,10 @@
             {!! Html::script('/plugins/datatables-buttons/js/buttons.html5.min.js') !!}
             {!! Html::script('/plugins/datatables-buttons/js/buttons.print.min.js') !!}
             {!! Html::script('/plugins/datatables-buttons/js/buttons.colVis.min.js') !!}
-            {!! Html::script('/plugins/datatable-responsive/datatables.responsive.min.js') !!}
 
             <script>
 
-                $(function () {
+                $(function (){
 
                     $("#itemList").DataTable({
                         "oLanguage": {
@@ -113,17 +112,11 @@
                         "autoWidth": true,
                         'serverSide': true,
                         'ajax': {
-                            url: '{{ route('admin.datatable.products') }}'
+                            url: '{{ route('admin.datatable.product_documents', ['product_id' => $product_id]) }}'
                         },
                         'columns': [
-                            {data: 'title', name: 'title'},
-                            {data: 'thumbnail', name: 'thumbnail', searchable: false},
-                            {data: 'catalog', name: 'catalogs.name'},
-                            {data: 'article', name: 'article'},
-                            {data: 'n_number', name: 'n_number'},
-                            {data: 'slug', name: 'slug'},
-                            {data: 'published', name: 'published', searchable: false},
-                            {data: 'created_at', name: 'created_at'},
+                            {data: 'file', name: 'file'},
+                            {data: 'name', name: 'name'},
                             {data: 'actions', name: 'actions', orderable: false, searchable: false},
                         ]
                     });
@@ -146,7 +139,7 @@
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 $.ajax({
-                                    url: '{{ route('admin.products.destroy') }}',
+                                    url: '{{ route('admin.product_documents.destroy') }}',
                                     type: "POST",
                                     dataType: "html",
                                     data: {id: rowid},

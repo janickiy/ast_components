@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Helpers\StringHelper;
 use App\Http\Requests\Admin\Manufacturers\EditRequest;
 use App\Http\Requests\Admin\Manufacturers\StoreRequest;
+use App\Http\Requests\Admin\Manufacturers\DeleteRequest;
 use App\Repositories\ManufacturerRepository;
 use App\Services\ManufacturerService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ManufacturersController extends Controller
@@ -18,8 +18,15 @@ class ManufacturersController extends Controller
      */
     public ManufacturerRepository $manufacturerRepository;
 
+    /**
+     * @var ManufacturerService
+     */
     public ManufacturerService $manufacturerService;
 
+    /**
+     * @param ManufacturerRepository $manufacturerRepository
+     * @param ManufacturerService $manufacturerService
+     */
     public function __construct(ManufacturerRepository $manufacturerRepository, ManufacturerService $manufacturerService)
     {
         $this->manufacturerRepository = $manufacturerRepository;
@@ -125,12 +132,11 @@ class ManufacturersController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param DeleteRequest $request
      * @return void
      */
-    public function destroy(Request $request): void
+    public function destroy(DeleteRequest $request): void
     {
         $this->manufacturerRepository->remove($request->id);
     }
-
 }

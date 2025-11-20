@@ -12,15 +12,6 @@ class ManufacturerRepository extends BaseRepository
     }
 
     /**
-     * @param array $data
-     * @return mixed
-     */
-    public function create(array $data): mixed
-    {
-        return $this->model->create($data);
-    }
-
-    /**
      * @param int $id
      * @param array $data
      * @return null
@@ -44,6 +35,9 @@ class ManufacturerRepository extends BaseRepository
             if ($data['image']) {
                 $manufacturer->image = $data['image'];
             }
+
+            $manufacturer->image_title = $data['image_title'];
+            $manufacturer->image_alt = $data['image_alt'];
 
             $manufacturer->seo_sitemap = $data['seo_sitemap'];
             $manufacturer->save();

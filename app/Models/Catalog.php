@@ -9,14 +9,13 @@ use Illuminate\Support\Facades\URL;
 
 class Catalog extends Model
 {
-    protected $table = 'catalog';
+    protected $table = 'catalogs';
 
     protected $fillable = [
         'name',
         'meta_title',
         'meta_description',
         'meta_keywords',
-        'image',
         'slug',
         'seo_h1',
         'seo_url_canonical',
@@ -191,7 +190,7 @@ class Catalog extends Model
             $cl .= '<ul>';
             if ($only_parent === false) {
                 foreach ($catalogs[$parent_id] as $catalog) {
-                    $cl .= '<li>' . $catalog['name'] . ' <a title="Добавить подкатегорию" href="' . URL::route('admin.catalog.create', ['parent_id' => $catalog['id']]) . '"> <span class="fa fa-plus"></span> </a> <a title="Редактировать" href="' . URL::route('admin.catalog.edit', ['id' => $catalog['id']]) . '"> <span class="fa fa-edit"></span> </a> <a title="Удалить" href="' . URL::route('admin.catalog.destroy', $catalog['id']) . '"> <span class="fa fa-trash"></span> </a>';
+                    $cl .= '<li>' . $catalog['name'] . ' <a title="Добавить подкатегорию" href="' . URL::route('admin.catalog.create', ['parent_id' => $catalog['id']]) . '"> <span class="fa fa-plus"></span> </a> <a title="Редактировать" href="' . URL::route('admin.catalog.edit', ['id' => $catalog['id']]) . '"> <span class="fa fa-edit"></span> </a> <a title="Удалить" href="' . URL::route('admin.catalog.destroy', ['id' => $catalog['id']]) . '"> <span class="fa fa-trash"></span> </a>';
                     $cl .= self::buildTree($catalogs, $catalog['id']);
                     $cl .= '</li>';
                 }

@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\Admin\News\StoreRequest;
 use App\Http\Requests\Admin\News\EditRequest;
+use App\Http\Requests\Admin\News\DeleteRequest;
 use App\Helpers\StringHelper;
 use App\Repositories\NewsRepository;
 use App\Services\NewsService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use Illuminate\Http\Request;
 
 class NewsController extends Controller
 {
@@ -17,6 +17,7 @@ class NewsController extends Controller
      * @var NewsRepository
      */
     private NewsRepository $newsRepository;
+
     /**
      * @var NewsService
      */
@@ -66,7 +67,6 @@ class NewsController extends Controller
         ]));
 
         return redirect()->route('admin.news.index')->with('success', 'Данные успешно добавлены');
-
     }
 
     /**
@@ -104,10 +104,10 @@ class NewsController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param DeleteRequest $request
      * @return void
      */
-    public function destroy(Request $request): void
+    public function destroy(DeleteRequest $request): void
     {
         $this->newsRepository->remove($request->id);
     }
