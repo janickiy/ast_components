@@ -12,6 +12,7 @@ use App\Models\Settings;
 use App\Models\Seo;
 use App\Models\Manufacturers;
 use App\Models\ProductDocuments;
+use App\Models\ProductParameters;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -222,6 +223,25 @@ class DataTableController extends Controller
         return Datatables::of($row)
             ->addColumn('actions', function ($row) {
                 $editBtn = '<a title="редактировать" class="btn btn-xs btn-primary"  href="' . URL::route('cp.product_documents.edit', ['id' => $row->id]) . '"><span  class="fa fa-edit"></span></a> &nbsp;';
+                $deleteBtn = '<a title="удалить" class="btn btn-xs btn-danger deleteRow" id="' . $row->id . '"><span class="fa fa-trash"></span></a>';
+
+                return '<div class="nobr"> ' . $editBtn . $deleteBtn . '</div>';
+            })
+            ->rawColumns(['actions'])->make(true);
+    }
+
+    /**
+     * @param int $product_id
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function productParameters(int $product_id): JsonResponse
+    {
+        $row = ProductParameters::where('product_id', $product_id);
+
+        return Datatables::of($row)
+            ->addColumn('actions', function ($row) {
+                $editBtn = '<a title="редактировать" class="btn btn-xs btn-primary"  href="' . URL::route('cp.product_parameters.edit', ['id' => $row->id]) . '"><span  class="fa fa-edit"></span></a> &nbsp;';
                 $deleteBtn = '<a title="удалить" class="btn btn-xs btn-danger deleteRow" id="' . $row->id . '"><span class="fa fa-trash"></span></a>';
 
                 return '<div class="nobr"> ' . $editBtn . $deleteBtn . '</div>';

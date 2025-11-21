@@ -99,6 +99,7 @@ Route::group(['prefix' => 'cp'], function () {
             Route::post('destroy', [ProductParametersController::class, 'destroy'])->name('admin.product_parameters.destroy');
         });
 
+
         //техническая документация
         Route::group(['prefix' => 'product-documents'], function () {
             Route::get('{product_id}', [ProductDocumentsController::class, 'index'])->name('admin.product_documents.index')->where('product_id', '[0-9]+');
@@ -180,6 +181,7 @@ Route::group(['prefix' => 'cp'], function () {
         Route::any('seo', [DataTableController::class, 'seo'])->name('admin.datatable.seo')->middleware(['permission:admin']);
         Route::any('product-documents/{product_id}', [DataTableController::class, 'productDocuments'])->name('admin.datatable.product_documents')->where('id', '[0-9]+');
 
-
+        Route::any('product-parameters/{product_id}', [DataTableController::class, 'productParameters'])->name('admin.datatable.product_parameters')->where('id', '[0-9]+');
+        //product_parameters
     });
 });

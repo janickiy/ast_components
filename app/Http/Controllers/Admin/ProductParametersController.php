@@ -44,7 +44,7 @@ class ProductParametersController extends Controller
 
         if (!$product) abort(404);
 
-        return view('admin.product_parameters.index', compact('product_id'))->with('title', 'Технические характеристики: ' . $product->title);
+        return view('cp.product_parameters.index', compact('product_id'))->with('title', 'Технические характеристики: ' . $product->title);
     }
 
     /**
