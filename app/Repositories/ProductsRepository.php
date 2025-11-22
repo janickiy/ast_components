@@ -30,7 +30,6 @@ class ProductsRepository extends BaseRepository
         $product = $this->model->find($id);
 
         if ($product) {
-            $product->name = $data['name'];
             $product->title = $data['title'];
             $product->description = $data['description'];
             $product->catalog_id = $data['catalog_id'];

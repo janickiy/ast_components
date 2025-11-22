@@ -70,6 +70,9 @@
                             </div>
 
                             <div class="form-group">
+
+                                {!! Form::label('image', 'Фото') !!}
+
                                 <div class="input-group">
                                     <div class="custom-file">
                                         {!! Form::file('image',  [ 'class' => 'custom-file-input']) !!}
@@ -88,6 +91,30 @@
 
                                 @if ($errors->has('image'))
                                     <span class="text-danger">{{ $errors->first('image') }}</span>
+                                @endif
+
+                            </div>
+
+                            <div class="form-group">
+
+                                {!! Form::label('image_title', 'IMAGE TITLE') !!}
+
+                                {!! Form::text('image_title', old('image_title', $row->image_title ?? null), ['class' => 'form-control']) !!}
+
+                                @if ($errors->has('image_title'))
+                                    <p class="text-danger">{{ $errors->first('image_title') }}</p>
+                                @endif
+
+                            </div>
+
+                            <div class="form-group">
+
+                                {!! Form::label('image_alt', 'IMAGE ALT') !!}
+
+                                {!! Form::text('image_alt', old('image_alt', $row->image_alt ?? null), ['class' => 'form-control']) !!}
+
+                                @if ($errors->has('image_alt'))
+                                    <p class="text-danger">{{ $errors->first('image_alt') }}</p>
                                 @endif
 
                             </div>
@@ -173,6 +200,19 @@
 
                                 @if ($errors->has('seo_sitemap'))
                                     <p class="text-danger">{{ $errors->first('seo_sitemap') }}</p>
+                                @endif
+
+                            </div>
+
+                            <div class="form-check">
+
+
+                                {!! Form::checkbox('published', 1, isset($row) ? ($row->status): 1, ['class' => 'form-check-input']) !!}
+
+                                {!! Form::label('published', 'Публиковать', ['class' => 'form-check-label']) !!}
+
+                                @if ($errors->has('published'))
+                                    <p class="text-danger">{{ $errors->first('published') }}</p>
                                 @endif
 
                             </div>
