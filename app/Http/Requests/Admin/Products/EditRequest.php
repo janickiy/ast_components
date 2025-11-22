@@ -25,9 +25,9 @@ class EditRequest extends FormRequest
             'id'    => 'required|integer|exists:products,id',
             'title' => 'required',
             'description' => 'required',
-            'article'     => 'required|unique:products',
+            'article'     => 'required|unique:products,article,' . $this->id,
             'n_number'    => 'required|integer',
-            'slug'  => 'required|unique:products',
+            'slug'  => 'required|unique:products,slug,' . $this->id,
             'image' => 'image|mimes:jpeg,jpg,png,gif|max:2048|nullable',
             'catalog_id'  => 'integer|required|exists:catalogs,id'
         ];

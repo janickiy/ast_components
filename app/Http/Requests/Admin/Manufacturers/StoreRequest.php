@@ -23,8 +23,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'slug' => 'required|unique:catalog',
-
+            'slug' => 'required|unique:manufacturers',
         ];
     }
 }

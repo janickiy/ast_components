@@ -22,8 +22,8 @@ class EditRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id'   => 'required|integer|exists:settings,id',
-
+            'id'   => 'required|integer|exists:manufacturers,id',
+            'slug'  => 'required|unique:manufacturers,slug,' . $this->id,
         ];
     }
 }
