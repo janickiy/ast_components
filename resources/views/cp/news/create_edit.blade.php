@@ -236,13 +236,15 @@
                         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                         dataType: "json"
                     });
+                    console.log(request);
                     request.done(function (data) {
                         if (data.slug != null && data.slug !== '') {
                             $("#slug").val(data.slug);
                         }
+                        console.log(data.slug);
                     });
                 }
-                console.log(html);
+                console.log(this.value);
             });
         });
     </script>

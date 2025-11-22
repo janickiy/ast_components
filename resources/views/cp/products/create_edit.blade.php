@@ -203,9 +203,9 @@
 
                             <div class="form-check">
 
-                                {!! Form::checkbox('seo_sitemap', 1, isset($row) ? ($row->seo_sitemap === true ? 1 : 0): 1, ['class' => 'form-check-input']) !!}
+                                {!! Form::checkbox('seo_sitemap', 1, isset($row) ? ($row->seo_sitemap): 1, ['class' => 'form-check-input']) !!}
 
-                                {!! Form::label('seo_sitemap', 'sitemap', ['class' => 'form-check-label']) !!}
+                                {!! Form::label('seo_sitemap', 'Отображать в карте сайта', ['class' => 'form-check-label']) !!}
 
                                 @if ($errors->has('seo_sitemap'))
                                     <p class="text-danger">{{ $errors->first('seo_sitemap') }}</p>
@@ -215,7 +215,8 @@
 
                             <div class="form-check">
 
-                                {!! Form::checkbox('published', 1, isset($row) ? ($row->published === true ? 1 : 0): 1, ['class' => 'form-check-input']) !!}
+
+                                {!! Form::checkbox('published', 1, isset($row) ? ($row->status): 1, ['class' => 'form-check-input']) !!}
 
                                 {!! Form::label('published', 'Публиковать', ['class' => 'form-check-label']) !!}
 
@@ -284,13 +285,15 @@
                         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                         dataType: "json"
                     });
+                    console.log(request);
                     request.done(function (data) {
                         if (data.slug != null && data.slug !== '') {
                             $("#slug").val(data.slug);
                         }
+                        console.log(data.slug);
                     });
                 }
-                console.log(html);
+                console.log(this.value);
             });
         });
     </script>

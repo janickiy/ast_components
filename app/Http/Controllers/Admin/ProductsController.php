@@ -102,7 +102,7 @@ class ProductsController extends Controller
 
         if (!$row) abort(404);
 
-        $options = Catalog::getOption();
+        $options = $this->categoryRepository->getOptions();
         $maxUploadFileSize = StringHelper::maxUploadFileSize();
 
         return view('cp.products.create_edit', compact('row', 'options', 'maxUploadFileSize'))->with('title', 'Редактирование продукции');
