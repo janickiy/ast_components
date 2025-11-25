@@ -895,7 +895,7 @@
         </div>
         <div class="footer__bottom">
             <span class="footer__copyright">©{{ env('APP_NAME', 'АСТ Компонентс') }}, {{ date('Y') }}</span>
-            <a href="./privacy-policy.html" class="footer__privacy-link">Политика конфиденциальности</a>
+            <a href="{{ route('page', ['slug' => 'privacy-policy']) }}" class="footer__privacy-link">Политика конфиденциальности</a>
             <div class="footer__up-btn">
                 <button type="button" class="btn js-up-btn">
                     <span>Наверх</span>
