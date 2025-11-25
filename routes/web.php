@@ -36,6 +36,16 @@ use App\Http\Controllers\FrontendController;
 */
 
 Route::get('', [FrontendController::class, 'index'])->name('frontend.index');
+Route::get('/page/{slug}', [FrontendController::class, 'page'])->name('frontend.page');
+Route::get('/details', [FrontendController::class, 'details'])->name('frontend.details');
+Route::get('/invite', [FrontendController::class, 'invite'])->name('frontend.invite');
+Route::get('/nomenclature-request', [FrontendController::class, 'nomenclatureRequest'])->name('frontend.nomenclature_request');
+Route::get('/news', [FrontendController::class, 'news'])->name('frontend.news');
+Route::get('/news/{slug}', [FrontendController::class, 'showNews'])->name('frontend.show_news');
+Route::get('/contacts', [FrontendController::class, 'contacts'])->name('frontend.contacts');
+
+
+
 
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('login', [AuthController::class, 'login'])->name('login.submit');

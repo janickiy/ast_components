@@ -20,7 +20,7 @@
     <meta property="og:description" content="@yield('description')">
     <meta property="og:type" content="website">
     <meta property="og:image" content="{{ url('/images/logo.jpg') }}">
-    <meta property="og:image:alt" content="О компании АСТ Компонентс">
+    <meta property="og:image:alt" content="@yield('title') АСТ Компонентс">
     <meta property="og:url" content="@yield('seo_url_canonical')">
     <meta property="og:locale" content="ru_RU">
     <link rel="preload" href="{{ url('/fonts/PT-Root-UI-Regular.woff2') }}" as="font" type="font/woff2" crossorigin>
