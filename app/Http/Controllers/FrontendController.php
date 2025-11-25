@@ -265,6 +265,42 @@ class FrontendController extends Controller
         )->with('title', 'Конвертеры');
     }
 
+    public function manufacturers(): View
+    {
+        $seo = Seo::where('type', 'frontend.manufacturers')->first();
+        $title = $seo->h1 ?? 'Производители';
+        $meta_description = $seo->description ?? '';
+        $meta_keywords = $seo->keyword ?? '';
+        $meta_title = $seo->title ?? '';
+        $seo_url_canonical = $seo->url_canonical ?? '';
+        $h1 = $seo->h1 ?? $title;
+        $menu = $this->getMenuList();
+        $catalogsList = $this->getCatalogsList();
+        $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
+
+        return view('frontend.manufacturers', compact(
+                'meta_description',
+                'meta_keywords',
+                'meta_title',
+                'menu',
+                'catalogs',
+                'catalogsList',
+                'h1',
+                'seo_url_canonical',
+                'title'
+            )
+        )->with('title', 'Производители');
+    }
+
+    /**
+     * @param string $lug
+     * @return View
+     */
+    public function showManufacturers(string $lug): View
+    {
+
+    }
+
     /**
      * @return array
      */

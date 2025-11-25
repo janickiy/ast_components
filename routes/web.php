@@ -35,23 +35,32 @@ use App\Http\Controllers\FrontendController;
 |
 */
 
-Route::get('', [FrontendController::class, 'index'])->name('frontend.index');
-Route::get('/page/{slug}', [FrontendController::class, 'page'])->name('frontend.page');
-Route::get('/details', [FrontendController::class, 'details'])->name('frontend.details');
-Route::get('/invite', [FrontendController::class, 'invite'])->name('frontend.invite');
-Route::get('/nomenclature-request', [FrontendController::class, 'nomenclatureRequest'])->name('frontend.nomenclature_request');
-Route::get('/news', [FrontendController::class, 'news'])->name('frontend.news');
-Route::get('/news/{slug}', [FrontendController::class, 'showNews'])->name('frontend.show_news');
-Route::get('/contacts', [FrontendController::class, 'contacts'])->name('frontend.contacts');
 
+//Главная страница
+Route::get('', [FrontendController::class, 'index'])->name('frontend.index');
+//Страницы и разделы
+Route::get('/page/{slug}', [FrontendController::class, 'page'])->name('frontend.page');
+//Реквизиты
+Route::get('/details', [FrontendController::class, 'details'])->name('frontend.details');
+//Пригласить на тендер
+Route::get('/invite', [FrontendController::class, 'invite'])->name('frontend.invite');
+//Запрос номенклатуры
+Route::get('/nomenclature-request', [FrontendController::class, 'nomenclatureRequest'])->name('frontend.nomenclature_request');
+//Новости
+Route::get('/news', [FrontendController::class, 'news'])->name('frontend.news');
+//Описание новости
+Route::get('/news/{slug}', [FrontendController::class, 'showNews'])->name('frontend.show_news');
+//Запрос номенклатуры
+Route::get('/contacts', [FrontendController::class, 'contacts'])->name('frontend.contacts');
+//Контакты
 Route::get('/converters', [FrontendController::class, 'converters'])->name('frontend.converters');
 
+//Производители
+Route::get('/manufacturers', [FrontendController::class, 'manufacturers'])->name('frontend.manufacturers');
+// Описание производителя
+Route::get('/manufacturers/{slug}', [FrontendController::class, 'showManufacturers'])->name('frontend.show-manufacturers');
 
-
-
-
-
-
+//Авторизация
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('login', [AuthController::class, 'login'])->name('login.submit');
 Route::get('logout', [AuthController::class, 'logout'])->name('logout');
