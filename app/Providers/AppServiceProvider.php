@@ -14,6 +14,8 @@ class AppServiceProvider extends ServiceProvider
     {
         $loader = \Illuminate\Foundation\AliasLoader::getInstance();
         $loader->alias('PermissionsHelper', \App\Helpers\PermissionsHelper::class);
+        $loader->alias('StringHelper', \App\Helpers\StringHelper::class);
+        $loader->alias('SettingsHelper', \App\Helpers\SettingsHelper::class);
     }
 
     /**

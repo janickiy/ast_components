@@ -24,6 +24,8 @@
 
                         {!! isset($row) ? Form::hidden('id', $row->id) : '' !!}
 
+                        {!! Form::hidden('product_id', $product_id) !!}
+
                         <div class="card-body">
 
                             <p>*-обязательные поля</p>

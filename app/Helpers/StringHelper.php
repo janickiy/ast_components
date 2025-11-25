@@ -268,4 +268,14 @@ class StringHelper
     {
         return str_replace([' ', '(', ')', '-'], '', $string);
     }
+
+    /**
+     * @param string $phone
+     * @return string
+     */
+    public static function getPhoneTag(string $phone): string
+    {
+        $phone = filter_var(str_replace(['-'], [], $phone), FILTER_SANITIZE_NUMBER_INT);
+        return str_replace('+8', '7', $phone);
+    }
 }

@@ -60,13 +60,13 @@ class SettingsHelper
                     return [];
                 }
 
-                $result = $settings->pluck('value', 'name');
+                $result = $settings->pluck('value', 'key_cd');
 
                 return $result;
             });
         } else {
             $settings = Settings::all();
-            $result = $settings->pluck('value', 'name');
+            $result = $settings->pluck('value', 'key_cd');
 
             return $result;
         }
@@ -107,7 +107,7 @@ class SettingsHelper
      * @param bool $reload
      * @return bool
      */
-    public static function cacheClear(bool $reload = false)
+    public static function cacheClear(bool $reload = false): bool
     {
         $result = Cache::forget(self::CACHE_KEY);
 

@@ -22,6 +22,8 @@ use App\Http\Controllers\Admin\{
     RobotsController,
 };
 
+use App\Http\Controllers\FrontendController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -32,6 +34,8 @@ use App\Http\Controllers\Admin\{
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::get('', [FrontendController::class, 'index'])->name('frontend.index');
 
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('login', [AuthController::class, 'login'])->name('login.submit');
@@ -180,8 +184,7 @@ Route::group(['prefix' => 'cp'], function () {
         Route::any('manufacturers', [DataTableController::class, 'manufacturers'])->name('admin.datatable.manufacturers');
         Route::any('seo', [DataTableController::class, 'seo'])->name('admin.datatable.seo')->middleware(['permission:admin']);
         Route::any('product-documents/{product_id}', [DataTableController::class, 'productDocuments'])->name('admin.datatable.product_documents')->where('id', '[0-9]+');
-
         Route::any('product-parameters/{product_id}', [DataTableController::class, 'productParameters'])->name('admin.datatable.product_parameters')->where('id', '[0-9]+');
-        //product_parameters
+
     });
 });

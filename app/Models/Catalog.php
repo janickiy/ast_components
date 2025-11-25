@@ -269,4 +269,19 @@ class Catalog extends Model
             self::getAllChildren($categories, $allChildren, $cat->id);
         }
     }
+
+    /**
+     * @return array
+     */
+    public static function getCatalogList(): array
+    {
+        $catalogs = self::query()->orderBy('name')->get();
+        $catalogsList = [];
+
+        foreach ($catalogs->toArray() ?? [] as $catalog) {
+            $catalogsList[$catalog['parent_id']][$catalog['id']] = $catalog;
+        }
+
+        return $catalogsList;
+    }
 }
