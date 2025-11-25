@@ -44,6 +44,11 @@ Route::get('/news', [FrontendController::class, 'news'])->name('frontend.news');
 Route::get('/news/{slug}', [FrontendController::class, 'showNews'])->name('frontend.show_news');
 Route::get('/contacts', [FrontendController::class, 'contacts'])->name('frontend.contacts');
 
+Route::get('/converters', [FrontendController::class, 'converters'])->name('frontend.converters');
+
+
+
+
 
 
 

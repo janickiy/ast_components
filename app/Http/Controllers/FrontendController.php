@@ -209,7 +209,60 @@ class FrontendController extends Controller
 
     public function contacts(): View
     {
+        $seo = Seo::where('type', 'frontend.contacts')->first();
+        $title = $seo->h1 ?? 'Контакты';
+        $meta_description = $seo->description ?? '';
+        $meta_keywords = $seo->keyword ?? '';
+        $meta_title = $seo->title ?? '';
+        $seo_url_canonical = $seo->url_canonical ?? '';
+        $h1 = $seo->h1 ?? $title;
+        $menu = $this->getMenuList();
+        $catalogsList = $this->getCatalogsList();
+        $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
 
+        return view('frontend.contacts', compact(
+                'meta_description',
+                'meta_keywords',
+                'meta_title',
+                'menu',
+                'catalogs',
+                'catalogsList',
+                'h1',
+                'seo_url_canonical',
+                'title'
+            )
+        )->with('title', 'Контакты');
+    }
+
+
+    /**
+     * @return View
+     */
+    public function converters(): View
+    {
+        $seo = Seo::where('type', 'frontend.converters')->first();
+        $title = $seo->h1 ?? 'Конвертеры';
+        $meta_description = $seo->description ?? '';
+        $meta_keywords = $seo->keyword ?? '';
+        $meta_title = $seo->title ?? '';
+        $seo_url_canonical = $seo->url_canonical ?? '';
+        $h1 = $seo->h1 ?? $title;
+        $menu = $this->getMenuList();
+        $catalogsList = $this->getCatalogsList();
+        $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
+
+        return view('frontend.converters', compact(
+                'meta_description',
+                'meta_keywords',
+                'meta_title',
+                'menu',
+                'catalogs',
+                'catalogsList',
+                'h1',
+                'seo_url_canonical',
+                'title'
+            )
+        )->with('title', 'Конвертеры');
     }
 
     /**
