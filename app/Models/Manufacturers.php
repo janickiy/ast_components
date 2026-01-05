@@ -66,7 +66,6 @@ class Manufacturers extends Model
     public function scopeRemove(): void
     {
         if (Storage::disk('public')->exists('manufacturers/' . $this->image) === true) Storage::disk('public')->delete('manufacturers/' . $this->image);
-        if (Storage::disk('public')->exists('manufacturers/' . '2x_' . $this->image) === true) Storage::disk('public')->delete('manufacturers/' . '2x_' . $this->image);
 
         $this->delete();
     }

@@ -23,6 +23,8 @@
 
                         {!! isset($row) ? Form::hidden('id', $row->id) : '' !!}
 
+                        {!! isset($parent_id) ? Form::hidden('parent_id', $parent_id) : '' !!}
+
                         <div class="card-body">
 
                             <p>*-обязательные поля</p>
@@ -140,7 +142,7 @@
                             <div class="form-check">
 
 
-                                {!! Form::checkbox('published', 1, isset($row) ? ($row->status): 1, ['class' => 'form-check-input']) !!}
+                                {!! Form::checkbox('published', 1, isset($row) ? ($row->published): 1, ['class' => 'form-check-input']) !!}
 
                                 {!! Form::label('published', 'Публиковать', ['class' => 'form-check-label']) !!}
 

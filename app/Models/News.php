@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\StringHelper;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
@@ -14,6 +15,8 @@ class News extends Model
         'title',
         'text',
         'preview',
+        'published',
+        'promotion',
         'image',
         'image_title',
         'image_alt',
@@ -45,10 +48,30 @@ class News extends Model
         return Storage::disk('public')->url('news/' . $this->image);
     }
 
+    /**
+     * @param $query
+     * @return mixed
+     */
+    public function scopePublished($query)
+    {
+        return $query->where('published', 1);
+    }
+
+    /**
+     * @return void
+     */
     public function scopeRemove(): void
     {
         if (Storage::disk('public')->exists('news/' . $this->image) === true) Storage::disk('public')->delete('news/' . $this->image);
 
         $this->delete();
+    }
+
+    /**
+     * @return string
+     */
+    public function dateFormat(): string
+    {
+        return Carbon::parse($this->created_at)->format('d.m.Y');
     }
 }

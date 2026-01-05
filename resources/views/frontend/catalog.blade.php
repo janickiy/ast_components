@@ -6,6 +6,8 @@
 
 @section('keywords', $meta_keywords)
 
+@section('seo_url_canonical', $seo_url_canonical)
+
 @section('css')
 
 
@@ -13,7 +15,9 @@
 
 @section('content')
 
+    @include('layouts._breadcrumbs')
 
+    @include('layouts._watched_cards')
 
 @endsection
 
@@ -22,3 +26,4 @@
 
 
 @endsection
+

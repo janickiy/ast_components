@@ -12,14 +12,13 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="{{ asset('plugins/fontawesome-free/css/all.min.css') }}">
+    {!! Html::style('plugins/fontawesome-free/css/all.min.css') !!}
 
     <!-- icheck bootstrap -->
-    <link rel="stylesheet" href="{{ asset('plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
+    {!! Html::style('plugins/icheck-bootstrap/icheck-bootstrap.min.css') !!}
 
     <!-- Theme style -->
-    <link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css') }}">
-
+    {!! Html::style('dist/css/adminlte.min.css') !!}
 
 </head>
 <body class="hold-transition login-page">
@@ -27,58 +26,69 @@
     <!-- /.login-logo -->
     <div class="card card-outline card-primary">
         <div class="card-header text-center">
-            <b>Admin</b>LTE
+            <b>Панель администратора</b>
         </div>
         <div class="card-body">
-            <p class="login-box-msg">Sign in to start your session</p>
 
-            <form action="{{ route('login') }}" method="post">
-                @csrf
+            @if (session('error'))
+                <p class="text-danger">{{ session('error') }}</p>
+            @endif
 
+            {!! Form::open(['url' => route('login'), 'method' => 'post']) !!}
 
-                <div class="input-group mb-3">
-                    <input type="text" name="login"  class="form-control" placeholder="Email">
-                    <div class="input-group-append">
-                        <div class="input-group-text">
-                            <span class="fas fa-envelope"></span>
-                        </div>
+            <div class="input-group mb-3">
+
+                {!! Form::text('login', old('login'), [ 'placeholder' => 'логин', 'class' => 'form-control']) !!}
+
+                <div class="input-group-append">
+                    <div class="input-group-text">
+                        <span class="fas fa-user"></span>
                     </div>
-                    @if ($errors->has('login'))
-                        <p class="text-danger">{{ $errors->first('login') }}</p>
-                    @endif
                 </div>
-                <div class="input-group mb-3">
-                    <input type="password" name="password" class="form-control" placeholder="Password">
-                    <div class="input-group-append">
-                        <div class="input-group-text">
-                            <span class="fas fa-lock"></span>
-                        </div>
+
+                @if ($errors->has('login'))
+                    <p class="text-danger">{{ $errors->first('login') }}</p>
+                @endif
+
+            </div>
+
+            <div class="input-group mb-3">
+
+                {!! Form::password('password',['class' => 'form-control', 'placeholder' => 'Пароль', 'type' => 'password']) !!}
+
+                <div class="input-group-append">
+                    <div class="input-group-text">
+                        <span class="fas fa-lock"></span>
                     </div>
-                    @if ($errors->has('password'))
-                        <p class="text-danger">{{ $errors->first('password') }}</p>
-                    @endif
                 </div>
-                <div class="row">
-                    <div class="col-8">
-                        <div class="icheck-primary">
-                            <input type="checkbox" id="remember">
-                            <label for="remember">
-                                Remember Me
-                            </label>
-                        </div>
-                    </div>
 
-                    <div class="col-4">
-                        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                @if ($errors->has('password'))
+                    <p class="text-danger">{{ $errors->first('password') }}</p>
+                @endif
+
+            </div>
+
+            <div class="row">
+                <div class="col-8">
+                    <div class="icheck-primary">
+
+                        {!! Form::checkbox('remember', 1, old('remember') ? true : false, ["id" => "remember"] ) !!}
+
+
+
+                        {!! Form::label('remember', 'Запомнить меня') !!}
+
                     </div>
+                </div>
+
+                <div class="col-4">
+
+                    {!! Form::submit('Войти', ['class' => 'btn btn-primary btn-block']) !!}
 
                 </div>
-            </form>
+            </div>
 
-
-
-
-
+            {!! Form::close() !!}
 
         </div>
         <!-- /.card-body -->
@@ -88,19 +98,13 @@
 <!-- /.login-box -->
 
 <!-- jQuery -->
-
-
-
-<script src="plugins/jquery/jquery.min.js"></script>
-
+{!! Html::script('plugins/jquery/jquery.min.js') !!}
 
 <!-- Bootstrap 4 -->
-<script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-
+{!! Html::script('plugins/bootstrap/js/bootstrap.bundle.min.js') !!}
 
 <!-- AdminLTE App -->
-<script src="dist/js/adminlte.min.js"></script>
+{!! Html::script('dist/js/adminlte.min.js') !!}
 
 </body>
 </html>

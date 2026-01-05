@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Models\News;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 class NewsService
 {
@@ -15,17 +17,17 @@ class NewsService
     public function storeImage(Request $request): string
     {
         $extension = $request->file('image')->getClientOriginalExtension();
-        $filename = time() . '.' . $extension;
+        $filename = time();
+        $originName = $filename . '.' . $extension;
 
-        if ($request->file('image')->storeAs('public/news', $filename)) {
-            $img = Image::make(Storage::path('/public/news/') . $filename);
-            $img->resize(null, 300, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-            $img->save(Storage::path('/public/news/') . $filename);
+        if ($request->file('image')->move('uploads/news', $originName)) {
+            $manager = new ImageManager(new Driver());
+            $image = $manager->read(Storage::disk('public')->path('news/' . $originName));
+            $image->scale(width: 1200);
+            $image->save(Storage::disk('public')->path('news/' . $originName));
         }
 
-        return $filename;
+        return $originName;
     }
 
     /**

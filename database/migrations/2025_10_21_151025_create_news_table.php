@@ -18,6 +18,8 @@ return new class extends Migration
             $table->text('text');
             $table->string('image')->nullable();
             $table->string('slug')->unique();
+            $table->boolean('published')->default(1);
+            $table->boolean('promotion')->default(0);
             $table->string('meta_title', 255)->nullable();
             $table->text('meta_description')->nullable();
             $table->string('meta_keywords', 255)->nullable();

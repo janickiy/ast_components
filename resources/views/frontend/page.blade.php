@@ -15,7 +15,19 @@
 
 @section('content')
 
+    @include('layouts._breadcrumbs')
 
+    @php
+
+    $content = $page->text;
+
+    $content = str_replace('DETAIL_DOWNLOAD_TAG', SettingsHelper::getInstance()->getValueForKey('DETAILS'), $content);
+
+    @endphp
+
+    {!! $content !!}
+
+    @include('layouts._watched_cards')
 
 @endsection
 

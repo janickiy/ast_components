@@ -15,7 +15,7 @@
 
 @section('content')
 
-
+    @include('layouts._breadcrumbs')
 
 @endsection
 

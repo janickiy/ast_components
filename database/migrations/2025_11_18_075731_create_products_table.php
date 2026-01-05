@@ -35,8 +35,6 @@ return new class extends Migration
 
             $table->foreign('catalog_id')->references('id')->on('catalogs')->onDelete('cascade');
 
-
-
         });
     }
 

@@ -6,6 +6,8 @@
 
 @section('keywords', $meta_keywords)
 
+@section('seo_url_canonical', $seo_url_canonical)
+
 @section('css')
 
 
@@ -13,7 +15,117 @@
 
 @section('content')
 
+    @include('layouts._breadcrumbs')
 
+    <div class="request container-xs">
+        <p class="request__description">Не нашли необходимую позицию в&nbsp;каталоге?<br>Отправьте запрос через форму
+            ниже, и&nbsp;наш менеджер связется с вами</p>
+
+        {!! Form::open(['url' => route('frontend.send_nomenclature_request'), 'method' => 'post', 'files' => true, 'class' => 'invite__form is-success']) !!}
+
+        <div class="request__input-row">
+            <div class="request__input-col">
+                <div class="form-input">
+                    {!! Form::label('company', 'Название компании*') !!}
+                    {!! Form::text('company', old('company'), ['id' => 'request-company', 'placeholder' => 'ООО "Электромонтаж"', 'required']) !!}
+                    <!-- <span class="is-error">Укажите название компании</span> -->
+                    @if ($errors->has('company'))
+                        <p class="text-danger">{{ $errors->first('company') }}</p>
+                    @endif
+                </div>
+                <div class="form-input">
+                    {!! Form::label('name', 'Ваше имя*') !!}
+                    {!! Form::text('name', old('name'), ['id' => 'request-name', 'placeholder' => 'Иванов Иван', 'required']) !!}
+                    @if ($errors->has('name'))
+                        <p class="text-danger">{{ $errors->first('name') }}</p>
+                    @endif
+                </div>
+                <div class="form-input">
+                    {!! Form::label('email', 'Электронная почта*') !!}
+                    {!! Form::email('email', old('email'), ['id' => 'request-email', 'placeholder' => 'customer@gmail.com', 'required']) !!}
+                    @if ($errors->has('email'))
+                        <p class="text-danger">{{ $errors->first('email') }}</p>
+                    @endif
+                </div>
+                <div class="form-input">
+                    {!! Form::label('phone', 'Номер телефона*') !!}
+                    {!! Form::tel('phone', old('phone'), ['id' => 'request-phone', 'placeholder' => '+7 900 000-00-00', 'required']) !!}
+                    @if ($errors->has('phone'))
+                        <p class="text-danger">{{ $errors->first('phone') }}</p>
+                    @endif
+                </div>
+            </div>
+            <div class="request__input-col">
+                <div class="form-input">
+                    {!! Form::label('label', 'Маркировка*') !!}
+                    {!! Form::text('label', old('label'), ['id' => 'request-label', 'placeholder' => '9999999999999999999999999999', 'required']) !!}
+                    @if ($errors->has('label'))
+                        <p class="text-danger">{{ $errors->first('label') }}</p>
+                    @endif
+                </div>
+                <div class="form-input__line">
+                    <div class="form-input">
+                        {!! Form::label('count', 'Количество*') !!}
+                        {!! Form::text('count', old('count'), ['id' => 'request-count', 'placeholder' => '10', 'required']) !!}
+                        @if ($errors->has('count'))
+                            <p class="text-danger">{{ $errors->first('count') }}</p>
+                        @endif
+
+                    </div>
+                    <div class="form-select">
+                        {!! Form::label('unit', 'Ед.упаковки*') !!}
+                        <select name="unit" id="request-unit" class="js-select">
+                            <option value="unit-1">штука</option>
+                            <option value="unit-2">коробка</option>
+                        </select>
+                        @if ($errors->has('unit'))
+                            <p class="text-danger">{{ $errors->first('unit') }}</p>
+                        @endif
+                    </div>
+                </div>
+                <div class="request__textarea form-input">
+                    {!! Form::label('message', 'Комментарий') !!}
+                    {!! Form::textarea('message', old('message'), ['id' => "request-message", 'placeholder' => 'Текст комментария']) !!}
+                    @if ($errors->has('message'))
+                        <p class="text-danger">{{ $errors->first('message') }}</p>
+                    @endif
+                </div>
+                <div class="request__input-file form-input-file js-input-file">
+                    <label for="request-file" class="btn btn--secondary">
+                        <svg aria-hidden="true">
+                            <use xlink:href="{{ url('/images/sprite.svg#file-download') }}"></use>
+                        </svg>
+                        <span>Загрузить файл</span>
+                    </label>
+                    <input type="file" name="attach" id="request-file" class="sr-only">
+                </div>
+            </div>
+        </div>
+        <div class="request__checkbox form-checkbox">
+            <input type="checkbox" id="request-agreement">
+            <label for="request-agreement">Я даю согласие на обработку персональных данных в&nbsp;соответствии с&nbsp;<a
+                        href="{{ route('frontend.page', ['slug' => 'privacy-policy']) }}">Политикой конфиденциальности</a></label>
+        </div>
+        <div class="request__btn">
+            <button type="submit" class="btn btn--primary">
+                <svg aria-hidden="true">
+                    <use xlink:href="{{ url('/images/sprite.svg#mail') }}"></use>
+                </svg>
+                <span>Отправить</span>
+            </button>
+            @if (session('success'))
+                <span class="success-message">
+                        <svg aria-hidden="true">
+                            <use xlink:href="{{ url('/images/sprite.svg#check-circle') }}"></use>
+                        </svg>
+                        <span>Ваш запрос успешно отправлен</span>
+                </span>
+            @endif
+        </div>
+
+        {!! Form::close() !!}
+
+    </div>
 
 @endsection
 

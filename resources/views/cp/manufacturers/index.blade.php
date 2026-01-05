@@ -41,7 +41,7 @@
                                     <thead>
                                     <tr>
                                         <th>Название</th>
-                                        <th>Краткое описание</th>
+                                        <th>Описание</th>
                                         <th>ЧПУ</th>
                                         <th>Создан</th>
                                         <th style="width: 10%">Действия</th>
@@ -113,7 +113,7 @@
                         },
                         'columns': [
                             {data: 'title', name: 'title'},
-                            {data: 'preview', name: 'preview'},
+                            {data: 'description', name: 'description'},
                             {data: 'slug', name: 'slug'},
                             {data: 'created_at', name: 'created_at'},
                             {data: 'actions', name: 'actions', orderable: false, searchable: false},

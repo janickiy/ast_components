@@ -243,7 +243,7 @@
                             <div class="form-check">
 
 
-                                {!! Form::checkbox('published', 1, isset($row) ? ($row->status): 1, ['class' => 'form-check-input']) !!}
+                                {!! Form::checkbox('published', 1, isset($row) ? ($row->published): 1, ['class' => 'form-check-input']) !!}
 
                                 {!! Form::label('published', 'Публиковать', ['class' => 'form-check-label']) !!}
 

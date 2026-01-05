@@ -26,7 +26,7 @@ class StoreRequest extends FormRequest
             'slug'    => 'required|unique:news',
             'preview' => 'required',
             'text'    => 'required',
-            'image'   => 'image|mimes:jpeg,jpg,png,gif|max:2048|nullable',
+            'image'   => 'image|mimes:jpeg,jpg,png|max:2048|nullable',
         ];
     }
 }

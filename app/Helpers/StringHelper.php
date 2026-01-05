@@ -5,10 +5,10 @@ namespace App\Helpers;
 class StringHelper
 {
     /**
-     * @param $data
+     * @param mixed $data
      * @return array
      */
-    public static function ObjectToArray($data)
+    public static function ObjectToArray(mixed $data): array
     {
         if (is_array($data) || is_object($data)) {
             $result = [];
@@ -21,11 +21,11 @@ class StringHelper
     }
 
     /**
-     * @param $el
+     * @param mixed $el
      * @param bool $first
      * @return string
      */
-    public static function tree($el, $first = true)
+    public static function tree(mixed $el, bool $first = true): string
     {
         if (is_object($el)) $el = (array)$el;
 
@@ -38,7 +38,6 @@ class StringHelper
             }
 
             foreach ($el as $k => $v) {
-
                 if (is_object($v)) $v = (array)$v;
 
                 if ($v) {
@@ -198,18 +197,17 @@ class StringHelper
     }
 
     /**
-     * @return mixed
+     * @return int|float
      */
-    public static function detectMaxUploadFileSize()
+    public static function detectMaxUploadFileSize(): int|float
     {
         /**
          * Converts shorthands like "2M" or "512K" to bytes
          *
          * @param int $size
-         * @return int|float
-         * @throws Exception
+         * @return int|float|bool
          */
-        $normalize = function ($size) {
+        $normalize = function (int $size): int|float|bool {
             if (preg_match('/^(-?[\d\.]+)(|[KMG])$/i', $size, $match)) {
                 $pos = array_search($match[2], ["", "K", "M", "G"]);
                 $size = $match[1] * pow(1024, $pos);
@@ -222,7 +220,7 @@ class StringHelper
         $limits = [];
         $limits[] = $normalize(ini_get('upload_max_filesize'));
 
-        if (($max_post = $normalize(ini_get('post_max_size'))) != 0) {
+        if (($max_post = $normalize(ini_get('post_max_size'))) !== 0) {
             $limits[] = $max_post;
         }
 
@@ -230,9 +228,7 @@ class StringHelper
             $limits[] = $memory_limit;
         }
 
-        $maxFileSize = min($limits);
-
-        return $maxFileSize;
+        return min($limits);
     }
 
     /**
@@ -242,7 +238,7 @@ class StringHelper
     {
         $maxUploadFileSize = self::detectMaxUploadFileSize();
 
-        if (!$maxUploadFileSize || $maxUploadFileSize === 0) {
+        if (!$maxUploadFileSize || $maxUploadFileSize == 0) {
             $maxUploadFileSize = 2097152;
         }
 
@@ -277,5 +273,15 @@ class StringHelper
     {
         $phone = filter_var(str_replace(['-'], [], $phone), FILTER_SANITIZE_NUMBER_INT);
         return str_replace('+8', '7', $phone);
+    }
+
+    /**
+     * @param string $string
+     * @return string
+     */
+    public static function clearHtmlTags(string $string): string
+    {
+        $string = preg_replace("/&#?[a-z0-9]+;/i", "", $string);
+        return strip_tags($string);
     }
 }

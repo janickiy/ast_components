@@ -106,6 +106,12 @@ class ManufacturersController extends Controller
     {
         $row = $this->manufacturerRepository->find($request->input('id'));
 
+        $image = $request->pic;
+
+        if ($image != null) {
+            $this->manufacturerService->deleteImage($row);
+        }
+
         if ($request->hasFile('image')) {
             $originName = $this->manufacturerService->updateImage($row, $request);
         }

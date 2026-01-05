@@ -24,10 +24,10 @@ class EditRequest extends FormRequest
         return [
             'id'      => 'required|integer|exists:news,id',
             'title'   => 'required',
-            'slug'    => 'required|unique:news',
+            'slug'  => 'required|unique:manufacturers,slug,' . $this->id,
             'preview' => 'required',
             'text'    => 'required',
-            'image'   => 'image|mimes:jpeg,jpg,png,gif|max:2048|nullable',
+            'image'   => 'image|mimes:jpeg,jpg,png|min:800,max:2048|nullable',
         ];
     }
 }

@@ -31,7 +31,10 @@
                                     <thead>
                                     <tr>
                                         <th>Имя</th>
+                                        <th>Компания</th>
+                                        <th>Телефон</th>
                                         <th>Email</th>
+                                        <th>Тип</th>
                                         <th>Сообщение</th>
                                         <th>IP</th>
                                         <th>Добавлен</th>
@@ -102,7 +105,10 @@
                         },
                         'columns': [
                             {data: 'name', name: 'name'},
+                            {data: 'company', name: 'company'},
+                            {data: 'phone', name: 'phone'},
                             {data: 'email', name: 'email'},
+                            {data: 'type', name: 'type', searchable: false},
                             {data: 'message', name: 'message', orderable: false, searchable: false},
                             {data: 'ip', name: 'ip'},
                             {data: 'created_at', name: 'created_at'},

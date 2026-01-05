@@ -13,6 +13,7 @@ class Catalog extends Model
 
     protected $fillable = [
         'name',
+        'parent_id',
         'meta_title',
         'meta_description',
         'meta_keywords',
@@ -138,7 +139,7 @@ class Catalog extends Model
 
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function parent(): BelongsTo
     {
@@ -146,7 +147,7 @@ class Catalog extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function children(): HasMany
     {
@@ -198,52 +199,6 @@ class Catalog extends Model
                 $catalog = $catalogs[$parent_id][$only_parent];
                 $cl .= '<li>' . $catalog['name'] . ' #' . $catalog['id'];
                 $cl .= self::buildTree($catalogs, $catalog['id'], true);
-                $cl .= '</li>';
-            }
-            $cl .= '</ul>';
-        }
-
-        return $cl;
-    }
-
-    /**
-     * @param array $catalogs
-     * @param int $parent_id
-     * @return string
-     */
-    public static function categoryTree(array $catalogs, int $parent_id): string
-    {
-        $cl = '';
-
-        if (isset($catalogs[$parent_id])) {
-            $cl .= '<ul class="header__product-menu-submenu-item ml-16">';
-            foreach ($catalogs[$parent_id] as $catalog) {
-                $cl .= '<li class="header__product-menu-submenu-item">';
-                $cl .= '<a class="header__product-menu-sublink" href="' . URL::route('frontend.catalog', ['slug' => $catalog['slug']]) . '">' . $catalog['name'] . '<span>' . Products::where('catalog_id', $catalog['id'])->where('published', 1)->count() . '</span></a>';
-                $cl .= self::categoryTree($catalogs, $catalog['id']);
-                $cl .= '</li>';
-            }
-            $cl .= '</ul>';
-        }
-
-        return $cl;
-    }
-
-    /**
-     * @param array $catalogs
-     * @param int $parent_id
-     * @return string
-     */
-    public static function categoryMobileTree(array $catalogs, int $parent_id): string
-    {
-        $cl = '';
-
-        if (isset($catalogs[$parent_id])) {
-            $cl .= '<ul class="ml-16">';
-            foreach ($catalogs[$parent_id] as $catalog) {
-                $cl .= '<li>';
-                $cl .= '<a class="header__mobile-submenu-sublink" href="' . URL::route('frontend.catalog', ['slug' => $catalog['slug']]) . '">' . $catalog['name'] . '<span>' . Products::where('catalog_id', $catalog['id'])->where('published', 1)->count() . '</span></a>';
-                $cl .= self::categoryTree($catalogs, $catalog['id']);
                 $cl .= '</li>';
             }
             $cl .= '</ul>';

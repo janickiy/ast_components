@@ -22,8 +22,9 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required',
+            'title' => 'required',
             'slug' => 'required|unique:manufacturers',
+            'image' => 'image|mimes:jpeg,jpg,png,gif|max:2048|nullable',
         ];
     }
 }

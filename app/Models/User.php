@@ -13,6 +13,8 @@ class User extends Authenticatable
     public const ROLE_MODERATOR = 'moderator';
     public const ROLE_EDITOR = 'editor';
 
+    public const ROLE_USER = 'user';
+
 
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -25,7 +27,6 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'login',
-        'description',
         'role',
         'password',
     ];
@@ -62,6 +63,7 @@ class User extends Authenticatable
             self::ROLE_ADMIN     => 'Админ',
             self::ROLE_MODERATOR => 'Модератор',
             self::ROLE_EDITOR    => 'Редактор',
+            self::ROLE_USER    => 'Пользователь',
         ];
     }
 }

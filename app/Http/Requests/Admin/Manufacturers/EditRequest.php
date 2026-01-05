@@ -23,7 +23,9 @@ class EditRequest extends FormRequest
     {
         return [
             'id'   => 'required|integer|exists:manufacturers,id',
+            'title' => 'required',
             'slug'  => 'required|unique:manufacturers,slug,' . $this->id,
+            'image' => 'image|mimes:jpeg,jpg,png,gif|max:2048|nullable',
         ];
     }
 }

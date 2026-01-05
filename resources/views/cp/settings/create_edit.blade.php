@@ -109,7 +109,7 @@
 
                                     {!! Form::label('value', 'Значение*') !!}
 
-                                    {!! Form::text('value', old('value'), ['class' => 'form-control']) !!}
+                                    {!! Form::text('value', old('value', $row->value ?? null ), ['class' => 'form-control']) !!}
 
                                 @endif
 
@@ -133,7 +133,7 @@
 
                             <div class="form-check">
 
-                                {!! Form::checkbox('published', 1, isset($row) ? ($row->published === true ? 1 : 0): 1, ['class' => 'form-check-input']) !!}
+                                {!! Form::checkbox('published', 1, isset($row) ? ($row->published): 1, ['class' => 'form-check-input']) !!}
 
                                 {!! Form::label('published', 'Публиковать', ['class' => 'form-check-label']) !!}
 

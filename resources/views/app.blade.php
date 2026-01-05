@@ -67,9 +67,8 @@
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
         <!-- Brand Logo -->
         <a href="{{ route('admin.dashboard.index') }}" class="brand-link">
-            <img src="{{ url('/dist/img/AdminLTELogo.png') }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
-                 style="opacity: .8">
-            <span class="brand-text font-weight-light">AdminLTE 3</span>
+            <img src="{{ url('../images/logo.svg') }}" alt="АСТ" class="brand-image  elevation-3" style="opacity: .8">
+            <span class="brand-text font-weight-light">АСТ</span>
         </a>
 
         <!-- Sidebar -->
@@ -217,6 +216,15 @@
                                        title="Robots.txt">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Robots.txt</p>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.redirect.index') }}"
+                                       class="nav-link{{ Request::is('cp/seo/redirect*') ? ' active' : '' }}"
+                                       title="Редирект">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Редирект</p>
                                     </a>
                                 </li>
 

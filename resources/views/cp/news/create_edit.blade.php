@@ -61,7 +61,7 @@
 
                                 {!! Form::label('text', 'Содержание*') !!}
 
-                                {!! Form::textarea('text', old('text', $row->description ?? null), ['rows' => "3", 'placeholder' => "Описание",  'id' => 'summernote', 'style' => "display: none;"]) !!}
+                                {!! Form::textarea('text', old('text', $row->text ?? null), ['rows' => "3", 'placeholder' => "Описание",  'id' => 'summernote', 'style' => "display: none;"]) !!}
 
                                 @if ($errors->has('text'))
                                     <p class="text-danger">{{ $errors->first('text') }}</p>
@@ -76,8 +76,7 @@
                                 <div class="input-group">
                                     <div class="custom-file">
                                         {!! Form::file('image',  [ 'class' => 'custom-file-input']) !!}
-
-                                        {!! Form::label('image', 'Выберите файл*', ['class' => 'custom-file-label']) !!}
+                                        {!! Form::label('image', 'Выберите файл (jpeg,jpg,png)*', ['class' => 'custom-file-label']) !!}
                                     </div>
                                     <div class="input-group-append">
                                         <span class="input-group-text">Обзор...</span>
@@ -206,13 +205,24 @@
 
                             <div class="form-check">
 
-
-                                {!! Form::checkbox('published', 1, isset($row) ? ($row->status): 1, ['class' => 'form-check-input']) !!}
+                                {!! Form::checkbox('published', 1, isset($row) ? ($row->published): 1, ['class' => 'form-check-input']) !!}
 
                                 {!! Form::label('published', 'Публиковать', ['class' => 'form-check-label']) !!}
 
                                 @if ($errors->has('published'))
                                     <p class="text-danger">{{ $errors->first('published') }}</p>
+                                @endif
+
+                            </div>
+
+                            <div class="form-check">
+
+                                {!! Form::checkbox('promotion', 1, isset($row) ? ($row->promotion): 0, ['class' => 'form-check-input']) !!}
+
+                                {!! Form::label('promotion', 'Акция', ['class' => 'form-check-label']) !!}
+
+                                @if ($errors->has('promotion'))
+                                    <p class="text-danger">{{ $errors->first('promotion') }}</p>
                                 @endif
 
                             </div>
@@ -265,13 +275,13 @@
 
             $("#title").on("change keyup input click", function () {
                 if (this.value.length >= 2) {
-                    let name = this.value;
+                    let title = this.value;
                     let request = $.ajax({
                         url: '{!! route('admin.ajax') !!}',
                         method: "POST",
                         data: {
                             action: "get_news_slug",
-                            name: name
+                            title: title
                         },
                         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                         dataType: "json"

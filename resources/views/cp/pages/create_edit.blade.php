@@ -132,7 +132,7 @@
 
                             <div class="form-check">
 
-                                {!! Form::checkbox('main', 0, isset($row) ? ($row->main): 0, ['class' => 'form-check-input']) !!}
+                                {!! Form::checkbox('main', 1, isset($row) ? ($row->main): 0, ['class' => 'form-check-input']) !!}
 
                                 {!! Form::label('main', 'Главная', ['class' => 'form-check-label']) !!}
 
@@ -156,8 +156,7 @@
 
                             <div class="form-check">
 
-
-                                {!! Form::checkbox('published', 1, isset($row) ? ($row->status): 1, ['class' => 'form-check-input']) !!}
+                                {!! Form::checkbox('published', 1, isset($row) ? ($row->published): 1, ['class' => 'form-check-input']) !!}
 
                                 {!! Form::label('published', 'Публиковать', ['class' => 'form-check-label']) !!}
 

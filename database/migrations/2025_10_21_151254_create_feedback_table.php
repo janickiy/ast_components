@@ -14,9 +14,12 @@ return new class extends Migration
         Schema::create('feedback', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email');
-            $table->string('message');
-            $table->string('ip')->nullable();
+            $table->string('phone', 50);
+            $table->string('email', 150);
+            $table->string('message')->nullable();
+            $table->string('attach')->nullable();
+            $table->string('ip', 50)->nullable();
+            $table->tinyInteger('type')->default(0);
             $table->timestamps();
         });
     }

@@ -1,27 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\{
-    AuthController,
-    AjaxController,
-    CatalogController,
-    DashboardController,
-    DataTableController,
-    FeedbackController,
-    PagesController,
-    ProductsController,
-    ProductParametersController,
-    ProductDocumentsController,
-    ManufacturersController,
-    NewsController,
-    MenuController,
-    UsersController,
-    SettingsController,
-    SeoController,
-    SitemapController,
-    RobotsController,
-};
-
 use App\Http\Controllers\FrontendController;
 
 /*
@@ -40,175 +19,31 @@ use App\Http\Controllers\FrontendController;
 Route::get('', [FrontendController::class, 'index'])->name('frontend.index');
 //Страницы и разделы
 Route::get('/page/{slug}', [FrontendController::class, 'page'])->name('frontend.page');
-//Реквизиты
-Route::get('/details', [FrontendController::class, 'details'])->name('frontend.details');
 //Пригласить на тендер
 Route::get('/invite', [FrontendController::class, 'invite'])->name('frontend.invite');
+Route::post('/invite', [FrontendController::class, 'sendInvite'])->name('frontend.send_invite');
 //Запрос номенклатуры
 Route::get('/nomenclature-request', [FrontendController::class, 'nomenclatureRequest'])->name('frontend.nomenclature_request');
+Route::post('/send-nomenclature-request', [FrontendController::class, 'sendNomenclatureRequest'])->name('frontend.send_nomenclature_request');
 //Новости
 Route::get('/news', [FrontendController::class, 'news'])->name('frontend.news');
 //Описание новости
-Route::get('/news/{slug}', [FrontendController::class, 'showNews'])->name('frontend.show_news');
-//Запрос номенклатуры
-Route::get('/contacts', [FrontendController::class, 'contacts'])->name('frontend.contacts');
+Route::get('/news/{slug}', [FrontendController::class, 'newsItem'])->name('frontend.news_item');
+//каталог
+Route::get('/catalog/{slug?}', [FrontendController::class, 'catalog'])->name('frontend.catalog');
 //Контакты
+Route::get('/contacts', [FrontendController::class, 'contacts'])->name('frontend.contacts');
+Route::post('/contacts', [FrontendController::class, 'sendFeedback'])->name('frontend.send_feedback');
+//Конверторы
 Route::get('/converters', [FrontendController::class, 'converters'])->name('frontend.converters');
-
 //Производители
 Route::get('/manufacturers', [FrontendController::class, 'manufacturers'])->name('frontend.manufacturers');
 // Описание производителя
-Route::get('/manufacturers/{slug}', [FrontendController::class, 'showManufacturers'])->name('frontend.show-manufacturers');
+Route::get('/manufacturer/{slug}', [FrontendController::class, 'manufacturer'])->name('frontend.manufacturer');
 
-//Авторизация
-Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('login', [AuthController::class, 'login'])->name('login.submit');
-Route::get('logout', [AuthController::class, 'logout'])->name('logout');
+Route::any('/get-subcategory', [FrontendController::class, 'getSubcategory'])->name('frontend.get_subcategory');
 
-Route::group(['prefix' => 'cp'], function () {
+// Доставка и оплата
+Route::any('/conditions', [FrontendController::class, 'conditions'])->name('frontend.conditions');
 
-    Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard.index');
-
-    //Управление контентом
-    Route::group(['prefix' => 'content'], function () {
-
-        //Меню
-        Route::any('manage-menus', [MenuController::class, 'index'])->name('admin.menu.index')->middleware(['permission:admin|moderator']);
-
-        //Страницы
-        Route::group(['prefix' => 'pages'], function () {
-            Route::get('', [PagesController::class, 'index'])->name('admin.pages.index');
-            Route::get('create', [PagesController::class, 'create'])->name('admin.pages.create');
-            Route::post('store', [PagesController::class, 'store'])->name('admin.pages.store');
-            Route::get('edit/{id}', [PagesController::class, 'edit'])->name('admin.pages.edit')->where('id', '[0-9]+');
-            Route::put('update', [PagesController::class, 'update'])->name('admin.pages.update');
-            Route::post('destroy', [PagesController::class, 'destroy'])->name('admin.pages.destroy');
-        });
-
-        //Раздел новости
-        Route::group(['prefix' => 'news'], function () {
-            Route::get('', [NewsController::class, 'index'])->name('admin.news.index');
-            Route::get('create', [NewsController::class, 'create'])->name('admin.news.create');
-            Route::post('store', [NewsController::class, 'store'])->name('admin.news.store');
-            Route::get('edit/{id}', [NewsController::class, 'edit'])->name('admin.news.edit')->where('id', '[0-9]+');
-            Route::put('update', [NewsController::class, 'update'])->name('admin.news.update');
-            Route::post('destroy', [NewsController::class, 'destroy'])->name('admin.news.destroy');
-        });
-    });
-
-    Route::group(['prefix' => 'goods'], function () {
-        //Каталог
-        Route::group(['prefix' => 'catalog'], function () {
-            Route::get('', [CatalogController::class, 'index'])->name('admin.catalog.index')->middleware(['permission:admin|moderator']);
-            Route::get('create', [CatalogController::class, 'create'])->name('admin.catalog.create')->middleware(['permission:admin|moderator']);
-            Route::post('store', [CatalogController::class, 'store'])->name('admin.catalog.store')->middleware(['permission:admin|moderator']);
-            Route::get('edit/{id}', [CatalogController::class, 'edit'])->name('admin.catalog.edit')->where('id', '[0-9]+')->middleware(['permission:admin|moderator']);
-            Route::put('update', [CatalogController::class, 'update'])->name('admin.catalog.update')->middleware(['permission:admin|moderator']);
-            Route::get('destroy/{id}', [CatalogController::class, 'destroy'])->name('admin.catalog.destroy')->where('id', '[0-9]+')->middleware(['permission:admin|moderator']);
-        });
-
-        //товары
-        Route::group(['prefix' => 'products'], function () {
-            Route::get('', [ProductsController::class, 'index'])->name('admin.products.index');
-            Route::get('create', [ProductsController::class, 'create'])->name('admin.products.create');
-            Route::post('store', [ProductsController::class, 'store'])->name('admin.products.store');
-            Route::get('edit/{id}', [ProductsController::class, 'edit'])->name('admin.products.edit')->where('id', '[0-9]+');
-            Route::put('update', [ProductsController::class, 'update'])->name('admin.products.update');
-            Route::post('destroy', [ProductsController::class, 'destroy'])->name('admin.products.destroy');
-        });
-
-        //техническая характеристика
-        Route::group(['prefix' => 'product-parameters'], function () {
-            Route::get('{product_id}', [ProductParametersController::class, 'index'])->name('admin.product_parameters.index')->where('product_id', '[0-9]+');
-            Route::get('create/{product_id}', [ProductParametersController::class, 'create'])->name('admin.product_parameters.create')->where('product_id', '[0-9]+');
-            Route::post('store', [ProductParametersController::class, 'store'])->name('admin.product_parameters.store');
-            Route::get('edit/{id}', [ProductParametersController::class, 'edit'])->name('admin.product_parameters.edit')->where('id', '[0-9]+');
-            Route::put('update', [ProductParametersController::class, 'update'])->name('admin.product_parameters.update');
-            Route::post('destroy', [ProductParametersController::class, 'destroy'])->name('admin.product_parameters.destroy');
-        });
-
-
-        //техническая документация
-        Route::group(['prefix' => 'product-documents'], function () {
-            Route::get('{product_id}', [ProductDocumentsController::class, 'index'])->name('admin.product_documents.index')->where('product_id', '[0-9]+');
-            Route::get('create/{product_id}', [ProductDocumentsController::class, 'create'])->name('admin.product_documents.create')->where('product_id', '[0-9]+');
-            Route::post('store', [ProductDocumentsController::class, 'store'])->name('admin.product_documents.store');
-            Route::get('edit/{id}', [ProductDocumentsController::class, 'edit'])->name('admin.product_documents.edit')->where('id', '[0-9]+');
-            Route::put('update', [ProductDocumentsController::class, 'update'])->name('admin.product_documents.update');
-            Route::post('destroy', [ProductDocumentsController::class, 'destroy'])->name('admin.product_documents.destroy');
-        });
-
-        //производители
-        Route::group(['prefix' => 'manufacturers'], function () {
-            Route::get('', [ManufacturersController::class, 'index'])->name('admin.manufacturers.index');
-            Route::get('create', [ManufacturersController::class, 'create'])->name('admin.manufacturers.create');
-            Route::post('store', [ManufacturersController::class, 'store'])->name('admin.manufacturers.store');
-            Route::get('edit/{id}', [ManufacturersController::class, 'edit'])->name('admin.manufacturers.edit')->where('id', '[0-9]+');
-            Route::put('update', [ManufacturersController::class, 'update'])->name('admin.manufacturers.update');
-            Route::post('destroy', [ManufacturersController::class, 'destroy'])->name('admin.manufacturers.destroy');
-        });
-    });
-
-    //Обратная связь
-    Route::get('feedback', FeedbackController::class)->name('admin.feedback.index');
-
-    //Раздел SEO
-    Route::group(['prefix' => 'seo'], function () {
-        Route::middleware(['permission:admin|moderator'])->group(function () {
-            Route::get('', [SeoController::class, 'index'])->name('admin.seo.index');
-            Route::get('edit/{id}', [SeoController::class, 'edit'])->name('admin.seo.edit')->where('id', '[0-9]+');
-            Route::put('update', [SeoController::class, 'update'])->name('admin.seo.update');
-
-            //карта сайта
-            Route::group(['prefix' => 'sitemap'], function () {
-                Route::get('', [SitemapController::class, 'index'])->name('admin.sitemap.index');
-                Route::get('export', [SitemapController::class, 'export'])->name('admin.sitemap.export');
-            });
-
-            //robots txt
-            Route::group(['prefix' => 'robots'], function () {
-                Route::get('edit', [RobotsController::class, 'edit'])->name('admin.robots.edit');
-                Route::put('update', [RobotsController::class, 'update'])->name('admin.robots.update');
-            });
-        });
-    });
-
-    Route::middleware(['permission:admin'])->group(function () {
-        Route::group(['prefix' => 'users'], function () {
-            Route::get('', [UsersController::class, 'index'])->name('admin.users.index');
-            Route::get('create', [UsersController::class, 'create'])->name('admin.users.create');
-            Route::post('store', [UsersController::class, 'store'])->name('admin.users.store');
-            Route::get('edit/{id}', [UsersController::class, 'edit'])->name('admin.users.edit')->where('id', '[0-9]+');
-            Route::put('update', [UsersController::class, 'update'])->name('admin.users.update');
-            Route::delete('destroy', [UsersController::class, 'destroy'])->name('admin.users.destroy')->where('id', '[0-9]+');
-        });
-    });
-
-    Route::middleware(['permission:admin'])->group(function () {
-        Route::group(['prefix' => 'settings'], function () {
-            Route::get('', [SettingsController::class, 'index'])->name('admin.settings.index');
-            Route::get('create/{type}', [SettingsController::class, 'create'])->name('admin.settings.create');
-            Route::post('store', [SettingsController::class, 'store'])->name('admin.settings.store');
-            Route::get('edit/{id}', [SettingsController::class, 'edit'])->name('admin.settings.edit')->where('id', '[0-9]+');
-            Route::put('update', [SettingsController::class, 'update'])->name('admin.settings.update');
-            Route::post('destroy', [SettingsController::class, 'destroy'])->name('admin.settings.destroy');
-        });
-    });
-
-    Route::any('ajax', AjaxController::class)->name('admin.ajax');
-
-    Route::group(['prefix' => 'datatable'], function () {
-        Route::any('category', [DataTableController::class, 'category'])->name('admin.datatable.category');
-        Route::any('pages', [DataTableController::class, 'pages'])->name('admin.datatable.pages');
-        Route::any('products', [DataTableController::class, 'products'])->name('admin.datatable.products');
-        Route::any('news', [DataTableController::class, 'news'])->name('admin.datatable.news');
-        Route::any('feedback', [DataTableController::class, 'feedback'])->name('admin.datatable.feedback');
-        Route::any('users', [DataTableController::class, 'users'])->name('admin.datatable.users')->middleware(['permission:admin']);
-        Route::any('settings', [DataTableController::class, 'settings'])->name('admin.datatable.settings')->middleware(['permission:admin']);
-        Route::any('manufacturers', [DataTableController::class, 'manufacturers'])->name('admin.datatable.manufacturers');
-        Route::any('seo', [DataTableController::class, 'seo'])->name('admin.datatable.seo')->middleware(['permission:admin']);
-        Route::any('product-documents/{product_id}', [DataTableController::class, 'productDocuments'])->name('admin.datatable.product_documents')->where('id', '[0-9]+');
-        Route::any('product-parameters/{product_id}', [DataTableController::class, 'productParameters'])->name('admin.datatable.product_parameters')->where('id', '[0-9]+');
-
-    });
-});
+Route::get('product/{slug}', [FrontendController::class, 'product'])->name('frontend.product');
