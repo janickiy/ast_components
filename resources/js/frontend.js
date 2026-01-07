@@ -30,7 +30,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
         setDisplayAccountTooltip();
     });
-    
+
     const yandexMap = document.getElementById("yandex-map");
 
     const initYandexMap = () => {
@@ -89,7 +89,7 @@ window.addEventListener('DOMContentLoaded', () => {
             headerSubmenu.classList.add('is-open');
         }
     });
-    
+
     // END Header submenu
 
     // Header menu
@@ -122,7 +122,7 @@ window.addEventListener('DOMContentLoaded', () => {
         headerSearch.classList.add('is-open-hint');
     }
 
-    const closeHint = () =>  {
+    const closeHint = () => {
         headerSearch.classList.remove('is-open-hint');
     }
 
@@ -146,7 +146,7 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    
+
     // END Header search hint
 
     // Mobile menu btns
@@ -219,7 +219,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const openCatalog = () => {
         headerCatalog.classList.add('is-open');
     }
-    
+
     const closeCatalog = () => {
         headerCatalog.classList.remove('is-open');
         headerCategoryItems[0].click();
@@ -254,7 +254,7 @@ window.addEventListener('DOMContentLoaded', () => {
         if (btn.getAttribute('aria-expanded') === 'true') {
             content.style.maxHeight = content.scrollHeight + 'px';
         }
-        
+
         btn.addEventListener('click', () => {
             expanded = btn.getAttribute('aria-expanded') === 'true';
             content = btn.nextElementSibling;
@@ -305,7 +305,7 @@ window.addEventListener('DOMContentLoaded', () => {
         })
     })
 
-    
+
     // END Modal
 
     // Sliders
@@ -427,13 +427,13 @@ window.addEventListener('DOMContentLoaded', () => {
     // END Sliders
 
     // Select
-        const element = document.querySelectorAll('.js-select');
-        element.forEach(select => {
-            const choices = new Choices(select, {
-                searchEnabled: false,
-                shouldSort: false,
-            });
+    const element = document.querySelectorAll('.js-select');
+    element.forEach(select => {
+        const choices = new Choices(select, {
+            searchEnabled: false,
+            shouldSort: false,
         });
+    });
     // END Select
 
     // Input file
@@ -472,7 +472,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const catalogFilterBtn = document.querySelector('.js-catalog-filters-btn');
     const catalogApplyBtn = document.querySelector('.js-catalog-apply-btn');
     const closeFilterBtn = document.querySelector('.js-close-filters-btn');
-    
+
 
     !!catalogFilterBtn && catalogFilterBtn.addEventListener('click', () => {
         catalog.classList.toggle('is-open-filters');
@@ -541,7 +541,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Tabs
     const tabs = document.querySelectorAll('.js-tab');
-    
+
     !!tabs && tabs.forEach(tab => {
         if (tab.checked) {
             const tabContent = document.querySelector(`[data-tab="${tab.id}"]`);
@@ -614,7 +614,82 @@ window.addEventListener('DOMContentLoaded', () => {
             closeModal(target.closest('.js-modal'));
         }
     });
-    //END Click outside    
+    //END Click outside
+
+    const loginModal = document.querySelector('.modal--login');
+    const registerModal = document.querySelector('.modal--sign-up');
+
+    const loginForm = document.querySelector('.modal--login .modal__form');
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        console.debug("LoginForm Submit", e)
+        const data = {
+            email: document.querySelector('#login-email').value,
+            password: document.querySelector('#login-password').value,
+        }
+
+        fetch('/api/v1/login', {
+            body: JSON.stringify(data),
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(response => {
+            console.debug("Login Response", response)
+            if (response.ok){
+                closeModal(loginModal);
+            }
+        })
+    })
+
+    const registerForm = document.querySelector('.modal--sign-up .modal__form');
+    if (registerForm) {
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            console.debug('RegisterForm Submit', e);
+
+            const name = document.querySelector('#sign-up-name')?.value || '';
+            const email = document.querySelector('#sign-up-phone')?.value || '';
+            const password = document.querySelector('#sign-up-password')?.value || '';
+            const passwordConfirmation = document.querySelector('#sign-up-password-confirm')?.value || password;
+
+            const data = {
+                name,
+                email, // backend expects `login` field (not `email`)
+                password,
+                password_confirmation: passwordConfirmation,
+            };
+
+            try {
+                const response = await fetch('/api/v1/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                let json = null;
+                try { json = await response.json(); } catch (err) { /* no json */ }
+                console.debug('Register Response', response.status, json);
+
+                if (!response.ok) {
+                    console.error('Register error', json);
+                    // TODO: show validation errors in the UI
+                    return;
+                }
+
+                // Success — do something (close modal, show message)
+                console.log('Registration succeeded', json);
+                closeModal(registerModal);
+            } catch (err) {
+                console.error('Register fetch failed', err);
+            }
+        });
+    } else {
+        console.debug('Register form not found: .modal--sign-up .modal__form');
+    }
 })
 
 function fix100vh() {

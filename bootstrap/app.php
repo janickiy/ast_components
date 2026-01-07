@@ -20,6 +20,10 @@ return Application::configure(basePath: dirname(__DIR__))
             Route::middleware('web')
                 ->prefix('cp')
                 ->group(base_path('routes/cp.php'));
+            // Load API routes (stateless)
+            Route::middleware('api')
+                ->prefix('api')
+                ->group(base_path('routes/api.php'));
         }
     )
     ->withMiddleware(function (Middleware $middleware) {
