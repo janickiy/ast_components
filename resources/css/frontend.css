@@ -15156,3 +15156,7 @@ span.product-desc__btn-type {
   margin-top: 8px;
   margin-bottom: 12px;
 }
+.btn[disabled] {
+  cursor: not-allowed;
+  opacity: 0.6;
+}

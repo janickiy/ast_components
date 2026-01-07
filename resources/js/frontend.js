@@ -627,6 +627,17 @@ window.addEventListener('DOMContentLoaded', () => {
         form.querySelector('.form-errors').innerHTML = resp.message || 'Ошибка при отправке формы';
     }
 
+    const getFormSubmitButton = (form) => {
+        return form.querySelector('button[type="submit"]');
+    }
+
+    const setFormLoading = (form, prom) => {
+        getFormSubmitButton(form).disabled = true;
+        prom.finally(() => {
+            getFormSubmitButton(form).disabled = false;
+        });
+    }
+
 
     const loginModal = document.querySelector('.modal--login');
     const registerModal = document.querySelector('.modal--sign-up');
@@ -643,7 +654,7 @@ window.addEventListener('DOMContentLoaded', () => {
             password: document.querySelector('#login-password').value,
         }
 
-        fetch('/api/v1/login', {
+        const prom = fetch('/api/v1/login', {
             body: JSON.stringify(data),
             method: 'POST',
             headers: {
@@ -651,65 +662,59 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         }).then(async (response) => {
             console.debug("Login Response", response)
-
             const json = await response.json()
-            setFormErrors(loginForm, json);
 
             if (response.ok) {
                 closeModal(loginModal);
+            } else {
+                setFormErrors(loginForm, json);
             }
         })
+        setFormLoading(loginForm, prom)
     })
 
     const registerForm = document.querySelector('.modal--sign-up .modal__form');
-    if (registerForm) {
-        registerForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            console.debug('RegisterForm Submit', e);
+    registerForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        console.debug('RegisterForm Submit', e);
 
-            const name = document.querySelector('#sign-up-name')?.value || '';
-            const email = document.querySelector('#sign-up-phone')?.value || '';
-            const password = document.querySelector('#sign-up-password')?.value || '';
-            const passwordConfirmation = document.querySelector('#sign-up-password-confirm')?.value || password;
+        const name = document.querySelector('#sign-up-name')?.value || '';
+        const email = document.querySelector('#sign-up-phone')?.value || '';
+        const password = document.querySelector('#sign-up-password')?.value || '';
+        const passwordConfirmation = document.querySelector('#sign-up-password-confirm')?.value || password;
 
-            const data = {
-                name,
-                email,
-                password,
-                password_confirmation: passwordConfirmation,
-            };
+        const data = {
+            name,
+            email,
+            password,
+            password_confirmation: passwordConfirmation,
+        };
 
-            try {
-                const response = await fetch('/api/v1/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                    },
-                    body: JSON.stringify(data),
-                });
+        const prom = fetch('/api/v1/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify(data),
+        }).then(async (response) => {
+            let json = null;
+            try { json = await response.json(); } catch (err) { /* no json */ }
+            console.debug('Register Response', response.status, json);
 
-                let json = null;
-                try { json = await response.json(); } catch (err) { /* no json */ }
-                console.debug('Register Response', response.status, json);
-
-                if (!response.ok) {
-                    console.error('Register error', json);
-                    setFormErrors(registerForm, json);
-                    return;
-                }
-
-                // Success — do something (close modal, show message)
-                console.log('Registration succeeded', json);
+            if (response.ok) {
                 closeModal(registerModal);
                 openModalManual(registerSuccesModal);
-            } catch (err) {
-                console.error('Register fetch failed', err);
+            } else {
+                console.error('Register error', json);
+                setFormErrors(registerForm, json);
             }
+        }).catch(err => {
+            console.error('Register fetch failed', err);
         });
-    } else {
-        console.debug('Register form not found: .modal--sign-up .modal__form');
-    }
+
+        setFormLoading(registerForm, prom);
+    });
 })
 
 function fix100vh() {
