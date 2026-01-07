@@ -20,7 +20,10 @@ return new class extends Migration
             $table->string('thumbnail')->nullable();
             $table->string('origin')->nullable();
             $table->unsignedBigInteger('catalog_id');
-            $table->integer('price')->default(0);
+            $table->unsignedBigInteger('manufacturer_id');
+            $table->decimal('price', 10)->nullable();
+            $table->boolean('in_stock')->default(1);
+            $table->boolean('under_order')->default(0);
             $table->string('meta_title')->nullable();
             $table->string('meta_description')->nullable();
             $table->string('meta_keywords')->nullable();
@@ -30,10 +33,10 @@ return new class extends Migration
             $table->boolean('seo_sitemap')->default(1);
             $table->string('image_title')->nullable();
             $table->string('image_alt')->nullable();
-            $table->boolean('published')->default(1);
             $table->timestamps();
 
             $table->foreign('catalog_id')->references('id')->on('catalogs')->onDelete('cascade');
+            $table->foreign('manufacturer_id')->references('id')->on('manufacturers')->onDelete('cascade');
 
         });
     }

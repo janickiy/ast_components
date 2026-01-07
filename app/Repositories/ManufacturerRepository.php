@@ -46,6 +46,14 @@ class ManufacturerRepository extends BaseRepository
     }
 
     /**
+     * @return array
+     */
+    public function getOptions(): array
+    {
+        return Manufacturers::orderBy('title')->get()->pluck('title', 'id')->toArray();
+    }
+
+    /**
      * @param int $id
      * @return void
      */

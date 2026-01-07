@@ -59,9 +59,21 @@
 
                             <div class="form-group">
 
+                                {!! Form::label('manufacturer_id',  "Производитель*") !!}
+
+                                {!! Form::select('manufacturer_id', $manufacturerOptions, old('manufacturer_id', $row->manufacturer_id ?? null), ['class' => 'custom-select form-control-border']) !!}
+
+                                @if ($errors->has('manufacturer_id'))
+                                    <p class="text-danger">{{ $errors->first('manufacturer_id') }}</p>
+                                @endif
+
+                            </div>
+
+                            <div class="form-group">
+
                                 {!! Form::label('description', 'Описание*') !!}
 
-                                {!! Form::textarea('description', old('description', $row->description ?? null), ['rows' => "3", 'placeholder' => "Описание",  'id' => 'summernote', 'style' => "display: none;"]) !!}
+                                {!! Form::textarea('description', old('description', $row->description ?? null), ['rows' => "5", 'class' => 'form-control', 'placeholder' => "Описание"]) !!}
 
                                 @if ($errors->has('description'))
                                     <p class="text-danger">{{ $errors->first('description') }}</p>
@@ -113,7 +125,7 @@
                                     <div class="custom-file">
                                         {!! Form::file('image',  [ 'class' => 'custom-file-input']) !!}
 
-                                        {!! Form::label('image', 'Выберите файл*', ['class' => 'custom-file-label']) !!}
+                                        {!! Form::label('image', 'Выберите файл (jpg,png,gif)*', ['class' => 'custom-file-label']) !!}
                                     </div>
                                     <div class="input-group-append">
                                         <span class="input-group-text">Обзор...</span>
@@ -185,7 +197,6 @@
 
                                 {!! Form::textarea('meta_description', old('meta_description', $row->meta_description ?? null), ['rows' => "3", 'class' => 'form-control']) !!}
 
-
                                 @if ($errors->has('meta_description'))
                                     <p class="text-danger">{{ $errors->first('meta_description') }}</p>
                                 @endif
@@ -242,13 +253,24 @@
 
                             <div class="form-check">
 
+                                {!! Form::checkbox('in_stock', 1, isset($row) ? ($row->in_stock): 1, ['class' => 'form-check-input']) !!}
 
-                                {!! Form::checkbox('published', 1, isset($row) ? ($row->published): 1, ['class' => 'form-check-input']) !!}
+                                {!! Form::label('in_stock', 'В наличии', ['class' => 'form-check-label']) !!}
 
-                                {!! Form::label('published', 'Публиковать', ['class' => 'form-check-label']) !!}
+                                @if ($errors->has('in_stock'))
+                                    <p class="text-danger">{{ $errors->first('in_stock') }}</p>
+                                @endif
 
-                                @if ($errors->has('published'))
-                                    <p class="text-danger">{{ $errors->first('published') }}</p>
+                            </div>
+
+                            <div class="form-check">
+
+                                {!! Form::checkbox('under_order', 1, isset($row) ? ($row->under_order): 0, ['class' => 'form-check-input']) !!}
+
+                                {!! Form::label('under_order', 'Под заказ', ['class' => 'form-check-label']) !!}
+
+                                @if ($errors->has('under_order'))
+                                    <p class="text-danger">{{ $errors->first('under_order') }}</p>
                                 @endif
 
                             </div>

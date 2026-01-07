@@ -17,6 +17,7 @@ class Products extends Model
         'n_number',
         'article',
         'catalog_id',
+        'manufacturer_id',
         'price',
         'meta_title',
         'meta_description',
@@ -27,26 +28,27 @@ class Products extends Model
         'seo_sitemap',
         'thumbnail',
         'origin',
-        'published',
         'image_title',
         'image_alt',
+        'under_order',
+        'in_stock'
     ];
 
     /**
      * @param $query
      * @return mixed
      */
-    public function scopePublished($query)
+    public function scopeInStock($query)
     {
-        return $query->where('published', 1);
+        return $query->where('in_stock', 1);
     }
 
     /**
      * @return string
      */
-    public function getPublishedAttribute(): string
+    public function getInStockAttribute(): string
     {
-        return $this->attributes['published'] ? 'публикован' : 'не опубликован';
+        return $this->attributes['in_stock'] ? 'В наличии' : 'Нет в наличии';
     }
 
     /**
@@ -54,7 +56,7 @@ class Products extends Model
      */
     public function getStatusAttribute()
     {
-        return $this->attributes['published'];
+        return $this->attributes['in_stock'];
     }
 
     /**
@@ -63,6 +65,14 @@ class Products extends Model
     public function catalog(): BelongsTo
     {
         return $this->belongsTo(Catalog::class, 'catalog_id', 'id');
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function manufacturer(): BelongsTo
+    {
+        return $this->belongsTo(Manufacturers::class , 'manufacturer_id', 'id');
     }
 
     /**

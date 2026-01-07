@@ -10,17 +10,13 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('product_parameters', function (Blueprint $table) {
-            $table->id();
+        Schema::create('clients', function (Blueprint $table) {
+            $table->bigIncrements('id');
             $table->string('name');
-            $table->string('value');
-            $table->unsignedBigInteger('product_id');
+            $table->string('email', 100)->unique();
+            $table->string('password');
+            $table->string('phone', 100)->nullable();
             $table->timestamps();
-
-            $table->foreign('product_id')
-                ->references('id')
-                ->on('products')
-                ->onDelete('cascade');
         });
     }
 
@@ -29,6 +25,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('product_parameters');
+        Schema::dropIfExists('clients');
     }
 };

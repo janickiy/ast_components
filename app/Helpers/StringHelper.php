@@ -154,7 +154,8 @@ class StringHelper
             ">" => "",
             "!" => "",
             "\(" => "",
-            "\)" => ""
+            "\)" => "",
+            "/" => "",
         ];
 
         foreach ($tr as $ru => $en) {
@@ -204,10 +205,10 @@ class StringHelper
         /**
          * Converts shorthands like "2M" or "512K" to bytes
          *
-         * @param int $size
+         * @param string $size
          * @return int|float|bool
          */
-        $normalize = function (int $size): int|float|bool {
+        $normalize = function (string $size): int|float|bool {
             if (preg_match('/^(-?[\d\.]+)(|[KMG])$/i', $size, $match)) {
                 $pos = array_search($match[2], ["", "K", "M", "G"]);
                 $size = $match[1] * pow(1024, $pos);

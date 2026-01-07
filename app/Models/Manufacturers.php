@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Manufacturers extends Model
 {
@@ -58,6 +59,14 @@ class Manufacturers extends Model
         $image = $x ? $x . $this->image : $this->image;
 
         return Storage::disk('public')->url('manufacturers/' . $image);
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function products(): BelongsTo
+    {
+        return $this->belongsTo(Products::class);
     }
 
     /**

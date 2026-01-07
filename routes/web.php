@@ -1,7 +1,8 @@
 <?php
 
+use App\Http\Controllers\Frontend\FrontendController;
+use App\Http\Controllers\Frontend\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\FrontendController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,3 +48,8 @@ Route::any('/get-subcategory', [FrontendController::class, 'getSubcategory'])->n
 Route::any('/conditions', [FrontendController::class, 'conditions'])->name('frontend.conditions');
 
 Route::get('product/{slug}', [FrontendController::class, 'product'])->name('frontend.product');
+
+
+Route::group(['prefix' => 'profile'], function () {
+    Route::get('', [ProfileController::class, 'index'])->name('frontend.profile.index');
+});

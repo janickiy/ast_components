@@ -1,0 +1,179 @@
+document.addEventListener('DOMContentLoaded', function() {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    // --- ХЕЛПЕРЫ ---
+
+    // Функция отправки
+    async function sendRequest(url, formData) {
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            });
+            const data = await response.json();
+            return { ok: response.ok, data: data, status: response.status };
+        } catch (error) {
+            console.error('Error:', error);
+            return { ok: false, data: { message: 'Ошибка сети. Попробуйте позже.' } };
+        }
+    }
+
+    // Функция вывода результата в <div class="result">
+    function showResult(form, type, content) {
+        const resultDiv = form.querySelector('.result');
+        if (!resultDiv) return;
+
+        resultDiv.innerHTML = ''; // Очистка
+
+        if (type === 'success') {
+            resultDiv.innerHTML = `<div class="message-success">${content}</div>`;
+        } else {
+            // Обработка ошибок (строка или объект Laravel)
+            let errorHtml = '';
+            if (typeof content === 'object') {
+                errorHtml = '<ul>';
+                for (const field in content) {
+                    content[field].forEach(err => {
+                        errorHtml += `<li>${err}</li>`;
+                    });
+                }
+                errorHtml += '</ul>';
+            } else {
+                errorHtml = content;
+            }
+            resultDiv.innerHTML = `<div class="message-error">${errorHtml}</div>`;
+        }
+    }
+
+    // --- ОБРАБОТЧИКИ ФОРМ ---
+
+    // 1. Вход (Login)
+    const loginForm = document.querySelector('.modal[data-modal-name="login"] form');
+    if (loginForm) {
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const resultDiv = this.querySelector('.result');
+            if(resultDiv) resultDiv.innerHTML = 'Загрузка...';
+
+            const formData = new FormData();
+            // Ищем поле по типу email или по ID
+            const emailField = this.querySelector('input[type="email"]') || this.querySelector('#login-email');
+            const passwordField = this.querySelector('input[type="password"]');
+
+            formData.append('email', emailField.value);
+            formData.append('password', passwordField.value);
+
+            const result = await sendRequest('/ajax/login', formData);
+
+            if (result.ok) {
+                showResult(this, 'success', 'Вход выполнен! Перезагрузка страницы...');
+                setTimeout(() => window.location.reload(), 1000);
+            } else {
+                // Если есть errors от валидации Laravel, берем их, иначе message
+                const msg = result.data.errors || result.data.message;
+                showResult(this, 'error', msg);
+            }
+        });
+    }
+
+    // 2. Регистрация (Register)
+    const registerForm = document.querySelector('.modal[data-modal-name="sign-up"] form');
+    if (registerForm) {
+        // Ищем кнопку сабмита внутри формы регистрации
+        const regBtn = registerForm.querySelector('button[type="submit"]') || registerForm.querySelector('button.btn--primary');
+        
+        // Если кнопка не type="submit", вешаем клик, иначе событие submit на форму
+        if (regBtn.type !== 'submit') {
+            regBtn.addEventListener('click', async function(e) {
+                e.preventDefault();
+                handleRegister(registerForm);
+            });
+        } else {
+            registerForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                handleRegister(registerForm);
+            });
+        }
+    }
+
+    async function handleRegister(form) {
+        const resultDiv = form.querySelector('.result');
+        if(resultDiv) resultDiv.innerHTML = 'Загрузка...';
+
+        const formData = new FormData();
+        formData.append('name', document.getElementById('sign-up-name').value);
+        formData.append('email', document.getElementById('sign-up-phone').value);
+        formData.append('password', document.getElementById('sign-up-password').value);
+
+        // Чекбокс согласия
+        const agreementCheckbox = document.getElementById('sign-up-agreement');
+        if (agreementCheckbox && agreementCheckbox.checked) {
+            formData.append('agreement', 'yes');
+        }
+
+        const result = await sendRequest('/ajax/register', formData);
+
+        if (result.ok) {
+            // 1. Очищаем форму
+            form.reset();
+            if(resultDiv) resultDiv.innerHTML = ''; 
+
+            // 2. Находим модальные окна
+            const signUpModal = document.querySelector('.js-modal[data-modal-name="sign-up"]');
+            const successModal = document.querySelector('.js-modal[data-modal-name="sign-up-success"]');
+
+            // 3. Закрываем окно регистрации
+            if (signUpModal) {
+                signUpModal.classList.remove('is-open');
+            }
+
+            // 4. Открываем окно успеха
+            if (successModal) {
+                successModal.classList.add('is-open');
+            }
+            
+            // 5. Убеждаемся, что прокрутка body заблокирована (стиль шаблона)
+            document.body.classList.add('no-scroll');
+
+        } else {
+            const msg = result.data.errors || result.data.message;
+            showResult(form, 'error', msg);
+        }
+    }
+
+    // 3. Восстановление пароля
+    const recoveryForm = document.querySelector('.modal[data-modal-name="password-recovery"] form');
+    if (recoveryForm) {
+        const recoverBtn = recoveryForm.querySelector('button.btn--primary');
+        // Проверяем тип кнопки, чтобы не дублировать события
+        const eventType = recoverBtn.type === 'submit' ? 'submit' : 'click';
+        const target = recoverBtn.type === 'submit' ? recoveryForm : recoverBtn;
+
+        target.addEventListener(eventType, async function(e) {
+            e.preventDefault();
+            const resultDiv = recoveryForm.querySelector('.result');
+            if(resultDiv) resultDiv.innerHTML = 'Отправка...';
+            
+            // Скрываем стандартное сообщение успеха верстки, будем использовать .result
+            const staticSuccess = recoveryForm.querySelector('.success-message');
+            if(staticSuccess) staticSuccess.style.display = 'none';
+
+            const emailInput = document.getElementById('recovery-phone');
+            const formData = new FormData();
+            formData.append('email', emailInput.value);
+
+            const result = await sendRequest('/ajax/password/email', formData);
+
+            if (result.ok) {
+                showResult(recoveryForm, 'success', result.data.message || 'Ссылка отправлена на почту');
+            } else {
+                const msg = result.data.errors || result.data.message;
+                showResult(recoveryForm, 'error', msg);
+            }
+        });
+    }
+});

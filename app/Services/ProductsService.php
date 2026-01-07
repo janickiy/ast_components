@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\Products;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -20,11 +22,10 @@ class ProductsService
         $thumbnailFileNameToStore = 'thumbnail_' . $filename;
 
         if ($request->file('image')->move('uploads/products', $fileNameToStore)) {
-            $img = Image::make(Storage::disk('public')->path('products/' . $fileNameToStore));
-            $img->resize(null, 300, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-            $img->save(Storage::disk('public')->path('products/' . $thumbnailFileNameToStore));
+            $manager = new ImageManager(new Driver());
+            $image = $manager->read(Storage::disk('public')->path('products/' . $fileNameToStore));
+            $image->scale(width: 300);
+            $image->save(Storage::disk('public')->path('products/' . $thumbnailFileNameToStore));
         }
 
         return $filename;
@@ -35,7 +36,7 @@ class ProductsService
      * @param Request $request
      * @return string
      */
-    public function updateImage(Products $product, Request $request): string
+    public function updateImage(Request $request, Products $product): string
     {
         $image = $request->pic;
 
@@ -53,15 +54,13 @@ class ProductsService
         $thumbnailFileNameToStore = 'thumbnail_' . $filename;
 
         if ($request->file('image')->move('uploads/products', $fileNameToStore)) {
-            $img = Image::make(Storage::disk('public')->path('products/' . $fileNameToStore));
-            $img->resize(null, 300, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-
-            if ($img->save(Storage::disk('public')->path('products/' . $thumbnailFileNameToStore))) {
-                $product->thumbnail = $thumbnailFileNameToStore;
-                $product->origin = $fileNameToStore;
-            }
+            $manager = new ImageManager(new Driver());
+            $image = $manager->read(Storage::disk('public')->path('products/' . $fileNameToStore));
+            $image->scale(width: 300);
+            $image->save(Storage::disk('public')->path('products/' . $thumbnailFileNameToStore));
+            $product->thumbnail = $thumbnailFileNameToStore;
+            $product->origin = $fileNameToStore;
+            $product->save();
         }
 
         return $filename;

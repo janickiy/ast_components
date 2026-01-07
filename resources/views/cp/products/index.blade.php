@@ -42,10 +42,11 @@
                                         <th>Название</th>
                                         <th>Фото</th>
                                         <th>Категория</th>
+                                        <th>Производитель</th>
                                         <th>Артикул</th>
                                         <th>Номенклатурный номер</th>
                                         <th>Slug</th>
-                                        <th>Опубликован</th>
+                                        <th>В наличии</th>
                                         <th>Добавлен</th>
                                         <th style="width: 10%">Действия</th>
                                     </tr>
@@ -119,10 +120,11 @@
                             {data: 'title', name: 'title'},
                             {data: 'thumbnail', name: 'thumbnail', searchable: false},
                             {data: 'catalog', name: 'catalogs.name'},
+                            {data: 'manufacturer', name: 'manufacturers.title'},
                             {data: 'article', name: 'article'},
                             {data: 'n_number', name: 'n_number'},
                             {data: 'slug', name: 'slug'},
-                            {data: 'published', name: 'published', searchable: false},
+                            {data: 'in_stock', name: 'in_stock', searchable: false},
                             {data: 'created_at', name: 'created_at'},
                             {data: 'actions', name: 'actions', orderable: false, searchable: false},
                         ]

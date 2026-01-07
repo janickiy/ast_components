@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Cache;
 
 class Catalog extends Model
 {
@@ -29,7 +30,7 @@ class Catalog extends Model
      */
     public function products(): HasMany
     {
-        return $this->hasMany(Products::class, 'catalog_id', 'id')->where('published', 1);
+        return $this->hasMany(Products::class, 'catalog_id', 'id');
     }
 
     /**
@@ -74,7 +75,9 @@ class Catalog extends Model
      */
     public function getProductCount(): int
     {
-        return (int)Products::where('catalog_id', $this->id)->where('published', 1)->count();
+        Cache::remember('product-count', now()->addHour(), function () {
+            return (int)Products::where('catalog_id', $this->id)->count();
+        });
     }
 
     /**
@@ -101,11 +104,20 @@ class Catalog extends Model
      */
     public function getTotalProductCount(): int
     {
-        $allChildren = [$this->id];
+        $key = 'total-product-count-' . $this->id;
 
-        self::getAllChildren(self::query()->orderBy('name')->get(), $allChildren, $this->id);
+        if (Cache::has($key)) {
+            return Cache::get($key);
+        } else {
+            $allChildren = [$this->id];
 
-        return Products::query()->whereIn('catalog_id', $allChildren)->count();
+            self::getAllChildren(self::query()->orderBy('name')->get(), $allChildren, $this->id);
+
+            $value = Products::query()->whereIn('catalog_id', $allChildren)->count();
+            Cache::put($key, $value);
+
+            return $value;
+        }
     }
 
     /**
@@ -230,13 +242,19 @@ class Catalog extends Model
      */
     public static function getCatalogList(): array
     {
-        $catalogs = self::query()->orderBy('name')->get();
-        $catalogsList = [];
+        if (Cache::has('catalog')) {
+            return Cache::get('catalog');
+        } else {
+            $catalogs = self::query()->orderBy('name')->get();
+            $catalogsList = [];
 
-        foreach ($catalogs->toArray() ?? [] as $catalog) {
-            $catalogsList[$catalog['parent_id']][$catalog['id']] = $catalog;
+            foreach ($catalogs->toArray() ?? [] as $catalog) {
+                $catalogsList[$catalog['parent_id']][$catalog['id']] = $catalog;
+            }
+
+            Cache::put('catalog', $catalogsList);
+
+            return $catalogsList;
         }
-
-        return $catalogsList;
     }
 }

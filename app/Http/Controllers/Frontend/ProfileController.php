@@ -3,82 +3,57 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Frontend\Profile\UpdateProfileRequest;
-use App\Http\Requests\Frontend\Profile\ChangePasswordRequest;
 use App\Helpers\MenuHelper;
 use App\Models\Catalog;
+use App\Models\Feedback;
+use App\Models\Seo;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Contracts\View\View;
 
 class ProfileController extends Controller
 {
-    protected function getViewData(string $title = 'Личный кабинет'): array
+    /**
+     * Страница профиля
+     *
+     * @return View
+     */
+    public function index(): View
     {
+        $seo = Seo::getSeo('frontend.profile', 'Личный кабинет');
+        $title = $seo['title'];
+        $meta_description = $seo['meta_description'];
+        $meta_keywords = $seo['meta_keywords'];
+        $meta_title = $seo['meta_title'];
+        $seo_url_canonical = $seo['seo_url_canonical'];
+        $h1 = $seo['h1'];
+
         $menu = MenuHelper::getMenuList();
         $catalogsList = Catalog::getCatalogList();
         $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
+        $options = Feedback::getPlatformList();
 
-        return [
-            'title' => $title,
-            'meta_description' => '',
-            'meta_keywords' => '',
-            'meta_title' => $title,
-            'seo_url_canonical' => '',
-            'h1' => $title,
-            'menu' => $menu,
-            'catalogsList' => $catalogsList,
-            'catalogs' => $catalogs,
-        ];
+        return view('frontend.profile.index', compact(
+                'meta_description',
+                'meta_keywords',
+                'meta_title',
+                'menu',
+                'options',
+                'catalogs',
+                'catalogsList',
+                'h1',
+                'seo_url_canonical',
+                'title'
+            )
+        )->with('title', $title);
     }
 
-    public function index(): View
+    public function orders()
     {
-        $user = Auth::user();
-        $data = $this->getViewData('Личный кабинет');
 
-        return view('frontend.profile.index', array_merge($data, [
-            'user' => $user,
-        ]));
     }
 
-    public function edit(): View
+    public function complaints()
     {
-        $user = Auth::user();
-        $data = $this->getViewData('Редактирование профиля');
 
-        return view('frontend.profile.edit', array_merge($data, [
-            'user' => $user,
-        ]));
-    }
-
-    public function update(UpdateProfileRequest $request): RedirectResponse
-    {
-        $user = Auth::user();
-        $user->update([
-            'name' => $request->name,
-        ]);
-
-        return redirect()->route('frontend.profile.index')
-            ->with('success', 'Профиль успешно обновлен');
-    }
-
-    public function showChangePasswordForm(): View
-    {
-        $data = $this->getViewData('Смена пароля');
-
-        return view('frontend.profile.change-password', $data);
-    }
-
-    public function changePassword(ChangePasswordRequest $request): RedirectResponse
-    {
-        $user = Auth::user();
-        $user->update([
-            'password' => Hash::make($request->password),
-        ]);
-
-        return redirect()->route('frontend.profile.index')
-            ->with('success', 'Пароль успешно изменен');
     }
 }

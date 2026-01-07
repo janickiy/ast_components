@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Products;
+use Illuminate\Http\Request;
 
 class ProductsRepository extends BaseRepository
 {
@@ -33,6 +34,7 @@ class ProductsRepository extends BaseRepository
             $product->title = $data['title'];
             $product->description = $data['description'];
             $product->catalog_id = $data['catalog_id'];
+            $product->manufacturer_id = $data['manufacturer_id'];
             $product->price = $data['price'];
             $product->meta_title = $data['meta_title'];
             $product->meta_description = $data['meta_description'];
@@ -43,16 +45,8 @@ class ProductsRepository extends BaseRepository
             $product->seo_sitemap = $data['seo_sitemap'];
             $product->image_title = $data['image_title'];
             $product->image_alt = $data['image_alt'];
-            $product->published = $data['published'];
-
-            if ($data['thumbnail']) {
-                $product->thumbnail = $data['thumbnail'];
-            }
-
-            if ($data['origin']) {
-                $product->origin = $data['origin'];
-            }
-
+            $product->in_stock = $data['in_stock'];
+            $product->under_order = $data['under_order'];
             $product->save();
         }
         return null;
@@ -71,4 +65,29 @@ class ProductsRepository extends BaseRepository
         }
     }
 
+    /**
+     * @param Request $request
+     * @param int $id
+     * @return array
+     */
+    public function setViewed(Request $request, int $id): array
+    {
+        $product = $this->model->find($id);
+
+        $productIds = null;
+
+        if ($product) {
+            if ($request->session()->has('productIds')) {
+                $productIds = $request->session()->get('productIds');
+                array_push($productIds, $product->id);
+                $productIds = array_unique($productIds);
+                $request->session()->put(['productIds' => $productIds]);
+            } else {
+                $productIds = [$product->id];
+                $request->session()->put(['productIds' => $productIds]);
+            }
+        }
+
+        return $productIds;
+    }
 }

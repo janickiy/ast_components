@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Catalog;
+
 use App\Repositories\CatalogRepository;
 use App\Repositories\ProductsRepository;
+use App\Repositories\ManufacturerRepository;
 use App\Services\ProductsService;
 use App\Helpers\StringHelper;
 use App\Http\Requests\Admin\Products\EditRequest;
 use App\Http\Requests\Admin\Products\StoreRequest;
 use App\Http\Requests\Admin\Products\DeleteRequest;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 
@@ -32,15 +32,23 @@ class ProductsController extends Controller
     private CatalogRepository $categoryRepository;
 
     /**
+     * @var ManufacturerRepository
+     */
+    private ManufacturerRepository $manufacturerRepository;
+
+
+    /**
      * @param ProductsRepository $productRepository
      * @param ProductsService $productService
      * @param CatalogRepository $categoryRepository
+     * @param ManufacturerRepository $manufacturerRepository
      */
-    public function __construct(ProductsRepository $productRepository, ProductsService $productService, CatalogRepository $categoryRepository)
+    public function __construct(ProductsRepository $productRepository, ProductsService $productService, CatalogRepository $categoryRepository, ManufacturerRepository $manufacturerRepository)
     {
         $this->productRepository = $productRepository;
         $this->productService = $productService;
         $this->categoryRepository = $categoryRepository;
+        $this->manufacturerRepository = $manufacturerRepository;
         parent::__construct();
     }
 
@@ -58,9 +66,10 @@ class ProductsController extends Controller
     public function create(): View
     {
         $options = $this->categoryRepository->getOptions();
+        $manufacturerOptions = $this->manufacturerRepository->getOptions();
         $maxUploadFileSize = StringHelper::maxUploadFileSize();
 
-        return view('cp.products.create_edit', compact('options', 'maxUploadFileSize'))->with('title', 'Добавление продукции');
+        return view('cp.products.create_edit', compact('options', 'manufacturerOptions', 'maxUploadFileSize'))->with('title', 'Добавление продукции');
     }
 
     /**
@@ -103,9 +112,10 @@ class ProductsController extends Controller
         if (!$row) abort(404);
 
         $options = $this->categoryRepository->getOptions();
+        $manufacturerOptions = $this->manufacturerRepository->getOptions();
         $maxUploadFileSize = StringHelper::maxUploadFileSize();
 
-        return view('cp.products.create_edit', compact('row', 'options', 'maxUploadFileSize'))->with('title', 'Редактирование продукции');
+        return view('cp.products.create_edit', compact('row', 'options', 'manufacturerOptions', 'maxUploadFileSize'))->with('title', 'Редактирование продукции');
     }
 
     /**
@@ -116,15 +126,19 @@ class ProductsController extends Controller
     {
         if ($request->hasFile('image')) {
             $product = $this->productRepository->find($request->id);
-            $filename = $this->productService->updateImage($product, $request);
-            $fileNameToStore = 'origin_' . $filename;
-            $thumbnailFileNameToStore = 'thumbnail_' . $filename;
+            $this->productService->updateImage($request, $product);
         }
 
-        $published = 0;
+        $in_stock = 0;
 
-        if ($request->input('published')) {
-            $published = 1;
+        if ($request->input('in_stock')) {
+            $in_stock = 1;
+        }
+
+        $under_order = 0;
+
+        if ($request->input('under_order')) {
+            $under_order = 1;
         }
 
         $seo_sitemap = 0;
@@ -134,10 +148,9 @@ class ProductsController extends Controller
         }
 
         $this->productRepository->update($request->id, array_merge($request->all(),[
-            'published' => $published,
+            'in_stock' => $in_stock,
+            'under_order' => $under_order,
             'seo_sitemap' => $seo_sitemap,
-            'thumbnail' => $thumbnailFileNameToStore ?? null,
-            'origin' => $fileNameToStore ?? null,
         ]));
 
         return redirect()->route('admin.products.index')->with('success', 'Данные обновлены');

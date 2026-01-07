@@ -175,9 +175,11 @@ class DataTableController extends Controller
      */
     public function products(): JsonResponse
     {
-        $row = Products::selectRaw('products.id,products.title,products.article,products.n_number,products.price,products.published,products.catalog_id,products.slug,products.created_at,products.description,catalogs.name AS catalog')
+        $row = Products::selectRaw('products.id,products.title,products.article,products.n_number,products.price,products.in_stock,products.catalog_id,products.slug,products.created_at,products.description,catalogs.name AS catalog, manufacturers.title AS manufacturer')
             ->leftJoin('catalogs', 'catalogs.id', '=', 'products.catalog_id')
+            ->leftJoin('manufacturers', 'manufacturers.id', '=', 'products.manufacturer_id')
             ->groupBy('catalogs.name')
+            ->groupBy('manufacturers.title')
             ->groupBy('products.id')
             ->groupBy('products.title')
             ->groupBy('products.catalog_id')
@@ -185,7 +187,7 @@ class DataTableController extends Controller
             ->groupBy('products.article')
             ->groupBy('products.n_number')
             ->groupBy('products.price')
-            ->groupBy('products.published')
+            ->groupBy('products.in_stock')
             ->groupBy('products.description')
             ->groupBy('products.created_at')
             ->groupBy('products.description');
@@ -207,10 +209,10 @@ class DataTableController extends Controller
             ->editColumn('thumbnail', function ($row) {
                 $product = Products::find($row->id);
 
-                return '<img  height="150" src="' . url($product->getThumbnailUrl()) . '" alt="" loading="lazy">';
+                return '<img  width="150" src="' . url($product->getThumbnailUrl()) . '" alt="" loading="lazy">';
             })
-            ->editColumn('published', function ($row) {
-                return $row->published == 1 ? 'опубликован' : 'не опубликован';
+            ->editColumn('in_stock', function ($row) {
+                return $row->in_stock == 1 ? 'да' : 'нет';
             })
             ->rawColumns(['actions', 'title', 'thumbnail'])->make(true);
     }

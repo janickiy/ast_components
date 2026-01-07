@@ -24,9 +24,10 @@ class Feedback extends Model
         'message',
         'ip',
         'attach',
+        'status',
     ];
 
-    public static $type_name = [
+    public static array $type_name = [
         self::TYPE_FEEDBACK => 'Обратная связь',
         self::TYPE_INVITE => 'Приглашение на тендер',
         self::TYPE_REQUEST => 'Запрос номенклатуры',

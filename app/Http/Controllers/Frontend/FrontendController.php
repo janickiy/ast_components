@@ -1,34 +1,43 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Frontend;
 
-use stdClass;
-use App\Models\Manufacturers;
-use App\Models\Feedback;
-use App\Models\Pages;
-use App\Models\Catalog;
-use App\Models\Seo;
-use App\Models\News;
-use App\Mail\InviteMailer;
-use App\Mail\NomenclatureRequestMailer;
-use App\Services\FeedbackService;
-use App\Helpers\SettingsHelper;
 use App\Helpers\MenuHelper;
+use App\Helpers\SettingsHelper;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Frontend\Contacts\FeedbackRequest;
 use App\Http\Requests\Frontend\Invite\SendRequest;
 use App\Http\Requests\Frontend\NomenclatureRequest\SendNomenclatureRequest;
-use App\Http\Requests\Frontend\Contacts\FeedbackRequest;
-use Illuminate\Support\Facades\Mail;
+use App\Mail\InviteMailer;
+use App\Mail\NomenclatureRequestMailer;
+use App\Models\Catalog;
+use App\Models\Feedback;
+use App\Models\Manufacturers;
+use App\Models\News;
+use App\Models\Pages;
+use App\Models\Products;
+use App\Models\Seo;
+use App\Repositories\ProductsRepository;
+use App\Services\FeedbackService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use stdClass;
 
 class FrontendController extends Controller
 {
     public FeedbackService $feedbackService;
 
-    public function __construct(FeedbackService $feedbackService)
+    /**
+     * @var ProductsRepository
+     */
+    public ProductsRepository $productRepository;
+
+    public function __construct(FeedbackService $feedbackService, ProductsRepository $productsRepository)
     {
         $this->feedbackService = $feedbackService;
+        $this->productRepository = $productsRepository;
     }
 
     /**
@@ -47,7 +56,7 @@ class FrontendController extends Controller
         $meta_keywords = $page->meta_keywords ?? '';
         $meta_title = $page->meta_title ?? '';
         $seo_url_canonical = $page->seo_url_canonical ?? '';
-        $h1 = $seo->h1 ?? $title;
+        $h1 = $page->seo_h1 ?? $title;
         $menu = MenuHelper::getMenuList();
         $catalogsList = Catalog::getCatalogList();
         $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
@@ -66,6 +75,9 @@ class FrontendController extends Controller
     }
 
     /**
+     * Контент
+     *
+     * @param Request $request
      * @param string $slug
      * @return View
      */
@@ -80,7 +92,7 @@ class FrontendController extends Controller
         $meta_keywords = $page->meta_keywords ?? '';
         $meta_title = $page->meta_title ?? '';
         $seo_url_canonical = $page->seo_url_canonical ?? '';
-        $h1 = $seo->h1 ?? $title;
+        $h1 = $page->seo_h1 ?? $title;
         $menu = MenuHelper::getMenuList();
         $catalogsList = Catalog::getCatalogList();
         $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
@@ -112,13 +124,14 @@ class FrontendController extends Controller
      */
     public function invite(): View
     {
-        $seo = Seo::where('type', 'frontend.invite')->first();
-        $title = $seo->h1 ?? 'Пригласить АСТ Компонентс к участию в тендере';
-        $meta_description = $seo->description ?? '';
-        $meta_keywords = $seo->keyword ?? '';
-        $meta_title = $seo->title ?? '';
-        $seo_url_canonical = $seo->url_canonical ?? '';
-        $h1 = $seo->h1 ?? $title;
+        $seo = Seo::getSeo('frontend.invite', 'Пригласить АСТ Компонентс к участию в тендере');
+        $title = $seo['title'];
+        $meta_description = $seo['meta_description'];
+        $meta_keywords = $seo['meta_keywords'];
+        $meta_title = $seo['meta_title'];
+        $seo_url_canonical = $seo['seo_url_canonical'];
+        $h1 = $seo['h1'];
+
         $menu = MenuHelper::getMenuList();
         $catalogsList = Catalog::getCatalogList();
         $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
@@ -184,13 +197,14 @@ class FrontendController extends Controller
      */
     public function nomenclatureRequest(): View
     {
-        $seo = Seo::where('type', 'frontend.invite')->first();
-        $title = $seo->h1 ?? 'Запрос номенклатуры';
-        $meta_description = $seo->description ?? '';
-        $meta_keywords = $seo->keyword ?? '';
-        $meta_title = $seo->title ?? '';
-        $seo_url_canonical = $seo->url_canonical ?? '';
-        $h1 = $seo->h1 ?? $title;
+        $seo = Seo::getSeo('frontend.invite', 'Запрос номенклатуры');
+        $title = $seo['title'];
+        $meta_description = $seo['meta_description'];
+        $meta_keywords = $seo['meta_keywords'];
+        $meta_title = $seo['meta_title'];
+        $seo_url_canonical = $seo['seo_url_canonical'];
+        $h1 = $seo['h1'];
+
         $menu = MenuHelper::getMenuList();
         $catalogsList = Catalog::getCatalogList();
         $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
@@ -255,13 +269,14 @@ class FrontendController extends Controller
      */
     public function news(): View
     {
-        $seo = Seo::where('type', 'frontend.news')->first();
-        $title = $seo->h1 ?? 'Новости';
-        $meta_description = $seo->description ?? '';
-        $meta_keywords = $seo->keyword ?? '';
-        $meta_title = $seo->title ?? '';
-        $seo_url_canonical = $seo->url_canonical ?? '';
-        $h1 = $seo->h1 ?? $title;
+        $seo = Seo::getSeo('frontend.news', 'Новости');
+        $title = $seo['title'];
+        $meta_description = $seo['meta_description'];
+        $meta_keywords = $seo['meta_keywords'];
+        $meta_title = $seo['meta_title'];
+        $seo_url_canonical = $seo['seo_url_canonical'];
+        $h1 = $seo['h1'];
+
         $menu = MenuHelper::getMenuList();
         $catalogsList = Catalog::getCatalogList();
         $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
@@ -299,7 +314,8 @@ class FrontendController extends Controller
         $meta_keywords = $seo->meta_keywords ?? '';
         $meta_title = $news->meta_title ?? '';
         $seo_url_canonical = $news->seo_url_canonical ?? '';
-        $h1 = $manufacturer->seo_h1 ?? $title;
+        $h1 = $news->seo_h1 ?? $title;
+
         $menu = MenuHelper::getMenuList();
         $catalogsList = Catalog::getCatalogList();
         $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
@@ -323,13 +339,14 @@ class FrontendController extends Controller
 
     public function contacts(): View
     {
-        $seo = Seo::where('type', 'frontend.contacts')->first();
-        $title = $seo->h1 ?? 'Контакты';
-        $meta_description = $seo->description ?? '';
-        $meta_keywords = $seo->keyword ?? '';
-        $meta_title = $seo->title ?? '';
-        $seo_url_canonical = $seo->url_canonical ?? '';
-        $h1 = $seo->h1 ?? $title;
+        $seo = Seo::getSeo('frontend.contacts', 'Контакты');
+        $title = $seo['title'];
+        $meta_description = $seo['meta_description'];
+        $meta_keywords = $seo['meta_keywords'];
+        $meta_title = $seo['meta_title'];
+        $seo_url_canonical = $seo['seo_url_canonical'];
+        $h1 = $seo['h1'];
+
         $menu = MenuHelper::getMenuList();
         $catalogsList = Catalog::getCatalogList();
         $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
@@ -385,13 +402,14 @@ class FrontendController extends Controller
      */
     public function converters(): View
     {
-        $seo = Seo::where('type', 'frontend.converters')->first();
-        $title = $seo->h1 ?? 'Конвертеры';
-        $meta_description = $seo->description ?? '';
-        $meta_keywords = $seo->keyword ?? '';
-        $meta_title = $seo->title ?? '';
-        $seo_url_canonical = $seo->url_canonical ?? '';
-        $h1 = $seo->h1 ?? $title;
+        $seo = Seo::getSeo('frontend.converters', 'Конвертеры');
+        $title = $seo['title'];
+        $meta_description = $seo['meta_description'];
+        $meta_keywords = $seo['meta_keywords'];
+        $meta_title = $seo['meta_title'];
+        $seo_url_canonical = $seo['seo_url_canonical'];
+        $h1 = $seo['h1'];
+
         $menu = MenuHelper::getMenuList();
         $catalogsList = Catalog::getCatalogList();
         $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
@@ -418,13 +436,14 @@ class FrontendController extends Controller
      */
     public function manufacturers(Request $request): View
     {
-        $seo = Seo::where('type', 'frontend.manufacturers')->first();
-        $title = $seo->h1 ?? 'Производители';
-        $meta_description = $seo->description ?? '';
-        $meta_keywords = $seo->keyword ?? '';
-        $meta_title = $seo->title ?? '';
-        $seo_url_canonical = $seo->url_canonical ?? '';
-        $h1 = $seo->h1 ?? $title;
+        $seo = Seo::getSeo('frontend.manufacturers', 'Производители');
+        $title = $seo['title'];
+        $meta_description = $seo['meta_description'];
+        $meta_keywords = $seo['meta_keywords'];
+        $meta_title = $seo['meta_title'];
+        $seo_url_canonical = $seo['seo_url_canonical'];
+        $h1 = $seo['h1'];
+
         $menu = MenuHelper::getMenuList();
         $catalogsList = Catalog::getCatalogList();
         $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
@@ -440,13 +459,13 @@ class FrontendController extends Controller
                 'meta_description',
                 'meta_keywords',
                 'meta_title',
+                'h1',
+                'seo_url_canonical',
                 'menu',
                 'productIds',
                 'catalogs',
                 'catalogsList',
                 'manufacturers',
-                'h1',
-                'seo_url_canonical',
                 'title'
             )
         )->with('title', $title);
@@ -506,16 +525,35 @@ class FrontendController extends Controller
      */
     public function catalog(Request $request, ?string $slug = null): View
     {
-        $seo = Seo::where('type', 'frontend.catalog')->first();
-        $title = $seo->h1 ?? 'Каталог';
-        $meta_description = $seo->description ?? '';
-        $meta_keywords = $seo->keyword ?? '';
-        $meta_title = $seo->title ?? '';
-        $seo_url_canonical = $seo->url_canonical ?? '';
-        $h1 = $seo->h1 ?? $title;
+        $seo = Seo::getSeo('frontend.catalog', 'Каталог');
+        $title = $seo['title'];
+        $meta_description = $seo['meta_description'];
+        $meta_keywords = $seo['meta_keywords'];
+        $meta_title = $seo['meta_title'];
+        $seo_url_canonical = $seo['seo_url_canonical'];
+        $h1 = $seo['h1'];
+
         $menu = MenuHelper::getMenuList();
         $catalogsList = Catalog::getCatalogList();
         $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
+        $manufacturers = Manufacturers::orderBy('title')->published()->get();
+
+        if ($slug) {
+            $catalog = Catalog::where('slug', $slug)->first();
+
+            if (!$catalog) abort(404);
+
+            $products = $catalog->products()->paginate(10);
+
+            $title = $catalog->name;
+            $meta_description = $catalog->meta_description;
+            $meta_keywords = $catalog->meta_keywords;
+            $meta_title = $catalog->meta_title;
+            $seo_url_canonical = $catalog->seo_url_canonical;
+            $h1 = $catalog->seo_h1 ?? $title;
+        } else {
+            $products = Products::query()->paginate(10);
+        }
 
         if ($request->session()->has('productIds')) {
             $productIds = $request->session()->get('productIds');
@@ -528,6 +566,8 @@ class FrontendController extends Controller
                 'meta_keywords',
                 'meta_title',
                 'menu',
+                'products',
+                'manufacturers',
                 'productIds',
                 'catalogs',
                 'catalogsList',
@@ -545,13 +585,14 @@ class FrontendController extends Controller
      */
     public function conditions(): View
     {
-        $seo = Seo::where('type', 'frontend.conditions')->first();
-        $title = $seo->h1 ?? 'Доставка и оплата';
-        $meta_description = $seo->description ?? '';
-        $meta_keywords = $seo->keyword ?? '';
-        $meta_title = $seo->title ?? '';
-        $seo_url_canonical = $seo->url_canonical ?? '';
-        $h1 = $seo->h1 ?? $title;
+        $seo = Seo::getSeo('frontend.conditions', 'Доставка и оплата');
+        $title = $seo['title'];
+        $meta_description = $seo['meta_description'];
+        $meta_keywords = $seo['meta_keywords'];
+        $meta_title = $seo['meta_title'];
+        $seo_url_canonical = $seo['seo_url_canonical'];
+        $h1 = $seo['h1'];
+
         $menu = MenuHelper::getMenuList();
         $catalogsList = Catalog::getCatalogList();
         $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
@@ -563,6 +604,48 @@ class FrontendController extends Controller
                 'menu',
                 'catalogs',
                 'catalogsList',
+                'h1',
+                'seo_url_canonical',
+                'title'
+            )
+        )->with('title', $title);
+    }
+
+    /**
+     * Карточка товара
+     *
+     * @param Request $request
+     * @param string $slug
+     * @return View
+     */
+    public function product(Request $request, string $slug): View
+    {
+        $product = Products::where('slug', $slug)->first();
+
+        if (!$product) abort(404);
+
+        $title = $product->title;
+        $meta_description = $product->meta_description;
+        $meta_keywords = $product->meta_keywords;
+        $meta_title = $product->meta_title;
+        $seo_url_canonical = $product->seo_url_canonical;
+        $h1 = $product->seo_h1 ?? $title;
+
+        $menu = MenuHelper::getMenuList();
+        $catalogsList = Catalog::getCatalogList();
+        $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
+
+        $productIds = $this->productRepository->setViewed($request, $product->id);
+
+        return view('frontend.product', compact(
+                'meta_description',
+                'meta_keywords',
+                'meta_title',
+                'menu',
+                'product',
+                'catalogs',
+                'catalogsList',
+                'productIds',
                 'h1',
                 'seo_url_canonical',
                 'title'
