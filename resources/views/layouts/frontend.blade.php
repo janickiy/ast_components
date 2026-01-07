@@ -30,7 +30,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    {!! Html::style('/css/styles.min.css?v=1') !!}
+    @vite('resources/css/frontend.css')
 
     @yield('css')
 
@@ -488,6 +488,7 @@
                                 <label for="login-display-password">Показать пароль</label>
                             </div>
                         </div>
+                        <div class="form-errors"></div>
                         <div class="modal__btns">
                             <button type="submit" class="btn btn--primary">
                                 <svg aria-hidden="true">
@@ -543,6 +544,7 @@
                                 с&nbsp;<a href="{{ route('frontend.page', ['slug' => 'privacy-policy']) }}">Политикой
                                     конфиденциальности</a></label>
                         </div>
+                        <div class="form-errors"></div>
                         <div class="modal__btns">
                             <!-- <button type="button" class="btn btn--primary" data-modal-trigger="sign-up-success"> -->
                             <button type="submit" class="btn btn--primary">
@@ -557,7 +559,7 @@
             </div>
         </div>
     </div>
-    <div class="modal js-modal" data-modal-name="sign-up-success">
+    <div class="modal js-modal modal--sign-up-success" data-modal-name="sign-up-success">
         <div class="modal__wrap">
             <div class="modal__dialog js-modal-dialog" role="dialog" aria-modal="true">
                 <button type="button" class="modal__close-btn btn btn--icon btn--sm js-modal-close">

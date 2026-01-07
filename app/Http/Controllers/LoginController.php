@@ -30,14 +30,15 @@ class LoginController extends Controller
             // $request->session()->regenerate();
 
             return response()->json([
-                'message' => 'Login successful',
+                'message' => 'Вход выполнен успешно',
                 'user' => Auth::guard('client')->user(),
                 'ok' => true,
             ], 200);
         }
 
         return response()->json([
-            'message' => 'The provided credentials are incorrect.'
+            'message' => 'Неверное имя пользователя или пароль',
+            'ok' => false,
         ], 422);
     }
 
@@ -51,7 +52,7 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return response()->json(['message' => 'Logged out'], 200);
+        return response()->json(['message' => 'Выход выполнен успешно'], 200);
     }
 
     /**

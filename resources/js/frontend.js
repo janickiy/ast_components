@@ -287,6 +287,12 @@ window.addEventListener('DOMContentLoaded', () => {
         currentModalOpen = target.dataset.modalTrigger;
     }
 
+    const openModalManual = (modal) => {
+        modal.classList.add('is-open');
+        document.body.classList.add('no-scroll');
+        currentModalOpen = modal.dataset.modalName;
+    }
+
     const closeModal = (modal) => {
         if (modal.classList.contains('is-open')) {
             modal.classList.remove('is-open');
@@ -616,8 +622,17 @@ window.addEventListener('DOMContentLoaded', () => {
     });
     //END Click outside
 
+    const setFormErrors = (form, resp) => {
+        console.debug("Set form errors", { form, resp });
+        form.querySelector('.form-errors').innerHTML = resp.message || 'Ошибка при отправке формы';
+    }
+
+
     const loginModal = document.querySelector('.modal--login');
     const registerModal = document.querySelector('.modal--sign-up');
+    const registerSuccesModal = document.querySelector('.modal--sign-up-success');
+    console.debug("Modals:", { loginModal, registerModal, registerSuccesModal })
+
 
     const loginForm = document.querySelector('.modal--login .modal__form');
     loginForm.addEventListener('submit', (e) => {
@@ -634,9 +649,13 @@ window.addEventListener('DOMContentLoaded', () => {
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).then(response => {
+        }).then(async (response) => {
             console.debug("Login Response", response)
-            if (response.ok){
+
+            const json = await response.json()
+            setFormErrors(loginForm, json);
+
+            if (response.ok) {
                 closeModal(loginModal);
             }
         })
@@ -655,7 +674,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
             const data = {
                 name,
-                email, // backend expects `login` field (not `email`)
+                email,
                 password,
                 password_confirmation: passwordConfirmation,
             };
@@ -676,13 +695,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
                 if (!response.ok) {
                     console.error('Register error', json);
-                    // TODO: show validation errors in the UI
+                    setFormErrors(registerForm, json);
                     return;
                 }
 
                 // Success — do something (close modal, show message)
                 console.log('Registration succeeded', json);
                 closeModal(registerModal);
+                openModalManual(registerSuccesModal);
             } catch (err) {
                 console.error('Register fetch failed', err);
             }
