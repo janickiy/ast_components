@@ -51,14 +51,15 @@ class Manufacturers extends Model
     }
 
     /**
-     * @param string|null $x
      * @return string
      */
-    public function getImage(?string $x = null): string
+    public function getImage(): string
     {
-        $image = $x ? $x . $this->image : $this->image;
-
-        return Storage::disk('public')->url('manufacturers/' . $image);
+        if (Storage::disk('public')->exists('manufacturers/' . $this->image) === true) {
+            return Storage::disk('public')->url('manufacturers/' . $this->image);
+        } else {
+            return asset('/images/no_image.jpg');
+        }
     }
 
     /**

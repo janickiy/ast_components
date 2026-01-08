@@ -45,7 +45,11 @@ class News extends Model
      */
     public function getImage(): string
     {
-        return Storage::disk('public')->url('news/' . $this->image);
+        if (Storage::disk('public')->exists('news/' . $this->image) === true) {
+            return Storage::disk('public')->url('news/' . $this->image);
+        } else {
+            return asset('/images/no_image.jpg');
+        }
     }
 
     /**

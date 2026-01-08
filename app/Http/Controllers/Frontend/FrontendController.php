@@ -57,6 +57,7 @@ class FrontendController extends Controller
         $meta_title = $page->meta_title ?? '';
         $seo_url_canonical = $page->seo_url_canonical ?? '';
         $h1 = $page->seo_h1 ?? $title;
+
         $menu = MenuHelper::getMenuList();
         $catalogsList = Catalog::getCatalogList();
         $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
@@ -316,6 +317,8 @@ class FrontendController extends Controller
         $seo_url_canonical = $news->seo_url_canonical ?? '';
         $h1 = $news->seo_h1 ?? $title;
 
+        $breadcrumbs[] = ['url' => route('frontend.news'), 'title' => 'Новости'];
+
         $menu = MenuHelper::getMenuList();
         $catalogsList = Catalog::getCatalogList();
         $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
@@ -330,6 +333,7 @@ class FrontendController extends Controller
                 'catalogsList',
                 'news',
                 'lastNews',
+                'breadcrumbs',
                 'h1',
                 'seo_url_canonical',
                 'title'
@@ -490,9 +494,12 @@ class FrontendController extends Controller
         $meta_title = $manufacturer->meta_title ?? '';
         $seo_url_canonical = $manufacturer->seo_url_canonical ?? '';
         $h1 = $manufacturer->seo_h1 ?? $title;
+
         $menu = MenuHelper::getMenuList();
         $catalogsList = Catalog::getCatalogList();
         $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
+
+        $breadcrumbs[] = ['url' => route('frontend.manufacturers'), 'title' => 'Производители'];
 
         if ($request->session()->has('productIds')) {
             $productIds = $request->session()->get('productIds');
@@ -509,6 +516,7 @@ class FrontendController extends Controller
                 'catalogs',
                 'catalogsList',
                 'manufacturer',
+                'breadcrumbs',
                 'h1',
                 'seo_url_canonical',
                 'title'
@@ -538,12 +546,16 @@ class FrontendController extends Controller
         $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
         $manufacturers = Manufacturers::orderBy('title')->published()->get();
 
+        $breadcrumbs = null;
+
         if ($slug) {
             $catalog = Catalog::where('slug', $slug)->first();
 
             if (!$catalog) abort(404);
 
             $products = $catalog->products()->paginate(10);
+
+            $breadcrumbs[] = ['url' => route('frontend.catalog'), 'title' => 'Каталог'];
 
             $title = $catalog->name;
             $meta_description = $catalog->meta_description;
@@ -571,6 +583,7 @@ class FrontendController extends Controller
                 'productIds',
                 'catalogs',
                 'catalogsList',
+                'breadcrumbs',
                 'h1',
                 'seo_url_canonical',
                 'title'
@@ -635,6 +648,9 @@ class FrontendController extends Controller
         $catalogsList = Catalog::getCatalogList();
         $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
 
+        $breadcrumbs[] = ['url' => route('frontend.catalog'), 'title' => 'Каталог'];
+        $breadcrumbs[] = ['url' => route('frontend.catalog', ['slug' => $product->catalog->slug]), 'title' => $product->catalog->name];
+
         $productIds = $this->productRepository->setViewed($request, $product->id);
 
         return view('frontend.product', compact(
@@ -646,15 +662,11 @@ class FrontendController extends Controller
                 'catalogs',
                 'catalogsList',
                 'productIds',
+                'breadcrumbs',
                 'h1',
                 'seo_url_canonical',
                 'title'
             )
         )->with('title', $title);
-    }
-
-    public function getSubcategory()
-    {
-
     }
 }

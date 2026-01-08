@@ -53,7 +53,9 @@ class ProductDocumentsController extends Controller
 
         if (!$row) abort(404);
 
-        return view('cp.product_documents.index', compact('product_id'))->with('title', 'Список документации: ' . $row->title);
+        $breadcrumbs[] = ['url' => route('admin.products.index'), 'title' => 'Продукция'];
+
+        return view('cp.product_documents.index', compact('product_id', 'breadcrumbs'))->with('title', 'Список документации: ' . $row->title);
     }
 
     /**
@@ -62,9 +64,16 @@ class ProductDocumentsController extends Controller
      */
     public function create(int $product_id): View
     {
+        $row = $this->productsRepository->find($product_id);
+
+        if (!$row) abort(404);
+
+        $breadcrumbs[] = ['url' => route('admin.products.index'), 'title' => 'Продукция'];
+        $breadcrumbs[] = ['url' => route('admin.product_documents.index', ['product_id' => $product_id]), 'title' => $row->title];
+
         $maxUploadFileSize = StringHelper::maxUploadFileSize();
 
-        return view('cp.product_documents.create_edit', compact('product_id', 'maxUploadFileSize'))->with('title', 'Добавление документации');
+        return view('cp.product_documents.create_edit', compact('product_id', 'maxUploadFileSize', 'breadcrumbs'))->with('title', 'Добавление документации');
     }
 
     /**
@@ -74,7 +83,7 @@ class ProductDocumentsController extends Controller
     public function store(StoreRequest $request): RedirectResponse
     {
         $filename = $this->productDocumentsService->storeFile($request);
-        $this->productsRepository->create(array_merge($request->all(), ['path' => $filename]));
+        $this->productDocumentsRepository->create(array_merge($request->all(), ['file' => $filename]));
 
         return redirect()->route('admin.product_documents.index', ['product_id' => $request->product_id])->with('success', 'Информация успешно добавлена');
     }
@@ -85,14 +94,17 @@ class ProductDocumentsController extends Controller
      */
     public function edit(int $id): View
     {
-        $row = $this->productsRepository->find($id);
+        $row = $this->productDocumentsRepository->find($id);
 
         if (!$row) abort(404);
 
         $product_id = $row->product_id;
         $maxUploadFileSize = StringHelper::maxUploadFileSize();
 
-        return view('cp.product_documents.create_edit', compact('row', 'product_id', 'maxUploadFileSize'))->with('title', 'Редактирование списка документации');
+        $breadcrumbs[] = ['url' => route('admin.products.index'), 'title' => 'Продукция'];
+        $breadcrumbs[] = ['url' => route('admin.product_documents.index', ['product_id' => $row->product_id]), 'title' => $row->product->title];
+
+        return view('cp.product_documents.create_edit', compact('row', 'product_id', 'maxUploadFileSize', 'breadcrumbs'))->with('title', 'Редактирование списка документации');
     }
 
     /**
@@ -107,7 +119,7 @@ class ProductDocumentsController extends Controller
             $filename = $this->productDocumentsService->storeFile($request);
         }
 
-        $this->productsRepository->update($request->id, array_merge(array_merge($request->all()), [
+        $this->productDocumentsRepository->update($request->id, array_merge(array_merge($request->all()), [
             'file' => $filename ?? null,
         ]));
 

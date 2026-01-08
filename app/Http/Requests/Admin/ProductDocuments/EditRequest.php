@@ -23,7 +23,7 @@ class EditRequest extends FormRequest
     {
         return [
             'id'         => 'required|integer|exists:product_documents,id',
-            'file'       => 'nullable|file|mimes:jpg,png,doc,pdf,docx,txt,pdf,xls,xlsx,odt,ods',
+            'file'       => 'nullable|file',
             'name'       => 'required',
             'product_id' => 'required|integer|exists:products,id',
         ];

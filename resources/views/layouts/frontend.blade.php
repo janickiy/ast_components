@@ -30,7 +30,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    {!! Html::style('/css/styles.min.css?v=1') !!}
+    {!! Html::style('/css/styles.min.css?v=3') !!}
 
     @yield('css')
 

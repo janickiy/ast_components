@@ -44,7 +44,9 @@ class ProductParametersController extends Controller
 
         if (!$product) abort(404);
 
-        return view('cp.product_parameters.index', compact('product_id'))->with('title', 'Технические характеристики: ' . $product->title);
+        $breadcrumbs[] = ['url' => route('admin.products.index'), 'title' => 'Продукция'];
+
+        return view('cp.product_parameters.index', compact('product_id', 'breadcrumbs'))->with('title', 'Технические характеристики: ' . $product->title);
     }
 
     /**
@@ -53,7 +55,14 @@ class ProductParametersController extends Controller
      */
     public function create(int $product_id): View
     {
-        return view('cp.product_parameters.create_edit', compact('product_id'))->with('title', 'Добавление параметра');
+        $row = $this->productsRepository->find($product_id);
+
+        if (!$row) abort(404);
+
+        $breadcrumbs[] = ['url' => route('admin.products.index'), 'title' => 'Продукция'];
+        $breadcrumbs[] = ['url' => route('admin.product_parameters.index', ['product_id' => $product_id]), 'title' => $row->product->title];
+
+        return view('cp.product_parameters.create_edit', compact('product_id', 'breadcrumbs'))->with('title', 'Добавление параметра');
     }
 
     /**
@@ -79,7 +88,10 @@ class ProductParametersController extends Controller
 
         $product_id = $row->product_id;
 
-        return view('cp.product_parameters.create_edit', compact('row', 'product_id'))->with('title', 'Редактирование параметра');
+        $breadcrumbs[] = ['url' => route('admin.products.index'), 'title' => 'Продукция'];
+        $breadcrumbs[] = ['url' => route('admin.product_parameters.index', ['product_id' => $product_id]), 'title' => $row->product->title];
+
+        return view('cp.product_parameters.create_edit', compact('row', 'product_id', 'breadcrumbs'))->with('title', 'Редактирование параметра');
     }
 
     /**

@@ -156,6 +156,8 @@ class StringHelper
             "\(" => "",
             "\)" => "",
             "/" => "",
+            "%" => "-",
+            "#" => "-",
         ];
 
         foreach ($tr as $ru => $en) {
@@ -178,10 +180,11 @@ class StringHelper
      */
     public static function shortText(string $str, int $chars = 500): string
     {
-        $pos = strpos(substr($str, $chars), " ");
-        $srttmpend = strlen($str) > $chars ? '...' : '';
+        $string = str_replace(' ', '', $str);
+        $pos = mb_strpos(mb_substr($string, $chars), " ");
+        $srttmpend = mb_strlen($string) > $chars ? '...' : '';
 
-        return substr($str, 0, $chars + $pos) . (isset($srttmpend) ? $srttmpend : '');
+        return mb_substr($str, 0, $chars + $pos) . ($srttmpend ?? '');
     }
 
     /**
@@ -284,5 +287,17 @@ class StringHelper
     {
         $string = preg_replace("/&#?[a-z0-9]+;/i", "", $string);
         return strip_tags($string);
+    }
+
+    /**
+     * @param int $bytes
+     * @param int $decimals
+     * @return string
+     */
+    public static function humanFilesize(int $bytes, int $decimals = 2): string
+    {
+        $sz = 'BKMGTP';
+        $factor = floor((strlen($bytes) - 1) / 3);
+        return sprintf("%.{$decimals}f ", $bytes / pow(1024, $factor)) . @$sz[$factor] . 'b';
     }
 }

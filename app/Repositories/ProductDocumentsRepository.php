@@ -21,7 +21,6 @@ class ProductDocumentsRepository extends BaseRepository
         $productDocument = $this->model->find($id);
 
         if ($productDocument) {
-
             if ($data['file']) {
                 $productDocument->file = $data['file'];
             }

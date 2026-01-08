@@ -80,7 +80,11 @@ class Products extends Model
      */
     public function getThumbnailUrl(): string
     {
-        return Storage::disk('public')->url('products/' . $this->thumbnail);
+        if (Storage::disk('public')->exists('products/' . $this->thumbnail) === true) {
+            return Storage::disk('public')->url('products/' . $this->thumbnail);
+        } else {
+            return asset('/images/no_image.jpg');
+        }
     }
 
     /**
@@ -88,7 +92,11 @@ class Products extends Model
      */
     public function getOriginUrl(): string
     {
-        return Storage::disk('public')->url('products/' . $this->origin);
+        if (Storage::disk('public')->exists('products/' . $this->origin) === true) {
+            return Storage::disk('public')->url('products/' . $this->origin);
+        } else {
+            return asset('/images/no_image.jpg');
+        }
     }
 
     /**
@@ -151,4 +159,6 @@ class Products extends Model
     {
         return self::orderBy('title')->get()->pluck('title', 'id')->toArray();
     }
+
+
 }
