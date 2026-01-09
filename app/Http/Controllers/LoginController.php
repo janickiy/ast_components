@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -27,7 +28,7 @@ class LoginController extends Controller
 
         if (Auth::guard('client')->attempt($credentials, $remember))
         {
-            // $request->session()->regenerate();
+            $request->session()->regenerate();
 
             return response()->json([
                 'message' => 'Вход выполнен успешно',
@@ -67,5 +68,49 @@ class LoginController extends Controller
             $request->only('email')
         );
         return response()->json(['sent' => $status == Password::ResetLinkSent], 200);
+    }
+
+    public function updateAccount(Request $request)
+    {
+        $user = Auth::guard('client')->user();
+
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255'],
+            'password' => ['nullable', 'string', 'min:8'],
+        ]);
+
+        if ($user->email != $data['email'])
+        {
+            $emailExists = Client::where('email', $data['email'])->exists();
+            if ($emailExists)
+            {
+                return response()->json([
+                    'message' => 'Данный email уже используется другим пользователем',
+                    'ok' => false,
+                ], 422);
+            }
+        }
+
+        $user->name = $data['name'];
+        $user->email = $data['email'];
+        if (!empty($data['password']))
+        {
+            $user->password = Hash::make($data['password']);
+        }
+        $user->save();
+
+        return response()->json([
+            'message' => 'Данные аккаунта успешно обновлены',
+            'user' => $user,
+            'ok' => true,
+        ], 200);
+    }
+
+    public function authButtonWidget()
+    {
+
+        $html = view('partials.auth-button', [])->render();
+        return response()->json(['html' => $html], 200);
     }
 }

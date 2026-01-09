@@ -622,6 +622,20 @@ window.addEventListener('DOMContentLoaded', () => {
     });
     //END Click outside
 
+    function updateAuthButton() {
+        const container = document.querySelector('.header__login-btn');
+        fetch('/api/v1/auth-button', {
+            credentials: 'include',
+            headers: {
+                'Accept': 'text/html',
+            },
+        }).then(r => r.json())
+            .then(data => {
+                console.debug("Auth button data", data)
+                container.innerHTML = data.html
+            })
+    }
+
     const setFormErrors = (form, resp) => {
         console.debug("Set form errors", { form, resp });
         form.querySelector('.form-errors').innerHTML = resp.message || 'Ошибка при отправке формы';
@@ -642,9 +656,10 @@ window.addEventListener('DOMContentLoaded', () => {
     const loginModal = document.querySelector('.modal--login');
     const registerModal = document.querySelector('.modal--sign-up');
     const registerSuccesModal = document.querySelector('.modal--sign-up-success');
+    const accountModal = document.querySelector('.modal--account');
     console.debug("Modals:", { loginModal, registerModal, registerSuccesModal })
 
-
+    // Login form
     const loginForm = document.querySelector('.modal--login .modal__form');
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -657,6 +672,7 @@ window.addEventListener('DOMContentLoaded', () => {
         const prom = fetch('/api/v1/login', {
             body: JSON.stringify(data),
             method: 'POST',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -666,6 +682,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok) {
                 closeModal(loginModal);
+                updateAuthButton();
             } else {
                 setFormErrors(loginForm, json);
             }
@@ -673,6 +690,7 @@ window.addEventListener('DOMContentLoaded', () => {
         setFormLoading(loginForm, prom)
     })
 
+    // Register form
     const registerForm = document.querySelector('.modal--sign-up .modal__form');
     registerForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -692,6 +710,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
         const prom = fetch('/api/v1/register', {
             method: 'POST',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
@@ -705,6 +724,7 @@ window.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 closeModal(registerModal);
                 openModalManual(registerSuccesModal);
+                updateAuthButton();
             } else {
                 console.error('Register error', json);
                 setFormErrors(registerForm, json);
@@ -714,6 +734,77 @@ window.addEventListener('DOMContentLoaded', () => {
         });
 
         setFormLoading(registerForm, prom);
+    });
+
+
+    // Account form
+    const accountForm = document.querySelector('.modal--account .modal__form');
+    accountForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        console.debug('AccountForm Submit', e);
+
+        const name = document.querySelector('#account-name')?.value || '';
+        const email = document.querySelector('#account-email')?.value || '';
+        const password = document.querySelector('#account-password')?.value || '';
+
+        const data = {
+            name,
+            email,
+            password,
+        };
+
+        const prom = fetch('/api/v1/account', {
+            method: 'PATCH',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify(data),
+        }).then(async (response) => {
+            let json = null;
+            try { json = await response.json(); } catch (err) { /* no json */ }
+            console.debug('Account Update Response', response.status, json);
+
+            if (response.ok) {
+                closeModal(accountModal);
+                updateAuthButton();
+            } else {
+                console.error('Account update error', json);
+                setFormErrors(accountForm, json);
+            }
+        }).catch(err => {
+            console.error('Account update fetch failed', err);
+        });
+
+        setFormLoading(accountForm, prom);
+    });
+
+    // Logout
+    const logoutButtons = document.querySelectorAll('.account-logout-btn');
+    logoutButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.debug('Logout Click', e);
+
+            const prom = fetch('/api/v1/logout', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Accept': 'application/json',
+                },
+            }).then(async (response) => {
+                console.debug('Logout Response', response.status);
+                if (response.ok) {
+                    updateAuthButton();
+                    closeModal(accountModal)
+                } else {
+                    console.error('Logout error');
+                }
+            }).catch(err => {
+                console.error('Logout fetch failed', err);
+            });
+        });
     });
 })
 

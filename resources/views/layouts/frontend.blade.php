@@ -172,14 +172,7 @@
                         </a>
                         <span class="header__cart-count">10</span>
                     </div>
-
-                    <button type="button" class="header__login-btn btn" data-modal-trigger="login">
-                        <svg aria-hidden="true" class="orange">
-                            <use xlink:href="{{ url('/images/sprite.svg#user') }}"></use>
-                        </svg>
-                        <span>Вход/Регистрация</span>
-                    </button>
-
+                    @include('partials.auth-button')
 
                     <a href="./converters.html" class="header__converters-btn btn btn--link">
                         <svg aria-hidden="true" class="orange">
@@ -552,6 +545,53 @@
                                     <use xlink:href="{{ url('/images/sprite.svg#user-plus') }}"></use>
                                 </svg>
                                 <span>Зарегистрироваться</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal js-modal modal--account" data-modal-name="account">
+        <div class="modal__wrap">
+            <div class="modal__dialog js-modal-dialog" role="dialog" aria-modal="true">
+                <button type="button" class="modal__close-btn btn btn--icon btn--sm js-modal-close">
+                    <span class="sr-only">Закрыть модальное окно</span>
+                    <svg aria-hidden="true">
+                        <use xlink:href="{{ url('/images/sprite.svg#close') }}"></use>
+                    </svg>
+                </button>
+                <div class="modal__content">
+                    <div class="modal__title">
+                        <h2>Личный кабинет</h2>
+                    </div>
+                    <form class="modal__form">
+                        <div class="form-input">
+                            <label for="account-name">Ваше имя</label>
+                            <input type="text" id="account-name" placeholder='' required value="{{@Auth::guard('client')->user()->name}}">
+                        </div>
+                        <div class="form-input">
+                            <label for="account-email">Email</label>
+                            <input type="tel" id="account-email" placeholder='' required  value="{{@Auth::guard('client')->user()->email}}">
+                        </div>
+                        <div class="form-password">
+                            <label for="account-password">Пароль</label>
+                            <input type="password" id="account-password" placeholder='*******'>
+                            <div class="form-display-btn">
+                                <input type="checkbox" id="account-display-password">
+                                <label for="account-display-password">Показать пароль</label>
+                            </div>
+                        </div>
+                        <div class="form-errors"></div>
+                        <div class="modal__btns">
+                            <button type="button" class="btn btn--tertiary account-logout-btn">
+                                <span>Выйти из аккаунта</span>
+                            </button>
+                            <button type="submit" class="btn btn--primary">
+                                <svg aria-hidden="true">
+                                    <use xlink:href="{{ url('/images/sprite.svg#user-plus') }}"></use>
+                                </svg>
+                                <span>Обновить данные</span>
                             </button>
                         </div>
                     </form>
