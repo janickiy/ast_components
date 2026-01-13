@@ -12,7 +12,6 @@
 
     @include('layouts._breadcrumbs')
 
-
     <div class="account container-md">
         <ul class="account__tabs tabs">
             <li class="tab">
@@ -52,12 +51,12 @@
                 </label>
             </li>
             <li class="tab">
-                <button type="button" class="tab__btn btn">
+                <a href="{{ route('frontend.profile.logout') }}" class="tab__btn btn">
                     <svg aria-hidden="true">
                         <use xlink:href="{{ url('/images/sprite.svg#logout') }}"></use>
                     </svg>
                     <span>Выйти</span>
-                </button>
+                </a>
             </li>
         </ul>
         <div class="account__tabs-content tabs-content">
@@ -78,7 +77,7 @@
                         <dl class="profile__list general">
                             <div class="profile__point">
                                 <dt class="profile__point-title">Номер телефона</dt>
-                                <dd class="profile__point-text">+ 7 900 000-00-00</dd>
+                                <dd class="profile__point-text">{{ Auth::guard('customer')->user()->phone }}</dd>
                             </div>
                             <div class="profile__point">
                                 <dt class="profile__point-title">Пароль</dt>
@@ -86,7 +85,7 @@
                             </div>
                             <div class="profile__point">
                                 <dt class="profile__point-title">Имя</dt>
-                                <dd class="profile__point-text">Иван Иванов</dd>
+                                <dd class="profile__point-text">{{ Auth::guard('customer')->user()->name }}</dd>
                             </div>
                         </dl>
                     </div>
@@ -107,25 +106,25 @@
                         <dl class="profile__list">
                             <div class="profile__point">
                                 <dt class="profile__point-title">Компания</dt>
-                                <dd class="profile__point-text">ООО “ЭлектроМонтаж”</dd>
+                                <dd class="profile__point-text">{{ Auth::guard('customer')->user()->company?->name }}</dd>
                             </div>
                             <div class="profile__point">
                                 <dt class="profile__point-title">ИНН</dt>
-                                <dd class="profile__point-text">1232313423423</dd>
+                                <dd class="profile__point-text">{{ Auth::guard('customer')->user()->company?->inn }}</dd>
                             </div>
                         </dl>
                         <dl class="profile__list">
                             <div class="profile__point">
                                 <dt class="profile__point-title">Контактное лицо</dt>
-                                <dd class="profile__point-text">Петр Петров</dd>
+                                <dd class="profile__point-text">{{ Auth::guard('customer')->user()->company?->contact_person }}</dd>
                             </div>
                             <div class="profile__point">
                                 <dt class="profile__point-title">Номер телефона</dt>
-                                <dd class="profile__point-text">+7 900 100-00-00</dd>
+                                <dd class="profile__point-text">{{ Auth::guard('customer')->user()->company?->phone }}</dd>
                             </div>
                             <div class="profile__point">
                                 <dt class="profile__point-title">Электронная почта</dt>
-                                <dd class="profile__point-text">customer@mail.ru</dd>
+                                <dd class="profile__point-text">{{ Auth::guard('customer')->user()->company?->email }}</dd>
                             </div>
                         </dl>
                     </div>
@@ -150,312 +149,37 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td>
-                                        <div class="account__table-numb">
-                                            <span>120</span>
-                                            <button type="button" class="btn btn--secondary btn--sm btn--icon" data-modal-trigger="order-details">
-                                                <span class="sr-only">Детали заказа</span>
+
+                                @foreach($orders ?? [] as $order)
+
+                                    <tr>
+                                        <td>
+                                            <div class="account__table-numb">
+                                                <span>{{ $order->id }}</span>
+                                                <button type="button" class="btn btn--secondary btn--sm btn--icon" data-modal-trigger="order-details">
+                                                    <span class="sr-only">Детали заказа</span>
+                                                    <svg aria-hidden="true">
+                                                        <use xlink:href="{{ url('/images/sprite.svg#details') }}"></use>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td class="text-right">{{ $order->dateFormat() }}</td>
+                                        <td class="text-nowrap">{{ $order->sum() }}</td>
+                                        <td>{{ $order->deliveryDateFormat() }}</td>
+                                        <td>
+                                            <div class="account__table-status create">
                                                 <svg aria-hidden="true">
-                                                    <use xlink:href="images/sprite.svg#details"></use>
+                                                    <use xlink:href="{{ url('/images/sprite.svg#new-doc') }}"></use>
                                                 </svg>
-                                            </button>
-                                        </div>
-                                    </td>
-                                    <td class="text-right">15.08.2025</td>
-                                    <td class="text-nowrap"></td>
-                                    <td></td>
-                                    <td>
-                                        <div class="account__table-status create">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#new-doc"></use>
-                                            </svg>
-                                            <span>Создан</span>
-                                        </div>
-                                    </td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="account__table-numb">
-                                            <span>120</span>
-                                            <button type="button" class="btn btn--secondary btn--sm btn--icon" data-modal-trigger="order-details">
-                                                <span class="sr-only">Детали заказа</span>
-                                                <svg aria-hidden="true">
-                                                    <use xlink:href="images/sprite.svg#details"></use>
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </td>
-                                    <td class="text-right">15.08.2025</td>
-                                    <td class="text-nowrap"></td>
-                                    <td></td>
-                                    <td>
-                                        <div class="account__table-status in-progress">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#cogwheel"></use>
-                                            </svg>
-                                            <span>В работе</span>
-                                        </div>
-                                    </td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="account__table-numb">
-                                            <span>120</span>
-                                            <button type="button" class="btn btn--secondary btn--sm btn--icon" data-modal-trigger="order-details">
-                                                <span class="sr-only">Детали заказа</span>
-                                                <svg aria-hidden="true">
-                                                    <use xlink:href="images/sprite.svg#details"></use>
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </td>
-                                    <td class="text-right">24.08.2025</td>
-                                    <td class="text-right text-medium text-nowrap">15 000 р.</td>
-                                    <td class="text-right">20.09.2025</td>
-                                    <td>
-                                        <div class="account__table-status issued">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#fact-check"></use>
-                                            </svg>
-                                            <span>Оформлен</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <a href="./images/logo.svg" download="logo.svg" class="btn btn--secondary btn--sm">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#download"></use>
-                                            </svg>
-                                            <span>Скачать счёт</span>
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="account__table-numb">
-                                            <span>122</span>
-                                            <button type="button" class="btn btn--secondary btn--sm btn--icon" data-modal-trigger="order-details">
-                                                <span class="sr-only">Детали заказа</span>
-                                                <svg aria-hidden="true">
-                                                    <use xlink:href="images/sprite.svg#details"></use>
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </td>
-                                    <td class="text-right">22.08.2025</td>
-                                    <td class="text-right text-medium text-nowrap">20 000 р.</td>
-                                    <td class="text-right">20.09.2025</td>
-                                    <td>
-                                        <div class="account__table-status paid">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#money"></use>
-                                            </svg>
-                                            <span>Оплачен</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <a href="./images/logo.svg" download="logo.svg" class="btn btn--secondary btn--sm">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#download"></use>
-                                            </svg>
-                                            <span>Скачать счёт</span>
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="account__table-numb">
-                                            <span>122</span>
-                                            <button type="button" class="btn btn--secondary btn--sm btn--icon" data-modal-trigger="order-details">
-                                                <span class="sr-only">Детали заказа</span>
-                                                <svg aria-hidden="true">
-                                                    <use xlink:href="images/sprite.svg#details"></use>
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </td>
-                                    <td class="text-right">22.08.2025</td>
-                                    <td class="text-right text-medium text-nowrap">20 000 р.</td>
-                                    <td class="text-right">20.09.2025</td>
-                                    <td>
-                                        <div class="account__table-status ready">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#box"></use>
-                                            </svg>
-                                            <span>Готов к&nbsp;выдаче</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <a href="./images/logo.svg" download="logo.svg" class="btn btn--secondary btn--sm">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#download"></use>
-                                            </svg>
-                                            <span>Скачать счёт</span>
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="account__table-numb">
-                                            <span>121</span>
-                                            <button type="button" class="btn btn--secondary btn--sm btn--icon" data-modal-trigger="order-details">
-                                                <span class="sr-only">Детали заказа</span>
-                                                <svg aria-hidden="true">
-                                                    <use xlink:href="images/sprite.svg#details"></use>
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </td>
-                                    <td class="text-right">20.08.2025</td>
-                                    <td class="text-right text-medium text-nowrap">200 000 р.</td>
-                                    <td class="text-right">24.09.2025</td>
-                                    <td>
-                                        <div class="account__table-status done">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#check-circle"></use>
-                                            </svg>
-                                            <span>Выдан</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <a href="./images/logo.svg" download="logo.svg" class="btn btn--secondary btn--sm">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#download"></use>
-                                            </svg>
-                                            <span>Скачать счёт</span>
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="account__table-numb">
-                                            <span>120</span>
-                                            <button type="button" class="btn btn--secondary btn--sm btn--icon" data-modal-trigger="order-details">
-                                                <span class="sr-only">Детали заказа</span>
-                                                <svg aria-hidden="true">
-                                                    <use xlink:href="images/sprite.svg#details"></use>
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </td>
-                                    <td class="text-right">15.08.2025</td>
-                                    <td class="text-right text-medium text-nowrap">200 000 р.</td>
-                                    <td class="text-right">20.09.2025</td>
-                                    <td>
-                                        <div class="account__table-status done">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#check-circle"></use>
-                                            </svg>
-                                            <span>Выдан</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <a href="./images/logo.svg" download="logo.svg" class="btn btn--secondary btn--sm">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#download"></use>
-                                            </svg>
-                                            <span>Скачать счёт</span>
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="account__table-numb">
-                                            <span>120</span>
-                                            <button type="button" class="btn btn--secondary btn--sm btn--icon" data-modal-trigger="order-details">
-                                                <span class="sr-only">Детали заказа</span>
-                                                <svg aria-hidden="true">
-                                                    <use xlink:href="images/sprite.svg#details"></use>
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </td>
-                                    <td class="text-right">15.08.2025</td>
-                                    <td class="text-right text-medium text-nowrap">200 000 р.</td>
-                                    <td class="text-right">20.09.2025</td>
-                                    <td>
-                                        <div class="account__table-status done">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#check-circle"></use>
-                                            </svg>
-                                            <span>Выдан</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <a href="./images/logo.svg" download="logo.svg" class="btn btn--secondary btn--sm">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#download"></use>
-                                            </svg>
-                                            <span>Скачать счёт</span>
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="account__table-numb">
-                                            <span>120</span>
-                                            <button type="button" class="btn btn--secondary btn--sm btn--icon" data-modal-trigger="order-details">
-                                                <span class="sr-only">Детали заказа</span>
-                                                <svg aria-hidden="true">
-                                                    <use xlink:href="images/sprite.svg#details"></use>
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </td>
-                                    <td class="text-right">15.08.2025</td>
-                                    <td class="text-right text-medium text-nowrap">200 000 р.</td>
-                                    <td class="text-right">20.09.2025</td>
-                                    <td>
-                                        <div class="account__table-status done">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#check-circle"></use>
-                                            </svg>
-                                            <span>Выдан</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <a href="./images/logo.svg" download="logo.svg" class="btn btn--secondary btn--sm">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#download"></use>
-                                            </svg>
-                                            <span>Скачать счёт</span>
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="account__table-numb">
-                                            <span>120</span>
-                                            <button type="button" class="btn btn--secondary btn--sm btn--icon" data-modal-trigger="order-details">
-                                                <span class="sr-only">Детали заказа</span>
-                                                <svg aria-hidden="true">
-                                                    <use xlink:href="images/sprite.svg#details"></use>
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </td>
-                                    <td class="text-right">15.08.2025</td>
-                                    <td class="text-right text-medium text-nowrap">200 000 р.</td>
-                                    <td class="text-right">20.09.2025</td>
-                                    <td>
-                                        <div class="account__table-status done">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#check-circle"></use>
-                                            </svg>
-                                            <span>Выдан</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <a href="./images/logo.svg" download="logo.svg" class="btn btn--secondary btn--sm">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#download"></use>
-                                            </svg>
-                                            <span>Скачать счёт</span>
-                                        </a>
-                                    </td>
-                                </tr>
+                                                <span>Создан</span>
+                                            </div>
+                                        </td>
+                                        <td></td>
+                                    </tr>
+
+                                @endforeach
+
                                 </tbody>
                             </table>
                         </div>
@@ -640,7 +364,7 @@
                         </div>
                         <button type="button" class="btn btn--tertiary btn--sm" data-modal-trigger="create-claim">
                             <svg aria-hidden="true">
-                                <use xlink:href="images/sprite.svg#plus"></use>
+                                <use xlink:href="{{ url('/images/sprite.svg#plus') }}"></use>
                             </svg>
                             <span>Создать</span>
                         </button>
@@ -1050,7 +774,7 @@
                 <button type="button" class="modal__close-btn btn btn--icon btn--sm js-modal-close">
                     <span class="sr-only">Закрыть модальное окно</span>
                     <svg aria-hidden="true">
-                        <use xlink:href="images/sprite.svg#close"></use>
+                        <use xlink:href="{{ url('/images/sprite.svg#clos') }}e"></use>
                     </svg>
                 </button>
                 <div class="modal__content">
@@ -1060,7 +784,7 @@
                     <form class="modal__form is-success">
                         <div class="form-input">
                             <label for="general-info-phone">Номер телефона*</label>
-                            <input type="tel" id="general-info-phone" placeholder='+7 900 000-00-00' value="+7 900 000-00-00" readonly>
+                            <input type="tel" id="general-info-phone" placeholder='+7 900 000-00-00' value="{{ Auth::guard('customer')->user()->phone }}" readonly>
                         </div>
                         <div class="form-password">
                             <label for="general-info-password">Пароль*</label>
@@ -1080,19 +804,19 @@
                         </div>
                         <div class="form-input">
                             <label for="general-info-name">Ваше имя</label>
-                            <input type="text" id="general-info-name" placeholder='Иван Иванов'>
+                            <input type="text" id="general-info-name" placeholder='Иван Иванов' value="{{  Auth::guard('customer')->user()->name }}">
                         </div>
                         <div class="modal__btns">
                             <button type="button" class="btn btn--primary">
                                 <svg aria-hidden="true">
-                                    <use xlink:href="images/sprite.svg#save"></use>
+                                    <use xlink:href="{{ url('/images/sprite.svg#save') }}"></use>
                                 </svg>
                                 <span>Сохранить</span>
                             </button>
                         </div>
                         <span class="success-message">
                             <svg aria-hidden="true">
-                                <use xlink:href="images/sprite.svg#check-circle"></use>
+                                <use xlink:href="{{ url('/images/sprite.svg#check-circle') }}"></use>
                             </svg>
                             <span>Изменения успешно сохранены</span>
                         </span>
@@ -1107,7 +831,7 @@
                 <button type="button" class="modal__close-btn btn btn--icon btn--sm js-modal-close">
                     <span class="sr-only">Закрыть модальное окно</span>
                     <svg aria-hidden="true">
-                        <use xlink:href="images/sprite.svg#close"></use>
+                        <use xlink:href="{{ url('/images/sprite.svg#close') }}"></use>
                     </svg>
                 </button>
                 <div class="modal__content">
@@ -1117,35 +841,35 @@
                     <form class="modal__form is-success">
                         <div class="form-input">
                             <label for="company-info-company-name">Название компании*</label>
-                            <input type="text" id="company-info-company-name" placeholder='ООО “ЭлектроМонтаж”' required>
+                            <input type="text" id="company-info-company-name" placeholder='ООО “ЭлектроМонтаж”' value="{{ Auth::guard('customer')->user()->company?->name }}" required>
                         </div>
                         <div class="form-input">
                             <label for="company-info-inn">ИНН*</label>
-                            <input type="number" id="company-info-inn" placeholder='1122312321428234' required>
+                            <input type="number" id="company-info-inn" placeholder='1122312321428234' value="{{ Auth::guard('customer')->user()->company?->inn }}" required>
                         </div>
                         <div class="form-input">
                             <label for="company-info-name">Контактное лицо*</label>
-                            <input type="text" id="company-info-name" placeholder='Петр Петров' required>
+                            <input type="text" id="company-info-name" placeholder='Петр Петров' value="{{ Auth::guard('customer')->user()->company?->contact_person }}" required>
                         </div>
                         <div class="form-input">
                             <label for="company-info-phone">Номер телефона*</label>
-                            <input type="tel" id="company-info-phone" placeholder='+7 900 000-00-00' required>
+                            <input type="tel" id="company-info-phone" placeholder='+7 900 000-00-00' value="{{ Auth::guard('customer')->user()->company?->phone }}" required>
                         </div>
                         <div class="form-input">
                             <label for="company-info-email">Электронная почта*</label>
-                            <input type="email" id="company-info-email" placeholder='customer@gmail.com' required>
+                            <input type="email" id="company-info-email" placeholder='customer@gmail.com' value="{{ Auth::guard('customer')->user()->company?->email }}" required>
                         </div>
                         <div class="modal__btns">
                             <button type="button" class="btn btn--primary">
                                 <svg aria-hidden="true">
-                                    <use xlink:href="images/sprite.svg#save"></use>
+                                    <use xlink:href="{{ url('/images/sprite.svg#save') }}"></use>
                                 </svg>
                                 <span>Сохранить</span>
                             </button>
                         </div>
                         <span class="success-message">
                             <svg aria-hidden="true">
-                                <use xlink:href="images/sprite.svg#check-circle"></use>
+                                <use xlink:href="{{ url('/images/sprite.svg#check-circle') }}"></use>
                             </svg>
                             <span>Изменения успешно сохранены</span>
                         </span>
@@ -1160,7 +884,7 @@
                 <button type="button" class="modal__close-btn btn btn--icon btn--sm js-modal-close">
                     <span class="sr-only">Закрыть модальное окно</span>
                     <svg aria-hidden="true">
-                        <use xlink:href="images/sprite.svg#close"></use>
+                        <use xlink:href="{{ url('/images/sprite.svg#close') }}"></use>
                     </svg>
                 </button>
                 <div class="modal__content">
@@ -1277,7 +1001,7 @@
                 <button type="button" class="modal__close-btn btn btn--icon btn--sm js-modal-close">
                     <span class="sr-only">Закрыть модальное окно</span>
                     <svg aria-hidden="true">
-                        <use xlink:href="images/sprite.svg#close"></use>
+                        <use xlink:href="{{ url('/images/sprite.svg#close') }}"></use>
                     </svg>
                 </button>
                 <div class="modal__content">
@@ -1327,7 +1051,7 @@
                             <div class="form-input-file js-input-file">
                                 <label for="create-claim-form" class="btn btn--secondary">
                                     <svg aria-hidden="true">
-                                        <use xlink:href="images/sprite.svg#file-download"></use>
+                                        <use xlink:href="{{ url('/images/sprite.svg#file-download') }}"></use>
                                     </svg>
                                     <span>Загрузить претензию на официальном бланке</span>
                                 </label>
@@ -1336,7 +1060,7 @@
                             <div class="form-input-file js-input-file">
                                 <label for="create-claim-image" class="btn btn--secondary">
                                     <svg aria-hidden="true">
-                                        <use xlink:href="images/sprite.svg#image-add"></use>
+                                        <use xlink:href="{{ url('/images/sprite.svg#image-add') }}"></use>
                                     </svg>
                                     <span>Загрузить фото</span>
                                 </label>
@@ -1346,14 +1070,14 @@
                         <div class="modal__btns">
                             <button type="button" class="btn btn--primary">
                                 <svg aria-hidden="true">
-                                    <use xlink:href="images/sprite.svg#save"></use>
+                                    <use xlink:href="{{ url('/images/sprite.svg#save') }}"></use>
                                 </svg>
                                 <span>Сохранить</span>
                             </button>
                         </div>
                         <span class="success-message">
                             <svg aria-hidden="true">
-                                <use xlink:href="images/sprite.svg#check-circle"></use>
+                                <use xlink:href="{{ url('/images/sprite.svg#check-circle') }}"></use>
                             </svg>
                             <span>Претензия успешно создана</span>
                         </span>

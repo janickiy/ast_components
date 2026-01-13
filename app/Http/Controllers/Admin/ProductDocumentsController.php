@@ -116,7 +116,7 @@ class ProductDocumentsController extends Controller
         $row = $this->productDocumentsRepository->find($request->id);
 
         if ($request->hasFile('file')) {
-            $filename = $this->productDocumentsService->storeFile($request);
+            $filename = $this->productDocumentsService->updateFile($row->id, $request);
         }
 
         $this->productDocumentsRepository->update($request->id, array_merge(array_merge($request->all()), [

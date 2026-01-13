@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->integer('return_count')->default(0);
             $table->unsignedBigInteger('order_id');
             $table->unsignedBigInteger('product_id');
+            $table->unsignedBigInteger('customer_id');
             $table->timestamps();
 
             $table->foreign('order_id')
@@ -29,6 +30,13 @@ return new class extends Migration {
                 ->references('id')
                 ->on('products')
                 ->onDelete('cascade');
+
+            $table->foreign('customer_id')
+                ->references('id')
+                ->on('customers')
+                ->onDelete('cascade');
+
+
         });
     }
 

@@ -12,6 +12,11 @@ class Pages extends Model
 {
     protected $table = 'pages';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'title',
         'text',

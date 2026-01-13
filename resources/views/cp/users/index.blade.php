@@ -35,6 +35,7 @@
                                 <table id="itemList" class="table table-bordered table-striped">
                                     <thead>
                                     <tr>
+                                        <th>ID</th>
                                         <th>логин</th>
                                         <th>имя</th>
                                         <th>роль</th>
@@ -106,6 +107,7 @@
                             url: '{{ route('admin.datatable.users') }}'
                         },
                         'columns': [
+                            {data: 'id', name: 'id'},
                             {data: 'login', name: 'login'},
                             {data: 'name', name: 'name'},
                             {data: 'role', name: 'role'},

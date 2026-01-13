@@ -46,7 +46,6 @@
                                 </label>
                             </div>
 
-
                         </div>
                     </div>
                 </div>
@@ -95,7 +94,6 @@
                                     </label>
                                 </div>
                             @endforeach
-
 
                         </div>
                     </div>
@@ -246,7 +244,6 @@
 @endsection
 
 @section('js')
-
 
 
 @endsection

@@ -9,7 +9,6 @@ use App\Http\Requests\Admin\Users\EditRequest;
 use App\Http\Requests\Admin\Users\StoreRequest;
 use App\Http\Requests\Admin\Users\DeleteRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
@@ -35,7 +34,7 @@ class UsersController extends Controller
      */
     public function index(): View
     {
-        return view('cp.users.index')->with('title', 'Пользователи');
+        return view('cp.users.index')->with('title', 'Администраторы');
     }
 
     /**
@@ -45,7 +44,7 @@ class UsersController extends Controller
     {
         $options = User::getOption();
 
-        return view('cp.users.create_edit', compact('options'))->with('title', 'Добавить пользователя');
+        return view('cp.users.create_edit', compact('options'))->with('title', 'Добавить администратора');
     }
 
     /**
@@ -71,14 +70,14 @@ class UsersController extends Controller
 
         $options = User::getOption();
 
-        return view('cp.users.create_edit', compact('user', 'options'))->with('title', 'Редактировать пользователя');
+        return view('cp.users.create_edit', compact('user', 'options'))->with('title', 'Редактировать администратора');
     }
 
     /**
      * @param EditRequest $request
      * @return RedirectResponse
      */
-    public function update(Request $request): RedirectResponse
+    public function update(EditRequest $request): RedirectResponse
     {
         $this->userRepository->update($request->id, $request->all());
 

@@ -1,7 +1,10 @@
 <?php
 
+
+use App\Http\Controllers\Frontend\AuthController;
 use App\Http\Controllers\Frontend\FrontendController;
 use App\Http\Controllers\Frontend\ProfileController;
+use App\Http\Controllers\Frontend\ResetPasswordController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -52,4 +55,15 @@ Route::get('product/{slug}', [FrontendController::class, 'product'])->name('fron
 
 Route::group(['prefix' => 'profile'], function () {
     Route::get('', [ProfileController::class, 'index'])->name('frontend.profile.index');
+    Route::get('logout', [ProfileController::class, 'logout'])->name('frontend.profile.logout');
+
+    //logout
 });
+
+Route::group(['prefix' => 'auth'], function () {
+    Route::post('login', [AuthController::class, 'login'])->name('frontend.auth.login');
+    Route::post('register', [AuthController::class, 'register'])->name('frontend.auth.register');
+    Route::post('send-reset-link', [AuthController::class, 'sendResetLink'])->name('frontend.auth.send_reset_link');
+});
+
+Route::get('password-reset/{token}/{email}', ResetPasswordController::class)->name('frontend.password.reset');

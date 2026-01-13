@@ -40,6 +40,7 @@
                                 <table id="itemList" class="table table-bordered table-striped">
                                     <thead>
                                     <tr>
+                                        <th>ID</th>
                                         <th>Название</th>
                                         <th>ЧПУ</th>
                                         <th>Главная</th>
@@ -113,6 +114,7 @@
                             url: '{{ route('admin.datatable.pages') }}'
                         },
                         'columns': [
+                            {data: 'id', name: 'id'},
                             {data: 'title', name: 'title'},
                             {data: 'slug', name: 'slug'},
                             {data: 'main', name: 'main'},

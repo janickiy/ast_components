@@ -9,6 +9,11 @@ class Seo extends Model
 {
     protected $table = 'seo';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'type',
         'h1',

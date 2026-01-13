@@ -142,7 +142,7 @@
 
                     <li class="nav-item{{ Request::is('cp/goods*') ? ' active menu-open' : '' }}">
                         <a href="#" class="nav-link{{ Request::is('cp/goods*') ? ' active' : '' }}">
-                            <i class="nav-icon fas fa-file"></i>
+                            <i class="nav-icon fas fa-list-ul"></i>
                             <p>
                                 Продукция
                                 <i class="fas fa-angle-left right"></i>
@@ -185,7 +185,7 @@
 
                         <li class="nav-item{{ Request::is('cp/seo*') ? ' active menu-open' : '' }}">
                             <a href="#" class="nav-link{{ Request::is('cp/seo*') ? ' active' : '' }}">
-                                <i class="nav-icon fas fa-file"></i>
+                                <i class="nav-icon fas fa-globe"></i>
                                 <p>
                                     Seo
                                     <i class="fas fa-angle-left right"></i>
@@ -245,14 +245,36 @@
                         </li>
                     @endif
 
+                    <li class="nav-item">
+                        <a href="{{ route('admin.orders.index') }}"
+                           class="nav-link{{ Request::is('cp/orders*') ? ' active' : '' }}"
+                           title="Заказы">
+                            <i class="nav-icon fas fa-shopping-cart"></i>
+                            <p>Заказы</p>
+                        </a>
+                    </li>
+
+                    @if(PermissionsHelper::has_permission('admin'))
+
+                        <li class="nav-item">
+                            <a href="{{ route('admin.customers.index') }}"
+                               class="nav-link{{ Request::is('cp/customers*') ? ' active' : '' }}"
+                               title="Пользователи">
+                                <i class="nav-icon fas fa-users"></i>
+                                <p>Пользователи</p>
+                            </a>
+                        </li>
+
+                    @endif
+
                     @if(PermissionsHelper::has_permission('admin'))
 
                         <li class="nav-item">
                             <a href="{{ route('admin.users.index') }}"
                                class="nav-link{{ Request::is('cp/users*') ? ' active' : '' }}"
-                               title="Пользователи">
+                               title="Администраторы">
                                 <i class="nav-icon fas fa-users"></i>
-                                <p>Пользователи</p>
+                                <p>Администраторы</p>
                             </a>
                         </li>
 

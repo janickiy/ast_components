@@ -11,6 +11,11 @@ class OrderProduct extends Model
 
     public $timestamps = false;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'order_id',
         'product_id',

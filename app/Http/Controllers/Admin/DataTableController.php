@@ -3,17 +3,22 @@
 namespace App\Http\Controllers\Admin;
 
 
-use App\Models\News;
-use App\Models\User;
-use App\Models\Feedback;
-use App\Models\Pages;
-use App\Models\Products;
-use App\Models\Settings;
-use App\Models\Seo;
-use App\Models\Redirect;
-use App\Models\Manufacturers;
-use App\Models\ProductDocuments;
-use App\Models\ProductParameters;
+use App\Models\{
+    Customers,
+    News,
+    User,
+    Feedback,
+    Pages,
+    Products,
+    Settings,
+    Seo,
+    Redirect,
+    Manufacturers,
+    ProductDocuments,
+    ProductParameters,
+    Orders,
+    OrderProduct,
+};
 use App\Helpers\StringHelper;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
@@ -93,7 +98,7 @@ class DataTableController extends Controller
                 return '<div class="nobr"> ' . $editBtn . $deleteBtn . '</div>';
             })
             ->editColumn('description', function ($row) {
-               return StringHelper::shortText(StringHelper::clearHtmlTags($row->description), 800);
+                return StringHelper::shortText(StringHelper::clearHtmlTags($row->description), 800);
             })
             ->rawColumns(['actions'])->make(true);
     }
@@ -274,5 +279,70 @@ class DataTableController extends Controller
                 return '<div class="nobr"> ' . $editBtn . $deleteBtn . '</div>';
             })
             ->rawColumns(['actions'])->make(true);
+    }
+
+    /**
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function orders(): JsonResponse
+    {
+        $row = Orders::selectRaw('orders.id,orders.status,orders.delivery_date,orders.invoice,orders.created_at,SUM(order_product.price * order_product.count) as sum, customers.name AS customer')
+            ->leftJoin('customers', 'customers.id', '=', 'orders.customer_id')
+            ->leftJoin('order_product', 'order_product.order_id', '=', 'orders.id')
+            ->groupBy('orders.id')
+            ->groupBy('orders.status')
+            ->groupBy('orders.delivery_date')
+            ->groupBy('orders.invoice')
+            ->groupBy('orders.created_at')
+            ->groupBy('customers.name');
+
+        return Datatables::of($row)
+            ->addColumn('actions', function ($row) {
+                $editBtn = '<a title="редактировать" class="btn btn-xs btn-primary"  href="' . URL::route('admin.orders.edit', ['id' => $row->id]) . '"><span  class="fa fa-edit"></span></a> &nbsp;';
+
+                return '<div class="nobr"> ' . $editBtn . '</div>';
+            })
+            ->editColumn('invoice', function ($row) {
+                return $row->invoice ? 'есть' : 'нет';
+            })
+            ->editColumn('customer', function ($row) {
+                return '<a href="' . URL::route('admin.order_product.index', ['order_id' => $row->id]) . '">' . $row->customer . '</a>';
+            })
+            ->editColumn('status', function ($row) {
+                return Orders::$status_name[$row->status];
+            })
+            ->rawColumns(['actions', 'customer'])->make(true);
+    }
+
+    /**
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function customers(): JsonResponse
+    {
+        $row = Customers::query();
+
+        return Datatables::of($row)
+            ->addColumn('actions', function ($row) {
+                $editBtn = '<a title="редактировать" class="btn btn-xs btn-primary"  href="' . URL::route('admin.customers.edit', ['id' => $row->id]) . '"><span  class="fa fa-edit"></span></a> &nbsp;';
+
+                return '<div class="nobr"> ' . $editBtn . '</div>';
+            })
+            ->rawColumns(['actions'])->make(true);
+    }
+
+    /**
+     * @param int $order_id
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function orderProduct(int $order_id): JsonResponse
+    {
+        $row = OrderProduct::where('order_id', $order_id);
+
+        return Datatables::of($row)
+
+            ->rawColumns([])->make(true);
     }
 }

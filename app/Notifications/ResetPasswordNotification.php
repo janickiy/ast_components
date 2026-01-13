@@ -7,9 +7,13 @@ use Illuminate\Notifications\Messages\MailMessage;
 
 class ResetPasswordNotification extends BaseResetPassword
 {
+    /**
+     * @param $notifiable
+     * @return MailMessage
+     */
     public function toMail($notifiable): MailMessage
     {
-        $url = url(route('frontend.auth.password.reset', [
+        $url = url(route('frontend.password.reset', [
             'token' => $this->token,
             'email' => $notifiable->getEmailForPasswordReset(),
         ], false));

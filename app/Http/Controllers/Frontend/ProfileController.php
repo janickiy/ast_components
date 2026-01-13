@@ -6,12 +6,20 @@ use App\Http\Controllers\Controller;
 use App\Helpers\MenuHelper;
 use App\Models\Catalog;
 use App\Models\Feedback;
+use App\Models\Orders;
 use App\Models\Seo;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:customer');
+    }
+
     /**
      * Страница профиля
      *
@@ -32,6 +40,12 @@ class ProfileController extends Controller
         $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
         $options = Feedback::getPlatformList();
 
+        $orders = Orders::where('customer_id', Auth::guard('customer')->user()->id)
+        ->limit(10)
+        ->orderBy('created_at')
+        ->get();
+
+
         return view('frontend.profile.index', compact(
                 'meta_description',
                 'meta_keywords',
@@ -40,6 +54,7 @@ class ProfileController extends Controller
                 'options',
                 'catalogs',
                 'catalogsList',
+                'orders',
                 'h1',
                 'seo_url_canonical',
                 'title'
@@ -55,5 +70,15 @@ class ProfileController extends Controller
     public function complaints()
     {
 
+    }
+
+    /**
+     * @return RedirectResponse
+     */
+    public function logout(): RedirectResponse
+    {
+        Auth::guard('customer')->logout();;
+
+        return redirect()->route('frontend.index');
     }
 }

@@ -39,6 +39,7 @@
                                 <table id="itemList" class="table table-striped table-bordered table-hover">
                                     <thead>
                                     <tr>
+                                        <th>ID</th>
                                         <th>Название</th>
                                         <th>Фото</th>
                                         <th>Категория</th>
@@ -117,6 +118,7 @@
                             url: '{{ route('admin.datatable.products') }}'
                         },
                         'columns': [
+                            {data: 'id', name: 'id'},
                             {data: 'title', name: 'title'},
                             {data: 'thumbnail', name: 'thumbnail', searchable: false},
                             {data: 'catalog', name: 'catalogs.name'},

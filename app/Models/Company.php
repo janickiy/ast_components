@@ -9,13 +9,18 @@ class Company extends Model
 {
     protected $table = 'company';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'name',
         'inn',
         'contact_person',
         'phone',
         'email',
-        'client_id'
+        'customer_id'
     ];
 
     /**
@@ -23,6 +28,6 @@ class Company extends Model
      */
     public function product(): BelongsTo
     {
-        return $this->belongsTo(Clients::class, 'client_id', 'id');
+        return $this->belongsTo(Customers::class, 'client_id', 'id');
     }
 }

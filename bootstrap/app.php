@@ -3,7 +3,6 @@
 
 use App\Models\Catalog;
 use App\Helpers\MenuHelper;
-use App\Models\Seo;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -25,18 +24,20 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'permission' => \App\Http\Middleware\Permission::class,
+            'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+            'auth' => \App\Http\Middleware\Authenticate::class,
         ]);
         $middleware->append(\App\Http\Middleware\RedirectTo::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (NotFoundHttpException $e, Request $request) {
-            $seo = Seo::where('type', 'frontend.catalog')->first();
             $title = '404';
             $meta_description = 'АСТ Компонентс поставляет электронные компоненты для вашего бизнеса';
             $meta_keywords = '';
             $meta_title = '';
             $seo_url_canonical = '';
-            $h1 = $seo->h1 ?? $title;
+            $h1 = $title;
+
             $menu = MenuHelper::getMenuList();
             $catalogsList = Catalog::getCatalogList();
             $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
@@ -54,4 +55,3 @@ return Application::configure(basePath: dirname(__DIR__))
             ), 404);
         });
     })->create();
-

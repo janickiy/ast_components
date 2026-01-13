@@ -10,6 +10,11 @@ class ProductParameters extends Model
 {
     protected $table = 'product_parameters';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'name',
         'value',

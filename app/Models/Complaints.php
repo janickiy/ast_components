@@ -15,13 +15,19 @@ class Complaints extends Model
 
     public const TYPE_RETURN = 2;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'type',
         'status',
         'order_count',
         'return_count',
         'order_id',
-        'product_id'
+        'product_id',
+        'customer_id',
     ];
 
     public static array $type_name = [
@@ -44,5 +50,13 @@ class Complaints extends Model
     public function order(): BelongsTo
     {
         return $this->belongsTo(Orders::class, 'order_id', 'id');
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customers::class, 'customer_id', 'id');
     }
 }

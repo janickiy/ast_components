@@ -31,10 +31,12 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     {!! Html::style('/css/styles.min.css?v=3') !!}
+    {!! Html::style('/css/auth.css?v=2') !!}
 
     @yield('css')
 
     {!! Html::script('/scripts/script.min.js?v=1') !!}
+    {!! Html::script('/scripts/auth.js?v=2') !!}
 
 </head>
 
@@ -57,7 +59,8 @@
                                     <div class="header__submenu-nav">
                                         <ul>
                                             @foreach( $item['child'] as $child )
-                                            <li><a title="{{ $child['label'] }}" href="{{ $child['link'] }}">{{ $child['label'] }}</a></li>
+                                                <li><a title="{{ $child['label'] }}"
+                                                       href="{{ $child['link'] }}">{{ $child['label'] }}</a></li>
                                             @endforeach
                                         </ul>
                                     </div>
@@ -173,15 +176,23 @@
                     <span class="header__cart-count">10</span>
                 </div>
 
-                <button type="button" class="header__login-btn btn" data-modal-trigger="login">
-                    <svg aria-hidden="true" class="orange">
-                        <use xlink:href="{{ url('/images/sprite.svg#user') }}"></use>
-                    </svg>
-                    <span>Вход/Регистрация</span>
-                </button>
+                @if (Auth::guard('customer')->check())
+                    <a href="{{ route('frontend.profile.index') }}" class="header__login-btn btn">
+                        <svg aria-hidden="true" class="orange">
+                            <use xlink:href="{{ url('/images/sprite.svg#user') }}"></use>
+                        </svg>
+                        <span>Личный кабинет</span>
+                    </a>
+                @else
+                    <button type="button" class="header__login-btn btn" data-modal-trigger="login">
+                        <svg aria-hidden="true" class="orange">
+                            <use xlink:href="{{ url('/images/sprite.svg#user') }}"></use>
+                        </svg>
+                        <span>Вход/Регистрация</span>
+                    </button>
+                @endif
 
-
-                <a href="./converters.html" class="header__converters-btn btn btn--link">
+                <a href="{{ route('frontend.converters') }}" class="header__converters-btn btn btn--link">
                     <svg aria-hidden="true" class="orange">
                         <use xlink:href="{{ url('/images/sprite.svg#calculation') }}"></use>
                     </svg>
@@ -297,8 +308,7 @@
     </a>
     <div class="mobile-catalog__accordions accordions">
         @foreach($catalogs ?? [] as $catalog)
-        <div class="accordion__item">
-
+            <div class="accordion__item">
 
                 <button class="accordion__btn js-accordion-btn" aria-expanded="false">
                     <span>
@@ -310,30 +320,27 @@
                     </svg>
                 </button>
 
-
-
-
-            <div class="accordion__content">
-                <div class="mobile-catalog__list">
+                <div class="accordion__content">
+                    <div class="mobile-catalog__list">
                         <span class="mobile-catalog__category">
                             <a href="{{ route('frontend.catalog') }}">Смотреть все</a>
                             <sup class="mobile-catalog__item-count">{{ $catalog->getTotalProductCount() }}</sup>
                         </span>
 
-                    <span class="mobile-catalog__category">
+                        <span class="mobile-catalog__category">
                             <a href="./catalog.html">Аттенюаторы</a>
                             <sup class="mobile-catalog__item-count">10 000</sup>
                     </span>
 
-                    <span class="mobile-catalog__subcategory">
+                        <span class="mobile-catalog__subcategory">
                             <a href="./catalog.html">Номенклатура 1</a>
                             <sup class="mobile-catalog__item-count">10 000</sup>
                         </span>
 
 
+                    </div>
                 </div>
             </div>
-        </div>
         @endforeach
     </div>
 </div>
@@ -489,7 +496,7 @@
                         </div>
                     </div>
                     <div class="modal__btns">
-                        <button type="button" class="btn btn--primary">
+                        <button type="submit" class="btn btn--primary">
                             <svg aria-hidden="true">
                                 <use xlink:href="{{ url('/images/sprite.svg#login') }}"></use>
                             </svg>
@@ -502,6 +509,7 @@
                             <span>Зарегистрироваться</span>
                         </button>
                     </div>
+                    <div class="result"></div>
                 </form>
             </div>
         </div>
@@ -537,6 +545,14 @@
                             <label for="sign-up-display-password">Показать пароль</label>
                         </div>
                     </div>
+                    <div class="form-password">
+                        <label for="sign-up-password-again">Повтор пароля*</label>
+                        <input type="password" id="sign-up-password-again" placeholder='*******' required>
+                        <div class="form-display-btn">
+                            <input type="checkbox" id="sign-up-display-password-again">
+                            <label for="sign-up-display-password-again">Показать пароль</label>
+                        </div>
+                    </div>
                     <div class="form-checkbox">
                         <input type="checkbox" id="sign-up-agreement">
                         <label for="sign-up-agreement">Я даю согласие на обработку персональных данных в&nbsp;соответствии
@@ -544,13 +560,14 @@
                                 конфиденциальности</a></label>
                     </div>
                     <div class="modal__btns">
-                        <button type="button" class="btn btn--primary" data-modal-trigger="sign-up-success">
+                        <button type="submit" class="btn btn--primary">
                             <svg aria-hidden="true">
                                 <use xlink:href="{{ url('/images/sprite.svg#user-plus') }}"></use>
                             </svg>
                             <span>Зарегистрироваться</span>
                         </button>
                     </div>
+                    <div class="result"></div>
                 </form>
             </div>
         </div>
@@ -603,10 +620,10 @@
                 <form class="modal__form is-success">
                     <div class="form-input">
                         <label for="recovery-phone">Введите email, указанный при регистрации*</label>
-                        <input type="tel" id="recovery-phone" placeholder='user@gmail.com' required>
+                        <input type="tel" id="recovery-email" placeholder='user@gmail.com' required>
                     </div>
                     <div class="modal__btns">
-                        <button type="button" class="btn btn--primary">
+                        <button type="submit" class="btn btn--primary">
                             <svg aria-hidden="true">
                                 <use xlink:href="{{ url('/images/sprite.svg#restore') }}"></use>
                             </svg>
@@ -614,11 +631,12 @@
                         </button>
                     </div>
                     <span class="success-message">
-                            <svg aria-hidden="true">
-                                <use xlink:href="{{ url('/images/sprite.svg#check-circle') }}"></use>
-                            </svg>
-                            <span>Код с новым паролем отправлено на указанный email</span>
-                        </span>
+                        <svg aria-hidden="true">
+                            <use xlink:href="{{ url('/images/sprite.svg#check-circle') }}"></use>
+                        </svg>
+                        <span>Код с новым паролем отправлено на указанный email</span>
+                    </span>
+                    <div class="result"></div>
                 </form>
             </div>
         </div>

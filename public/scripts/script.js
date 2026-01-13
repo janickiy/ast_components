@@ -275,6 +275,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     const openModal = (e) => {
         const target = e.currentTarget;
+
         if (!!currentModalOpen) {
             const prevModal = document.querySelector(`[data-modal-name=${currentModalOpen}]`);
             setTimeout(() => {

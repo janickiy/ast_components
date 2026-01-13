@@ -12,6 +12,11 @@ class Catalog extends Model
 {
     protected $table = 'catalogs';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'name',
         'parent_id',

@@ -13,12 +13,13 @@ return new class extends Migration {
         Schema::create('orders', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->tinyInteger('status');
-            $table->unsignedBigInteger('client_id');
+            $table->unsignedBigInteger('customer_id');
+            $table->timestamp('delivery_date')->nullable();
+            $table->string('invoice')->nullable();
             $table->timestamps();
-
-            $table->foreign('client_id')
+            $table->foreign('customer_id')
                 ->references('id')
-                ->on('clients')
+                ->on('customers')
                 ->onDelete('cascade');
         });
     }

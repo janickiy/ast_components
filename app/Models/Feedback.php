@@ -16,6 +16,11 @@ class Feedback extends Model
 
     public const TYPE_REQUEST = 2;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'name',
         'company',

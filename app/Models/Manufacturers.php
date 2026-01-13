@@ -10,6 +10,11 @@ class Manufacturers extends Model
 {
     protected $table = 'manufacturers';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'title',
         'description',

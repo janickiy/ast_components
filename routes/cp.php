@@ -5,11 +5,14 @@ use App\Http\Controllers\Admin\{
     AuthController,
     AjaxController,
     CatalogController,
+    CustomersController,
     DashboardController,
     DataTableController,
     FeedbackController,
     PagesController,
     ProductsController,
+    OrdersController,
+    OrderProductController,
     ProductParametersController,
     ProductDocumentsController,
     ManufacturersController,
@@ -166,6 +169,16 @@ Route::middleware(['permission:admin'])->group(function () {
     });
 });
 
+Route::group(['prefix' => 'orders'], function () {
+    Route::get('', [OrdersController::class, 'index'])->name('admin.orders.index');
+    Route::get('edit/{id}', [OrdersController::class, 'edit'])->name('admin.orders.edit')->where('id', '[0-9]+');
+    Route::put('update', [OrdersController::class, 'update'])->name('admin.orders.update');
+
+    Route::group(['prefix' => 'order-product'], function () {
+        Route::get('{order_id}', [OrderProductController::class, 'index'])->name('admin.order_product.index')->where('order_id', '[0-9]+');
+    });
+});
+
 Route::middleware(['permission:admin'])->group(function () {
     Route::group(['prefix' => 'settings'], function () {
         Route::get('', [SettingsController::class, 'index'])->name('admin.settings.index');
@@ -174,6 +187,14 @@ Route::middleware(['permission:admin'])->group(function () {
         Route::get('edit/{id}', [SettingsController::class, 'edit'])->name('admin.settings.edit')->where('id', '[0-9]+');
         Route::put('update', [SettingsController::class, 'update'])->name('admin.settings.update');
         Route::post('destroy', [SettingsController::class, 'destroy'])->name('admin.settings.destroy');
+    });
+});
+
+Route::middleware(['permission:admin'])->group(function () {
+    Route::group(['prefix' => 'customers'], function () {
+        Route::get('', [CustomersController::class, 'index'])->name('admin.customers.index');
+        Route::get('edit/{id}', [CustomersController::class, 'edit'])->name('admin.customers.edit')->where('id', '[0-9]+');
+        Route::put('update', [CustomersController::class, 'update'])->name('admin.customers.update');
     });
 });
 
@@ -189,7 +210,11 @@ Route::group(['prefix' => 'datatable'], function () {
     Route::any('settings', [DataTableController::class, 'settings'])->name('admin.datatable.settings')->middleware(['permission:admin']);
     Route::any('manufacturers', [DataTableController::class, 'manufacturers'])->name('admin.datatable.manufacturers');
     Route::any('seo', [DataTableController::class, 'seo'])->name('admin.datatable.seo')->middleware(['permission:admin']);
-    Route::any('product-documents/{product_id}', [DataTableController::class, 'productDocuments'])->name('admin.datatable.product_documents')->where('id', '[0-9]+');
-    Route::any('product-parameters/{product_id}', [DataTableController::class, 'productParameters'])->name('admin.datatable.product_parameters')->where('id', '[0-9]+');
+    Route::any('product-documents/{product_id}', [DataTableController::class, 'productDocuments'])->name('admin.datatable.product_documents')->where('product_id', '[0-9]+');
+    Route::any('product-parameters/{product_id}', [DataTableController::class, 'productParameters'])->name('admin.datatable.product_parameters')->where('product_id', '[0-9]+');
     Route::any('redirect', [DataTableController::class, 'redirect'])->name('admin.datatable.redirect');
+    Route::any('orders', [DataTableController::class, 'orders'])->name('admin.datatable.orders');
+    Route::any('customers', [DataTableController::class, 'customers'])->name('admin.datatable.customers')->middleware(['permission:admin']);
+    Route::any('order-product/{order_id}', [DataTableController::class, 'orderProduct'])->name('admin.datatable.order_product')->where('order_id', '[0-9]+');
+
 });

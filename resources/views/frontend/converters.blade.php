@@ -59,7 +59,7 @@
             <div class="converters__card">
                 <div class="converters__controls">
                     <div class="form-input">
-                        <label for="inductance-original-value">Введите исходное значние</label>
+                        <label for="inductance-original-value">Введите исходное значение</label>
                         <div class="converters__input-line">
                             <input type="text" id="inductance-original-value" placeholder='0'>
                             <div class="form-select">
@@ -92,51 +92,72 @@
 
 @section('js')
 
-    <!-- jQuery -->
-    {!! Html::script('/plugins/jquery/jquery.min.js') !!}
-
     <script>
+        const inVal = document.getElementById('capacity-original-value');
+        const unitVal = document.getElementById('capacity-original-unit');
+        const capacityM = document.getElementById('convertert-capacity-m');
+        const capacityP = document.getElementById('convertert-capacity-p');
 
-        $(document).ready(function() {
-            let convert = function() {
-                let inVal = $('#capacity-original-value').val();
-                let unitVal = $('#capacity-original-unit').val();
-                let num = 0;
+        const inVal2 = document.getElementById('inductance-original-value');
+        const unitVal2 = document.getElementById('inductance-original-unit');
+        const inductanceValue = document.getElementById('convert-inductance-mm');
+        const inductanceUnit = document.getElementById('convert-inductance-n');
 
-                if (unitVal === 'n') {
-                    num = Number(inVal) * 1000000000;
-                } else if(unitVal === 'm') {
-                    num = Number(inVal) * 1000000;
-                } else if (unitVal === 'p') {
-                    num = Number(inVal) * 100000000000;
-                }
-
-                $("#convertert-capacity-m").text(num / 1000000);
-                $("#convertert-capacity-p").text(num / 100000000000);
-            };
-
-            let convert2 = function() {
-                let inVal = $('#inductance-original-value').val();
-                let unitVal = $('#inductance-original-unit').val();
-                let num = 0;
-
-                if (unitVal === 'm') {
-                    num = Number(inVal) * 1000000;
-                } else if(unitVal === 'mm') {
-                    num = Number(inVal) * 1000;
-                } else if (unitVal === 'n') {
-                    num = Number(inVal) * 1000000000;
-                }
-
-                $("#convert-inductance-mm").text(num / 1000);
-                $("#convert-inductance-n").text(num / 1000000000);
-            };
-
-            $("#capacity-original-value").change(convert);
-            $("#capacity-original-unit").change(convert);
-            $("#inductance-original-value").change(convert2);
-            $("#inductance-original-unit").change(convert2);
+        inVal.addEventListener('input', function() {
+            showResult1(inVal,unitVal,capacityM,capacityP);
         });
+
+        unitVal.addEventListener('change', function() {
+            showResult1(inVal,unitVal,capacityM,capacityP);
+        });
+
+        inVal2.addEventListener('input', function() {
+            showResult2(inVal2,unitVal2,inductanceValue,inductanceUnit);
+        });
+
+        unitVal2.addEventListener('change', function() {
+            showResult2(inVal2,unitVal2,inductanceValue,inductanceUnit);
+        });
+
+        function showResult1(inVal,unitVal,M,P) {
+            const inValValue = inVal.value;
+
+            if (inValValue !== '') {
+                const unitValValue = unitVal.value;
+                let num = 0;
+
+                if (unitValValue === 'n') {
+                    num = Number(inValValue) * 1000000000;
+                } else if(unitValValue === 'm') {
+                    num = Number(inValValue) * 1000000;
+                } else if (unitValValue === 'p') {
+                    num = Number(inValValue) * 100000000000;
+                }
+
+                M.textContent = num / 1000000;
+                P.textContent = num / 100000000000;
+            }
+        }
+
+        function showResult2(inVal2,unitVal2,V,U) {
+            const inValValue = inVal2.value;
+
+            if (inValValue !== '') {
+                const unitValValue = unitVal2.value;
+                let num = 0;
+
+                if (unitValValue === 'm') {
+                    num = Number(inValValue) * 1000000;
+                } else if(unitValValue === 'mm') {
+                    num = Number(inValValue) * 1000;
+                } else if (unitValValue === 'n') {
+                    num = Number(inValValue) * 1000000000;
+                }
+
+                V.textContent = num / 1000000;
+                U.textContent = num / 1000000000;
+            }
+        }
 
     </script>
 

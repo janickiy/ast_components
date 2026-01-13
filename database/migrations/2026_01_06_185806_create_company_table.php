@@ -17,13 +17,12 @@ return new class extends Migration {
             $table->string('contact_person');
             $table->string('phone', 100);
             $table->string('email');
-
-            $table->unsignedBigInteger('client_id');
+            $table->unsignedBigInteger('customer_id');
             $table->timestamps();
 
-            $table->foreign('client_id')
+            $table->foreign('customer_id')
                 ->references('id')
-                ->on('clients')
+                ->on('customers')
                 ->onDelete('cascade');
         });
     }
