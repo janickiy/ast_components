@@ -30,7 +30,7 @@ class ManufacturerRepository extends BaseRepository
             $manufacturer->slug = $data['slug'];
             $manufacturer->seo_h1 = $data['seo_h1'];
             $manufacturer->seo_url_canonical = $data['seo_url_canonical'];
-            $manufacturer->published = $data['published'];
+            $manufacturer->published = (int) $data['published'];
 
             if ($data['image']) {
                 $manufacturer->image = $data['image'];

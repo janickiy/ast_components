@@ -18,6 +18,7 @@ use App\Models\{
     ProductParameters,
     Orders,
     OrderProduct,
+    Logs,
 };
 use App\Helpers\StringHelper;
 use Illuminate\Support\Facades\Auth;
@@ -310,9 +311,9 @@ class DataTableController extends Controller
                 return '<a href="' . URL::route('admin.order_product.index', ['order_id' => $row->id]) . '">' . $row->customer . '</a>';
             })
             ->editColumn('status', function ($row) {
-                return Orders::$status_name[$row->status];
+                return '<p class="' . $row->getStatus()?->cssColor() . '">' .$row->getStatus()?->label() . '</p>';
             })
-            ->rawColumns(['actions', 'customer'])->make(true);
+            ->rawColumns(['actions', 'customer', 'status'])->make(true);
     }
 
     /**
@@ -329,7 +330,10 @@ class DataTableController extends Controller
 
                 return '<div class="nobr"> ' . $editBtn . '</div>';
             })
-            ->rawColumns(['actions'])->make(true);
+            ->editColumn('name', function ($row) {
+                return '<a href="' . URL::route('admin.customer_log.index', ['customer_id' => $row->id]) . '">' . $row->name . '</a>';
+            })
+            ->rawColumns(['actions', 'name'])->make(true);
     }
 
     /**
@@ -342,7 +346,22 @@ class DataTableController extends Controller
         $row = OrderProduct::where('order_id', $order_id);
 
         return Datatables::of($row)
+            ->rawColumns([])->make(true);
+    }
 
+    /**
+     * @param int $customer_id
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function logs(int $customer_id): JsonResponse
+    {
+        $row = Logs::where('customer_id', $customer_id);
+
+        return Datatables::of($row)
+            ->editColumn('action', function ($row) {
+                return Logs::$action_name[$row->action];
+            })
             ->rawColumns([])->make(true);
     }
 }

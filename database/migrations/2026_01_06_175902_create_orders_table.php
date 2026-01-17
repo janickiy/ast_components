@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->bigIncrements('id');
             $table->tinyInteger('status');
             $table->unsignedBigInteger('customer_id');
-            $table->timestamp('delivery_date')->nullable();
+            $table->date('delivery_date')->nullable();
             $table->string('invoice')->nullable();
             $table->timestamps();
             $table->foreign('customer_id')

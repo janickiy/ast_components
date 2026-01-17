@@ -19,9 +19,9 @@ class OrdersService
             Storage::disk('public')->delete('invoices/' . $order->invoice);
         }
 
-        $extension = $request->file('file')->getClientOriginalExtension();
+        $extension = $request->file('invoice')->getClientOriginalExtension();
         $filename = time() . '.' . $extension;
-        $request->file('file')->move('uploads/invoices', $filename);
+        $request->file('invoice')->move('uploads/invoices', $filename);
 
         return $filename;
     }

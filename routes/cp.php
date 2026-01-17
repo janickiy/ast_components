@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\{
     AjaxController,
     CatalogController,
     CustomersController,
+    CustomerLogsController,
     DashboardController,
     DataTableController,
     FeedbackController,
@@ -195,6 +196,9 @@ Route::middleware(['permission:admin'])->group(function () {
         Route::get('', [CustomersController::class, 'index'])->name('admin.customers.index');
         Route::get('edit/{id}', [CustomersController::class, 'edit'])->name('admin.customers.edit')->where('id', '[0-9]+');
         Route::put('update', [CustomersController::class, 'update'])->name('admin.customers.update');
+        Route::group(['prefix' => 'logs'], function () {
+            Route::get('{customer_id}', CustomerLogsController::class)->name('admin.customer_log.index')->where('customer_id', '[0-9]+');
+        });
     });
 });
 
@@ -216,5 +220,5 @@ Route::group(['prefix' => 'datatable'], function () {
     Route::any('orders', [DataTableController::class, 'orders'])->name('admin.datatable.orders');
     Route::any('customers', [DataTableController::class, 'customers'])->name('admin.datatable.customers')->middleware(['permission:admin']);
     Route::any('order-product/{order_id}', [DataTableController::class, 'orderProduct'])->name('admin.datatable.order_product')->where('order_id', '[0-9]+');
-
+    Route::any('logs/{customer_id}', [DataTableController::class, 'logs'])->name('admin.datatable.logs')->where('customer_id', '[0-9]+');
 });

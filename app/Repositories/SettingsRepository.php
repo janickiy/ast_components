@@ -25,7 +25,7 @@ class SettingsRepository extends BaseRepository
             $settings->name = $data['name'] ;
             $settings->display_value = $data['display_value'] ?? null;
             $settings->value = $data['value'] ?? null;
-            $settings->published = $data['published'];
+            $settings->published = (int) $data['published'];
             $settings->save();
         }
         return null;

@@ -14,7 +14,7 @@ class User extends Authenticatable
     public const ROLE_EDITOR = 'editor';
 
 
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<\database\database\migrations\database\factories\UserFactory> */
     use HasFactory, Notifiable;
 
     /**

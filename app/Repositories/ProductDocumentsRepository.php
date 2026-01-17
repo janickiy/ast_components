@@ -26,7 +26,7 @@ class ProductDocumentsRepository extends BaseRepository
             }
 
             $productDocument->name = $data['name'];
-            $productDocument->product_id = $data['product_id'];
+            $productDocument->product_id = (int) $data['product_id'];
             $productDocument->save();
         }
         return null;

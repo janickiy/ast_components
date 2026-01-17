@@ -23,7 +23,7 @@ class ProductParametersRepository extends BaseRepository
         if ($productParameters) {
             $productParameters->name = $data['name'];
             $productParameters->value = $data['value'];
-            $productParameters->product_id = $data['product_id'];
+            $productParameters->product_id = (int) $data['product_id'];
             $productParameters->save();
         }
         return null;

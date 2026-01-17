@@ -33,9 +33,9 @@ class ProductsRepository extends BaseRepository
         if ($product) {
             $product->title = $data['title'];
             $product->description = $data['description'];
-            $product->catalog_id = $data['catalog_id'];
-            $product->manufacturer_id = $data['manufacturer_id'];
-            $product->price = $data['price'];
+            $product->catalog_id = (int) $data['catalog_id'];
+            $product->manufacturer_id = (int) $data['manufacturer_id'];
+            $product->price = (int) $data['price'];
             $product->meta_title = $data['meta_title'];
             $product->meta_description = $data['meta_description'];
             $product->meta_keywords = $data['meta_keywords'];
@@ -45,8 +45,8 @@ class ProductsRepository extends BaseRepository
             $product->seo_sitemap = $data['seo_sitemap'];
             $product->image_title = $data['image_title'];
             $product->image_alt = $data['image_alt'];
-            $product->in_stock = $data['in_stock'];
-            $product->under_order = $data['under_order'];
+            $product->in_stock = (int) $data['in_stock'];
+            $product->under_order = (int) $data['under_order'];
             $product->save();
         }
         return null;

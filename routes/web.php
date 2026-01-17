@@ -1,10 +1,14 @@
 <?php
 
 
-use App\Http\Controllers\Frontend\AuthController;
-use App\Http\Controllers\Frontend\FrontendController;
-use App\Http\Controllers\Frontend\ProfileController;
-use App\Http\Controllers\Frontend\ResetPasswordController;
+use App\Http\Controllers\Frontend\{
+    AuthController,
+    CartController,
+    ComplaintController,
+    FrontendController,
+    ProfileController,
+    ResetPasswordController,
+};
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -52,12 +56,24 @@ Route::any('/conditions', [FrontendController::class, 'conditions'])->name('fron
 
 Route::get('product/{slug}', [FrontendController::class, 'product'])->name('frontend.product');
 
+// Корзина
+Route::get('/cart', [CartController::class, 'index'])->name('frontend.cart.index');
 
+// Личный кабинет
 Route::group(['prefix' => 'profile'], function () {
+    // Профиль
     Route::get('', [ProfileController::class, 'index'])->name('frontend.profile.index');
+    // Получаем список заказов
+    Route::get('orders', [ProfileController::class, 'orders'])->name('frontend.profile.orders');
+    // Редактирование общей информации
+    Route::post('update', [ProfileController::class, 'updateGeneralInfo'])->name('frontend.profile.update.general');
+    // Редактирование информации о компании
+    Route::post('company', [ProfileController::class, 'updateCompanyInfo'])->name('frontend.profile.update.company');
+    // Получаем список претензий
+    Route::post('complaints', [ComplaintController::class, 'store'])->name('frontend.profile.complaints.store');
+    // Выход
     Route::get('logout', [ProfileController::class, 'logout'])->name('frontend.profile.logout');
 
-    //logout
 });
 
 Route::group(['prefix' => 'auth'], function () {

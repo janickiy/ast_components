@@ -9,7 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-class CustomersController
+class CustomersController extends Controller
 {
     /**extends Controller
      * @var CustomerRepository

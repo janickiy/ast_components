@@ -28,7 +28,7 @@ class CatalogRepository extends BaseRepository
             $catalog->meta_keywords = $data['meta_keywords'];
             $catalog->seo_h1 = $data['seo_h1'] ;
             $catalog->seo_url_canonical = $data['seo_url_canonical'];
-            $catalog->parent_id = $data['parent_id'];
+            $catalog->parent_id = (int) $data['parent_id'];
             $catalog->seo_sitemap = $data['seo_sitemap'];
             $catalog->save();
         }

@@ -93,6 +93,10 @@
                                     <span class="text-danger">{{ $errors->first('image') }}</span>
                                 @endif
 
+                                <div class="note">
+                                    Максимальный размер: <strong>{{ $maxUploadFileSize }}</strong>
+                                </div>
+
                             </div>
 
                             <div class="form-group">
@@ -205,7 +209,6 @@
                             </div>
 
                             <div class="form-check">
-
 
                                 {!! Form::checkbox('published', 1, isset($row) ? ($row->published): 1, ['class' => 'form-check-input']) !!}
 

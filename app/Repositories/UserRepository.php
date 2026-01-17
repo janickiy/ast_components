@@ -28,7 +28,7 @@ class UserRepository extends BaseRepository
 
             if (!empty($request->role)) $user->role = $request->input('role');
 
-            if (isset($data['password']) && !empty($data['password'])) {
+            if (isset($data['password'])) {
                 $user->password = Hash::make($data['password']);
             }
 

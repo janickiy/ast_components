@@ -8,6 +8,12 @@
 
 @section('seo_url_canonical', $seo_url_canonical)
 
+@section('css')
+
+    {!! Html::style('/css/profile.css?v=2') !!}
+
+@endsection
+
 @section('content')
 
     @include('layouts._breadcrumbs')
@@ -36,7 +42,7 @@
                 <input type="radio" name="account" id="account-requests" class="js-tab">
                 <label for="account-requests">
                     <svg aria-hidden="true">
-                        <use xlink:href="{{ url('/images/sprite.svg#request') }}s"></use>
+                        <use xlink:href="{{ url('/images/sprite.svg#requests') }}"></use>
                     </svg>
                     Мои запросы
                 </label>
@@ -60,135 +66,8 @@
             </li>
         </ul>
         <div class="account__tabs-content tabs-content">
-            <div data-tab="account-profile" class="profile">
-                <section>
-                    <div class="account__section-header">
-                        <div class="account__section-title">
-                            <h2>Общая информация</h2>
-                        </div>
-                        <button type="button" class="profile__edit-btn btn btn--icon" data-modal-trigger="general-info">
-                            <span class="sr-only">Редактировать общую информацию</span>
-                            <svg aria-hidden="true">
-                                <use xlink:href="{{ url('/images/sprite.svg#edit') }}"></use>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="profile__info">
-                        <dl class="profile__list general">
-                            <div class="profile__point">
-                                <dt class="profile__point-title">Номер телефона</dt>
-                                <dd class="profile__point-text">{{ Auth::guard('customer')->user()->phone }}</dd>
-                            </div>
-                            <div class="profile__point">
-                                <dt class="profile__point-title">Пароль</dt>
-                                <dd class="profile__point-text">***********</dd>
-                            </div>
-                            <div class="profile__point">
-                                <dt class="profile__point-title">Имя</dt>
-                                <dd class="profile__point-text">{{ Auth::guard('customer')->user()->name }}</dd>
-                            </div>
-                        </dl>
-                    </div>
-                </section>
-                <section>
-                    <div class="account__section-header">
-                        <div class="account__section-title">
-                            <h2>Информация о&nbsp;компании</h2>
-                        </div>
-                        <button type="button" class="profile__edit-btn btn btn--icon" data-modal-trigger="company-info">
-                            <span class="sr-only">Редактировать информацию о компании</span>
-                            <svg aria-hidden="true">
-                                <use xlink:href="{{ url('/images/sprite.svg#edit') }}"></use>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="profile__info">
-                        <dl class="profile__list">
-                            <div class="profile__point">
-                                <dt class="profile__point-title">Компания</dt>
-                                <dd class="profile__point-text">{{ Auth::guard('customer')->user()->company?->name }}</dd>
-                            </div>
-                            <div class="profile__point">
-                                <dt class="profile__point-title">ИНН</dt>
-                                <dd class="profile__point-text">{{ Auth::guard('customer')->user()->company?->inn }}</dd>
-                            </div>
-                        </dl>
-                        <dl class="profile__list">
-                            <div class="profile__point">
-                                <dt class="profile__point-title">Контактное лицо</dt>
-                                <dd class="profile__point-text">{{ Auth::guard('customer')->user()->company?->contact_person }}</dd>
-                            </div>
-                            <div class="profile__point">
-                                <dt class="profile__point-title">Номер телефона</dt>
-                                <dd class="profile__point-text">{{ Auth::guard('customer')->user()->company?->phone }}</dd>
-                            </div>
-                            <div class="profile__point">
-                                <dt class="profile__point-title">Электронная почта</dt>
-                                <dd class="profile__point-text">{{ Auth::guard('customer')->user()->company?->email }}</dd>
-                            </div>
-                        </dl>
-                    </div>
-                </section>
-            </div>
-            <div data-tab="account-orders" class="orders">
-                <section class="account__container">
-                    <div class="account__section-title">
-                        <h2>Мои заказы</h2>
-                    </div>
-                    <div class="account__table">
-                        <div class="account__table-wrap">
-                            <table>
-                                <thead>
-                                <tr>
-                                    <th>Номер заказа</th>
-                                    <th>Дата создания</th>
-                                    <th>Сумма заказа</th>
-                                    <th>Ожидаемая<br>дата доставки</th>
-                                    <th>Статус заказа</th>
-                                    <th>Счет на оплату</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-
-                                @foreach($orders ?? [] as $order)
-
-                                    <tr>
-                                        <td>
-                                            <div class="account__table-numb">
-                                                <span>{{ $order->id }}</span>
-                                                <button type="button" class="btn btn--secondary btn--sm btn--icon" data-modal-trigger="order-details">
-                                                    <span class="sr-only">Детали заказа</span>
-                                                    <svg aria-hidden="true">
-                                                        <use xlink:href="{{ url('/images/sprite.svg#details') }}"></use>
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                        </td>
-                                        <td class="text-right">{{ $order->dateFormat() }}</td>
-                                        <td class="text-nowrap">{{ $order->sum() }}</td>
-                                        <td>{{ $order->deliveryDateFormat() }}</td>
-                                        <td>
-                                            <div class="account__table-status create">
-                                                <svg aria-hidden="true">
-                                                    <use xlink:href="{{ url('/images/sprite.svg#new-doc') }}"></use>
-                                                </svg>
-                                                <span>Создан</span>
-                                            </div>
-                                        </td>
-                                        <td></td>
-                                    </tr>
-
-                                @endforeach
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <button type="button" class="account__more-btn btn btn--secondary">
-                        <span>Показать еще</span>
-                    </button>
-                </section>
-            </div>
+            @include('frontend.profile.tabs.account-profile')
+            @include('frontend.profile.tabs.orders')
             <div data-tab="account-requests" class="requests">
                 <section class="account__container">
                     <div class="account__section-title">
@@ -386,381 +265,42 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td>Брак</td>
-                                    <td>№123 от 28.09.2025</td>
-                                    <td>
-                                        <div class="account__table-product tooltip js-account-tooltip">
-                                            <div class="tooltip__body js-account-tooltip-tbody" role="tooltip">
-                                                <span>ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52] ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052</span>
+                                @forelse($complaints ?? [] as $complaint)
+                                    <tr class="account__item js-account-item" data-list="claims">
+                                        <td>{{ $complaintTypes[$complaint->type] ?? '—' }}</td>
+                                        <td>№{{ $complaint->order_id }} от {{ $complaint->order?->created_at?->format('d.m.Y') }}</td>
+                                        <td>
+                                            <div class="account__table-product tooltip js-account-tooltip">
+                                                <div class="tooltip__body js-account-tooltip-tbody" role="tooltip">
+                                                    <span>{{ $complaint->product?->title ?? '—' }}</span>
+                                                </div>
+                                                <span class="account__table-title js-account-tooltip-title">{{ $complaint->product?->title ?? '—' }}</span>
                                             </div>
-                                            <span class="account__table-title js-account-tooltip-title">ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52] ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052</span>
-                                        </div>
-                                    </td>
-                                    <td class="text-medium text-nowrap text-right">10 000</td>
-                                    <td class="account__table-defect-count">10 000</td>
-                                    <td>
-                                        <div class="account__table-status create">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#cogwheel"></use>
-                                            </svg>
-                                            <span>В обработке</span>
-                                        </div>
-                                    </td>
-                                    <td class="account__table-result"></td>
-                                    <td class="text-center">
-                                        <a href="./images/logo.svg" download="logo.svg" class="btn btn--secondary btn--sm btn--icon" aria-label="Скачать бланк">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#requests"></use>
-                                            </svg>
-                                        </a>
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="./images/logo.svg" download="logo.svg" class="btn btn--secondary btn--sm btn--icon" aria-label="Скачать фото">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#image"></use>
-                                            </svg>
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Недопоставка</td>
-                                    <td>№123 от 28.09.2025</td>
-                                    <td>
-                                        <div class="account__table-product tooltip js-account-tooltip">
-                                            <div class="tooltip__body js-account-tooltip-tbody" role="tooltip">
-                                                <span>ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52]</span>
+                                        </td>
+                                        <td class="text-medium text-nowrap text-right">{{ number_format((int) $complaint->order_count, 0, '', ' ') }}</td>
+                                        <td class="account__table-defect-count">{{ number_format((int) $complaint->return_count, 0, '', ' ') }}</td>
+                                        <td>
+                                            <div class="account__table-status {{ $complaint->getStatus()?->cssClass() ?? 'in-progress' }}">
+                                                <svg aria-hidden="true">
+                                                    <use xlink:href="{{ url('/images/sprite.svg#' . $complaint->getStatus()?->statusIcon() ?? 'cogwheel') }}"></use>
+                                                </svg>
+                                                <span>{{ $complaint->getStatus()?->label() ?? 'В обработке' }}</span>
                                             </div>
-                                            <span class="account__table-title js-account-tooltip-title">ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52]</span>
-                                        </div>
-                                    </td>
-                                    <td class="text-medium text-nowrap text-right">10 000</td>
-                                    <td class="account__table-defect-count">10 000</td>
-                                    <td>
-                                        <div class="account__table-status in-progress">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#time"></use>
-                                            </svg>
-                                            <span>В обработке</span>
-                                        </div>
-                                    </td>
-                                    <td class="account__table-result"></td>
-                                    <td class="text-center">
-                                        <a href="./images/logo.svg" download="logo.svg" class="btn btn--secondary btn--sm btn--icon" aria-label="Скачать бланк">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#requests"></use>
-                                            </svg>
-                                        </a>
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="./images/logo.svg" download="logo.svg" class="btn btn--secondary btn--sm btn--icon" aria-label="Скачать фото">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#image"></use>
-                                            </svg>
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Брак</td>
-                                    <td>№123 от 28.09.2025</td>
-                                    <td>
-                                        <div class="account__table-product tooltip js-account-tooltip">
-                                            <div class="tooltip__body js-account-tooltip-tbody" role="tooltip">
-                                                <span>ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52]</span>
-                                            </div>
-                                            <span class="account__table-title js-account-tooltip-title">ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52]</span>
-                                        </div>
-                                    </td>
-                                    <td class="text-medium text-nowrap text-right">10 000</td>
-                                    <td class="account__table-defect-count">10 000</td>
-                                    <td>
-                                        <div class="account__table-status agreement">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#folder"></use>
-                                            </svg>
-                                            <span>Согласование</span>
-                                        </div>
-                                    </td>
-                                    <td class="account__table-result"></td>
-                                    <td class="text-center">
-                                        <a href="./images/logo.svg" download="logo.svg" class="btn btn--secondary btn--sm btn--icon" aria-label="Скачать бланк">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#requests"></use>
-                                            </svg>
-                                        </a>
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="./images/logo.svg" download="logo.svg" class="btn btn--secondary btn--sm btn--icon" aria-label="Скачать фото">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#image"></use>
-                                            </svg>
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Возврат</td>
-                                    <td>№123 от 28.09.2025</td>
-                                    <td>
-                                        <div class="account__table-product tooltip js-account-tooltip">
-                                            <div class="tooltip__body js-account-tooltip-tbody" role="tooltip">
-                                                <span>ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52]</span>
-                                            </div>
-                                            <span class="account__table-title js-account-tooltip-title">ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52]</span>
-                                        </div>
-                                    </td>
-                                    <td class="text-medium text-nowrap text-right">10 000</td>
-                                    <td class="account__table-defect-count">10 000</td>
-                                    <td>
-                                        <div class="account__table-status expertise">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#search"></use>
-                                            </svg>
-                                            <span>Отправлено на экспертизу</span>
-                                        </div>
-                                    </td>
-                                    <td class="account__table-result"></td>
-                                    <td class="text-center">
-                                        <a href="./images/logo.svg" download="logo.svg" class="btn btn--secondary btn--sm btn--icon" aria-label="Скачать бланк">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#requests"></use>
-                                            </svg>
-                                        </a>
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="./images/logo.svg" download="logo.svg" class="btn btn--secondary btn--sm btn--icon" aria-label="Скачать фото">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#image"></use>
-                                            </svg>
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Брак</td>
-                                    <td>№123 от 28.09.2025</td>
-                                    <td>
-                                        <div class="account__table-product tooltip js-account-tooltip">
-                                            <div class="tooltip__body js-account-tooltip-tbody" role="tooltip">
-                                                <span>ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52]</span>
-                                            </div>
-                                            <span class="account__table-title js-account-tooltip-title">ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52]</span>
-                                        </div>
-                                    </td>
-                                    <td class="text-medium text-nowrap text-right">10 000</td>
-                                    <td class="account__table-defect-count">10 000</td>
-                                    <td>
-                                        <div class="account__table-status denied">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#cancel"></use>
-                                            </svg>
-                                            <span>Отказано</span>
-                                        </div>
-                                    </td>
-                                    <td class="account__table-result"></td>
-                                    <td class="text-center">
-                                        <a href="./images/logo.svg" download="logo.svg" class="btn btn--secondary btn--sm btn--icon" aria-label="Скачать бланк">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#requests"></use>
-                                            </svg>
-                                        </a>
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="./images/logo.svg" download="logo.svg" class="btn btn--secondary btn--sm btn--icon" aria-label="Скачать фото">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#image"></use>
-                                            </svg>
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Брак</td>
-                                    <td>№123 от 28.09.2025</td>
-                                    <td>
-                                        <div class="account__table-product tooltip js-account-tooltip">
-                                            <div class="tooltip__body js-account-tooltip-tbody" role="tooltip">
-                                                <span>ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52]</span>
-                                            </div>
-                                            <span class="account__table-title js-account-tooltip-title">ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52]</span>
-                                        </div>
-                                    </td>
-                                    <td class="text-medium text-nowrap text-right">10 000</td>
-                                    <td class="account__table-defect-count">10 000</td>
-                                    <td>
-                                        <div class="account__table-status done">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#check-circle"></use>
-                                            </svg>
-                                            <span>Одобрено</span>
-                                        </div>
-                                    </td>
-                                    <td class="account__table-result">Замена</td>
-                                    <td class="text-center">
-                                        <a href="./images/logo.svg" download="logo.svg" class="btn btn--secondary btn--sm btn--icon" aria-label="Скачать бланк">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#requests"></use>
-                                            </svg>
-                                        </a>
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="./images/logo.svg" download="logo.svg" class="btn btn--secondary btn--sm btn--icon" aria-label="Скачать фото">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#image"></use>
-                                            </svg>
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Брак</td>
-                                    <td>№123 от 28.09.2025</td>
-                                    <td>
-                                        <div class="account__table-product tooltip js-account-tooltip">
-                                            <div class="tooltip__body js-account-tooltip-tbody" role="tooltip">
-                                                <span>ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52]</span>
-                                            </div>
-                                            <span class="account__table-title js-account-tooltip-title">ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52]</span>
-                                        </div>
-                                    </td>
-                                    <td class="text-medium text-nowrap text-right">10 000</td>
-                                    <td class="account__table-defect-count">10 000</td>
-                                    <td>
-                                        <div class="account__table-status return">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#back"></use>
-                                            </svg>
-                                            <span>К возврату</span>
-                                        </div>
-                                    </td>
-                                    <td class="account__table-result">Замена</td>
-                                    <td class="text-center">
-                                        <a href="./images/logo.svg" download="logo.svg" class="btn btn--secondary btn--sm btn--icon" aria-label="Скачать бланк">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#requests"></use>
-                                            </svg>
-                                        </a>
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="./images/logo.svg" download="logo.svg" class="btn btn--secondary btn--sm btn--icon" aria-label="Скачать фото">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#image"></use>
-                                            </svg>
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Брак</td>
-                                    <td>№123 от 28.09.2025</td>
-                                    <td>
-                                        <div class="account__table-product tooltip js-account-tooltip">
-                                            <div class="tooltip__body js-account-tooltip-tbody" role="tooltip">
-                                                <span>ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52]</span>
-                                            </div>
-                                            <span class="account__table-title js-account-tooltip-title">ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52]</span>
-                                        </div>
-                                    </td>
-                                    <td class="text-medium text-nowrap text-right">10 000</td>
-                                    <td class="account__table-defect-count">10 000</td>
-                                    <td>
-                                        <div class="account__table-status close">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#close-circle"></use>
-                                            </svg>
-                                            <span>Закрыто</span>
-                                        </div>
-                                    </td>
-                                    <td class="account__table-result">Замена</td>
-                                    <td class="text-center">
-                                        <a href="./images/logo.svg" download="logo.svg" class="btn btn--secondary btn--sm btn--icon" aria-label="Скачать бланк">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#requests"></use>
-                                            </svg>
-                                        </a>
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="./images/logo.svg" download="logo.svg" class="btn btn--secondary btn--sm btn--icon" aria-label="Скачать фото">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#image"></use>
-                                            </svg>
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Брак</td>
-                                    <td>№123 от 28.09.2025</td>
-                                    <td>
-                                        <div class="account__table-product tooltip js-account-tooltip">
-                                            <div class="tooltip__body js-account-tooltip-tbody" role="tooltip">
-                                                <span>ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52]</span>
-                                            </div>
-                                            <span class="account__table-title js-account-tooltip-title">ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52]</span>
-                                        </div>
-                                    </td>
-                                    <td class="text-medium text-nowrap text-right">10 000</td>
-                                    <td class="account__table-defect-count">10 000</td>
-                                    <td>
-                                        <div class="account__table-status checked">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#fact-check"></use>
-                                            </svg>
-                                            <span>Проверено складом</span>
-                                        </div>
-                                    </td>
-                                    <td class="account__table-result">Замена</td>
-                                    <td class="text-center">
-                                        <a href="./images/logo.svg" download="logo.svg" class="btn btn--secondary btn--sm btn--icon" aria-label="Скачать бланк">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#requests"></use>
-                                            </svg>
-                                        </a>
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="./images/logo.svg" download="logo.svg" class="btn btn--secondary btn--sm btn--icon" aria-label="Скачать фото">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#image"></use>
-                                            </svg>
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Брак</td>
-                                    <td>№123 от 28.09.2025</td>
-                                    <td>
-                                        <div class="account__table-product tooltip js-account-tooltip">
-                                            <div class="tooltip__body js-account-tooltip-tbody" role="tooltip">
-                                                <span>ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52]</span>
-                                            </div>
-                                            <span class="account__table-title js-account-tooltip-title">ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52]</span>
-                                        </div>
-                                    </td>
-                                    <td class="text-medium text-nowrap text-right">10 000</td>
-                                    <td class="account__table-defect-count">10 000</td>
-                                    <td>
-                                        <div class="account__table-status checked">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#fact-check"></use>
-                                            </svg>
-                                            <span>Проверено складом</span>
-                                        </div>
-                                    </td>
-                                    <td class="account__table-result">Замена</td>
-                                    <td class="text-center">
-                                        <a href="./images/logo.svg" download="logo.svg" class="btn btn--secondary btn--sm btn--icon" aria-label="Скачать бланк">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#requests"></use>
-                                            </svg>
-                                        </a>
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="./images/logo.svg" download="logo.svg" class="btn btn--secondary btn--sm btn--icon" aria-label="Скачать фото">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#image"></use>
-                                            </svg>
-                                        </a>
-                                    </td>
-                                </tr>
+                                        </td>
+                                        <td class="account__table-result"></td>
+                                        <td class="text-center">—</td>
+                                        <td class="text-center">—</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="9" class="text-center">Претензий пока нет</td>
+                                    </tr>
+                                @endforelse
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                    <button type="button" class="account__more-btn btn btn--secondary">
+                    <button type="button" class="account__more-btn btn btn--secondary js-account-load-more" data-list="claims" data-step="10">
                         <span>Показать еще</span>
                     </button>
                 </section>
@@ -781,45 +321,63 @@
                     <div class="modal__title">
                         <h2>Изменить общую информацию</h2>
                     </div>
-                    <form class="modal__form is-success">
+
+                    <form class="modal__form is-success" id="general-info-form">
+                        <p>*-обязательные поля</p>
+                        <div class="form-input">
+                            <label for="general-info-name">Ваше имя*</label>
+                            <input type="text" name="name" id="general-info-name" placeholder='Иван Иванов'
+                                   value="{{  Auth::guard('customer')->user()->name }}">
+                        </div>
+                        <div class="form-input">
+                            <label for="general-info-email">Электронная почта*</label>
+                            <input type="text" name="email" id="general-info-email" placeholder='user@example.ru'
+                                   value="{{  Auth::guard('customer')->user()->email }}">
+                        </div>
                         <div class="form-input">
                             <label for="general-info-phone">Номер телефона*</label>
-                            <input type="tel" id="general-info-phone" placeholder='+7 900 000-00-00' value="{{ Auth::guard('customer')->user()->phone }}" readonly>
+                            <input type="tel" id="general-info-phone"
+                                   placeholder='+7 900 000-00-00'
+                                   required
+                                   oninput="this.value = this.value.replace(/[^0-9+\-\s]/g, '')"
+                                   name="phone"
+                                   value="{{ Auth::guard('customer')->user()->phone }}">
                         </div>
                         <div class="form-password">
-                            <label for="general-info-password">Пароль*</label>
-                            <input type="password" id="general-info-password" placeholder='*******' required>
+                            <label for="general-info-password">Пароль</label>
+                            <input type="password" name="password" id="general-info-password" placeholder='*******'>
                             <div class="form-display-btn">
                                 <input type="checkbox" id="general-info-display-password">
                                 <label for="general-info-display-password">Показать пароль</label>
                             </div>
                         </div>
                         <div class="form-password">
-                            <label for="general-info-repeat-password">Повторите пароль*</label>
-                            <input type="password" id="general-info-repeat-password" placeholder='*******' required>
+                            <label for="general-info-repeat-password">Повторите пароль</label>
+                            <input type="password" name="password_confirmation" id="general-info-repeat-password"
+                                   placeholder='*******'>
                             <div class="form-display-btn">
                                 <input type="checkbox" id="general-info-display-repeat-password">
                                 <label for="general-info-display-repeat-password">Показать пароль</label>
                             </div>
                         </div>
-                        <div class="form-input">
-                            <label for="general-info-name">Ваше имя</label>
-                            <input type="text" id="general-info-name" placeholder='Иван Иванов' value="{{  Auth::guard('customer')->user()->name }}">
-                        </div>
                         <div class="modal__btns">
-                            <button type="button" class="btn btn--primary">
+                            <button type="submit" class="btn btn--primary">
                                 <svg aria-hidden="true">
                                     <use xlink:href="{{ url('/images/sprite.svg#save') }}"></use>
                                 </svg>
                                 <span>Сохранить</span>
                             </button>
                         </div>
-                        <span class="success-message">
-                            <svg aria-hidden="true">
-                                <use xlink:href="{{ url('/images/sprite.svg#check-circle') }}"></use>
-                            </svg>
-                            <span>Изменения успешно сохранены</span>
-                        </span>
+                        <div class="result">
+                            <div class="loading-message"
+                                 style="display:none; align-items:center; gap:8px;">
+                                Загрузка...
+                            </div>
+                            <span class="success-message " hidden>
+                                Данные успешно сохранены! Перезагрузка страницы...
+                            </span>
+                            <div class="message-error result" id="general-info-errors"></div>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -838,41 +396,62 @@
                     <div class="modal__title">
                         <h2>Изменить информацию о&nbsp;компании</h2>
                     </div>
-                    <form class="modal__form is-success">
+                    <form class="modal__form is-success" id="company-info-form">
                         <div class="form-input">
                             <label for="company-info-company-name">Название компании*</label>
-                            <input type="text" id="company-info-company-name" placeholder='ООО “ЭлектроМонтаж”' value="{{ Auth::guard('customer')->user()->company?->name }}" required>
+                            <input type="text" id="company-info-company-name" name="name"
+                                   placeholder='ООО “ЭлектроМонтаж”'
+                                   value="{{ Auth::guard('customer')->user()->company?->name }}" required>
                         </div>
                         <div class="form-input">
                             <label for="company-info-inn">ИНН*</label>
-                            <input type="number" id="company-info-inn" placeholder='1122312321428234' value="{{ Auth::guard('customer')->user()->company?->inn }}" required>
+                            <input type="number" id="company-info-inn"
+                                   name="inn"
+                                   placeholder='1122312321428234'
+                                   value="{{ Auth::guard('customer')->user()->company?->inn }}" required>
                         </div>
                         <div class="form-input">
                             <label for="company-info-name">Контактное лицо*</label>
-                            <input type="text" id="company-info-name" placeholder='Петр Петров' value="{{ Auth::guard('customer')->user()->company?->contact_person }}" required>
+                            <input type="text"
+                                   name="contact_person"
+                                   id="company-info-name" placeholder='Петр Петров'
+                                   value="{{ Auth::guard('customer')->user()->company?->contact_person }}" required>
                         </div>
                         <div class="form-input">
                             <label for="company-info-phone">Номер телефона*</label>
-                            <input type="tel" id="company-info-phone" placeholder='+7 900 000-00-00' value="{{ Auth::guard('customer')->user()->company?->phone }}" required>
+                            <input type="tel"
+                                   name="phone"
+                                   id="company-info-phone"
+                                   placeholder='+7 900 000-00-00'
+                                   oninput="this.value = this.value.replace(/[^0-9+\-\s]/g, '')"
+
+                                   value="{{ Auth::guard('customer')->user()->company?->phone }}" required>
                         </div>
                         <div class="form-input">
                             <label for="company-info-email">Электронная почта*</label>
-                            <input type="email" id="company-info-email" placeholder='customer@gmail.com' value="{{ Auth::guard('customer')->user()->company?->email }}" required>
+                            <input type="email"
+                                   name="email"
+                                   id="company-info-email" placeholder='customer@gmail.com'
+                                   value="{{ Auth::guard('customer')->user()->company?->email }}" required>
                         </div>
                         <div class="modal__btns">
-                            <button type="button" class="btn btn--primary">
+                            <button type="submit" class="btn btn--primary">
                                 <svg aria-hidden="true">
                                     <use xlink:href="{{ url('/images/sprite.svg#save') }}"></use>
                                 </svg>
                                 <span>Сохранить</span>
                             </button>
                         </div>
-                        <span class="success-message">
-                            <svg aria-hidden="true">
-                                <use xlink:href="{{ url('/images/sprite.svg#check-circle') }}"></use>
-                            </svg>
-                            <span>Изменения успешно сохранены</span>
-                        </span>
+                        <div class="result">
+                            <div class="loading-message"
+                                 style="display:none; align-items:center; gap:8px;">
+                                Загрузка...
+                            </div>
+                            <span class="success-message" hidden>
+                                 Данные успешно сохранены! Перезагрузка страницы...
+                            </span>
+                            <div class="message-error result" id="company-info-errors"></div>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -897,11 +476,14 @@
                                 <div class="order-list__item-img">
                                     <picture>
                                         <source srcset="./images/products/product-1.webp" type="image/webp">
-                                        <img src="./images/products/product-1.jpg" alt="ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52">
+                                        <img src="./images/products/product-1.jpg"
+                                             alt="ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52">
                                     </picture>
                                 </div>
                                 <div class="order-list__item-info">
-                                    <a href="./product-details.html" class="order-list__item-title">ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52]</a>
+                                    <a href="./product-details.html" class="order-list__item-title">ADUC812BSZ,
+                                        Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V
+                                        [MQFP-52]</a>
                                     <span class="order-list__item-count">Количество: 10</span>
                                 </div>
                             </li>
@@ -909,11 +491,13 @@
                                 <div class="order-list__item-img">
                                     <picture>
                                         <source srcset="./images/products/product-2.webp" type="image/webp">
-                                        <img src="./images/products/product-2.jpg" alt="FSCQ0765RTYDTU, Импульсный регулятор напряжения [TO-220-5 FP (Formed Leads)]">
+                                        <img src="./images/products/product-2.jpg"
+                                             alt="FSCQ0765RTYDTU, Импульсный регулятор напряжения [TO-220-5 FP (Formed Leads)]">
                                     </picture>
                                 </div>
                                 <div class="order-list__item-info">
-                                    <a href="./product-details.html" class="order-list__item-title">FSCQ0765RTYDTU, Импульсный регулятор напряжения [TO-220-5 FP (Formed Leads)]</a>
+                                    <a href="./product-details.html" class="order-list__item-title">FSCQ0765RTYDTU,
+                                        Импульсный регулятор напряжения [TO-220-5 FP (Formed Leads)]</a>
                                     <span class="order-list__item-count">Количество: 10</span>
                                 </div>
                             </li>
@@ -921,11 +505,13 @@
                                 <div class="order-list__item-img">
                                     <picture>
                                         <source srcset="./images/products/product-3.webp" type="image/webp">
-                                        <img src="./images/products/product-3.jpg" alt="FSFR1800XSL, Контроллер резонансного ИИП со встроенным ключом 120Вт [SIP-9 L-Forming]">
+                                        <img src="./images/products/product-3.jpg"
+                                             alt="FSFR1800XSL, Контроллер резонансного ИИП со встроенным ключом 120Вт [SIP-9 L-Forming]">
                                     </picture>
                                 </div>
                                 <div class="order-list__item-info">
-                                    <a href="./product-details.html" class="order-list__item-title">FSFR1800XSL, Контроллер резонансного</a>
+                                    <a href="./product-details.html" class="order-list__item-title">FSFR1800XSL,
+                                        Контроллер резонансного</a>
                                     <span class="order-list__item-count">Количество: 10</span>
                                 </div>
                             </li>
@@ -933,11 +519,14 @@
                                 <div class="order-list__item-img">
                                     <picture>
                                         <source srcset="./images/products/product-4.webp" type="image/webp">
-                                        <img src="./images/products/product-4.jpg" alt="ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52]">
+                                        <img src="./images/products/product-4.jpg"
+                                             alt="ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52]">
                                     </picture>
                                 </div>
                                 <div class="order-list__item-info">
-                                    <a href="./product-details.html" class="order-list__item-title">ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52]</a>
+                                    <a href="./product-details.html" class="order-list__item-title">ADUC812BSZ,
+                                        Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V
+                                        [MQFP-52]</a>
                                     <span class="order-list__item-count">Количество: 10</span>
                                 </div>
                             </li>
@@ -945,11 +534,14 @@
                                 <div class="order-list__item-img">
                                     <picture>
                                         <source srcset="./images/products/product-1.webp" type="image/webp">
-                                        <img src="./images/products/product-1.jpg" alt="ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52">
+                                        <img src="./images/products/product-1.jpg"
+                                             alt="ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52">
                                     </picture>
                                 </div>
                                 <div class="order-list__item-info">
-                                    <a href="./product-details.html" class="order-list__item-title">ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52]</a>
+                                    <a href="./product-details.html" class="order-list__item-title">ADUC812BSZ,
+                                        Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V
+                                        [MQFP-52]</a>
                                     <span class="order-list__item-count">Количество: 10</span>
                                 </div>
                             </li>
@@ -957,11 +549,13 @@
                                 <div class="order-list__item-img">
                                     <picture>
                                         <source srcset="./images/products/product-2.webp" type="image/webp">
-                                        <img src="./images/products/product-2.jpg" alt="FSCQ0765RTYDTU, Импульсный регулятор напряжения [TO-220-5 FP (Formed Leads)]">
+                                        <img src="./images/products/product-2.jpg"
+                                             alt="FSCQ0765RTYDTU, Импульсный регулятор напряжения [TO-220-5 FP (Formed Leads)]">
                                     </picture>
                                 </div>
                                 <div class="order-list__item-info">
-                                    <a href="./product-details.html" class="order-list__item-title">FSCQ0765RTYDTU, Импульсный регулятор напряжения [TO-220-5 FP (Formed Leads)]</a>
+                                    <a href="./product-details.html" class="order-list__item-title">FSCQ0765RTYDTU,
+                                        Импульсный регулятор напряжения [TO-220-5 FP (Formed Leads)]</a>
                                     <span class="order-list__item-count">Количество: 10</span>
                                 </div>
                             </li>
@@ -969,11 +563,13 @@
                                 <div class="order-list__item-img">
                                     <picture>
                                         <source srcset="./images/products/product-3.webp" type="image/webp">
-                                        <img src="./images/products/product-3.jpg" alt="FSFR1800XSL, Контроллер резонансного ИИП со встроенным ключом 120Вт [SIP-9 L-Forming]">
+                                        <img src="./images/products/product-3.jpg"
+                                             alt="FSFR1800XSL, Контроллер резонансного ИИП со встроенным ключом 120Вт [SIP-9 L-Forming]">
                                     </picture>
                                 </div>
                                 <div class="order-list__item-info">
-                                    <a href="./product-details.html" class="order-list__item-title">FSFR1800XSL, Контроллер резонансного</a>
+                                    <a href="./product-details.html" class="order-list__item-title">FSFR1800XSL,
+                                        Контроллер резонансного</a>
                                     <span class="order-list__item-count">Количество: 10</span>
                                 </div>
                             </li>
@@ -981,11 +577,14 @@
                                 <div class="order-list__item-img">
                                     <picture>
                                         <source srcset="./images/products/product-4.webp" type="image/webp">
-                                        <img src="./images/products/product-4.jpg" alt="ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52]">
+                                        <img src="./images/products/product-4.jpg"
+                                             alt="ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52]">
                                     </picture>
                                 </div>
                                 <div class="order-list__item-info">
-                                    <a href="./product-details.html" class="order-list__item-title">ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52]</a>
+                                    <a href="./product-details.html" class="order-list__item-title">ADUC812BSZ,
+                                        Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V
+                                        [MQFP-52]</a>
                                     <span class="order-list__item-count">Количество: 10</span>
                                 </div>
                             </li>
@@ -1008,83 +607,111 @@
                     <div class="modal__title">
                         <h2>Создать претензию</h2>
                     </div>
-                    <form class="modal__form is-success">
-                        <div class="form-input__line">
-                            <div class="form-select">
-                                <label for="create-claim-type">Тип претензии</label>
-                                <select name="platform" id="create-claim-type" class="js-select">
-                                    <option value="claim-type-1">Брак</option>
-                                    <option value="claim-type-2">Недопоставка</option>
-                                    <option value="claim-type-3">Возврат</option>
-                                </select>
-                            </div>
-                            <div class="form-select">
-                                <label for="create-claim-invoice-numb">Номер счета</label>
-                                <select name="platform" id="create-claim-invoice-numb" class="js-select">
-                                    <option value="claim-invoice-1">№123 от 28.09.2025</option>
-                                    <option value="claim-invoice-2">№12 от 28.08.2025</option>
-                                    <option value="claim-invoice-3">№1 от 10.07.2025</option>
-                                </select>
-                            </div>
-                        </div>
+
+                    {!! Form::open(['url' => route('frontend.profile.complaints.store'), 'files' => true, 'method' => 'post', 'class' => 'modal__form is-success']) !!}
+
+                    <div class="form-input__line">
                         <div class="form-select">
-                            <label for="create-claim-product">Наименование позиции</label>
-                            <select name="platform" id="create-claim-product" class="js-select">
-                                <option value="claim-product-1">HMC542BLP4ETR, Широкополосный 5-бит цифровой аттенюатор c serial-parallel драйвером, DC-4ГГц [VFQFN-24 EP.]</option>
-                                <option value="claim-product-2">HMC542BLP4ETR, Широкополосный 5-бит цифровой аттенюатор c serial-parallel драйвером, DC-4ГГц [VFQFN-24 EP.]</option>
-                                <option value="claim-product-3">HMC542BLP4ETR, Широкополосный 5-бит цифровой аттенюатор c serial-parallel драйвером, DC-4ГГц [VFQFN-24 EP.]</option>
-                                <option value="claim-product-4">HMC542BLP4ETR, Широкополосный 5-бит цифровой аттенюатор c serial-parallel драйвером, DC-4ГГц [VFQFN-24 EP.]</option>
-                                <option value="claim-product-5">HMC542BLP4ETR, Широкополосный 5-бит цифровой аттенюатор c serial-parallel драйвером, DC-4ГГц [VFQFN-24 EP.]</option>
+
+                            {!! Form::label('create-claim-type', 'Тип претензии') !!}
+
+                            <select name="type" id="create-claim-type" class="js-select" required>
+                                @foreach($complaintTypes ?? [] as $typeId => $typeName)
+                                    <option value="{{ $typeId }}">{{ $typeName }}</option>
+                                @endforeach
                             </select>
                         </div>
-                        <div class="form-input__line">
-                            <div class="form-input">
-                                <label for="create-claim-count-invoice">Количество в счете</label>
-                                <input type="number" id="create-claim-count-invoice" value="1000" readonly>
-                            </div>
-                            <div class="form-input">
-                                <label for="create-claim-count-defect">Количество с браком</label>
-                                <input type="number" id="create-claim-count-defect" placeholder="1">
-                            </div>
+                        <div class="form-select">
+
+                            {!! Form::label('create-claim-invoice-numb', 'Номер счета') !!}
+
+                            <select name="order_id" id="create-claim-invoice-numb" class="js-select"
+                                    @if(($orders ?? collect())->isNotEmpty()) required @else disabled @endif>
+                                @forelse($orders ?? [] as $order)
+                                    <option value="{{ $order->id }}">№{{ $order->id }}
+                                        от {{ $order->created_at?->format('d.m.Y') }}</option>
+                                @empty
+                                    <option value="" disabled selected>Нет доступных счетов</option>
+                                @endforelse
+                            </select>
                         </div>
-                        <div class="form-input__btns-line">
-                            <div class="form-input-file js-input-file">
-                                <label for="create-claim-form" class="btn btn--secondary">
-                                    <svg aria-hidden="true">
-                                        <use xlink:href="{{ url('/images/sprite.svg#file-download') }}"></use>
-                                    </svg>
-                                    <span>Загрузить претензию на официальном бланке</span>
-                                </label>
-                                <input type="file" id="create-claim-form" class="sr-only">
-                            </div>
-                            <div class="form-input-file js-input-file">
-                                <label for="create-claim-image" class="btn btn--secondary">
-                                    <svg aria-hidden="true">
-                                        <use xlink:href="{{ url('/images/sprite.svg#image-add') }}"></use>
-                                    </svg>
-                                    <span>Загрузить фото</span>
-                                </label>
-                                <input type="file" id="create-claim-image" class="sr-only">
-                            </div>
+                    </div>
+                    <div class="form-select">
+
+                        {!! Form::label('create-claim-product', 'Наименование позиции') !!}
+
+                        <select name="product_id" id="create-claim-product" class="js-select"
+                                @if(($complaintProducts ?? collect())->isNotEmpty()) required @else disabled @endif>
+                            @forelse($complaintProducts ?? [] as $orderProduct)
+                                <option value="{{ $orderProduct->product_id }}"
+                                        data-order-id="{{ $orderProduct->order_id }}"
+                                        data-order-count="{{ $orderProduct->count }}">
+                                    {{ $orderProduct->product?->title ?? $orderProduct->product_info }}
+                                </option>
+                            @empty
+                                <option value="" disabled selected>Нет доступных позиций</option>
+                            @endforelse
+                        </select>
+                    </div>
+                    <div class="form-input__line">
+                        <div class="form-input">
+
+                            {!! Form::label('create-claim-count-invoice', 'Количество в счете') !!}
+
+                            <input type="number" id="create-claim-count-invoice" readonly>
                         </div>
-                        <div class="modal__btns">
-                            <button type="button" class="btn btn--primary">
+                        <div class="form-input">
+
+                            {!! Form::label('create-claim-count-defect', 'Количество с браком') !!}
+
+                            {!! Form::number('return_count', old('return_count'), ['placeholder' => "1", 'min' => "1", 'id' => "create-claim-count-defect", 'class' => 'form-control', 'required']) !!}
+
+                        </div>
+                    </div>
+                    <div class="form-input__btns-line">
+                        <div class="form-input-file js-input-file">
+                            <label for="create-claim-form" class="btn btn--secondary">
                                 <svg aria-hidden="true">
-                                    <use xlink:href="{{ url('/images/sprite.svg#save') }}"></use>
+                                    <use xlink:href="{{ url('/images/sprite.svg#file-download') }}"></use>
                                 </svg>
-                                <span>Сохранить</span>
-                            </button>
+                                <span>Загрузить претензию на официальном бланке</span>
+                            </label>
+
+                            {!! Form::file('claim_form',  ['class' => 'sr-only', 'id' => 'create-claim-form']) !!}
+
                         </div>
-                        <span class="success-message">
+                        <div class="form-input-file js-input-file">
+                            <label for="create-claim-image" class="btn btn--secondary">
+                                <svg aria-hidden="true">
+                                    <use xlink:href="{{ url('/images/sprite.svg#image-add') }}"></use>
+                                </svg>
+                                <span>Загрузить фото</span>
+                            </label>
+
+                            {!! Form::file('claim_photo',  ['class' => 'sr-only', 'id' => 'create-claim-image']) !!}
+
+                        </div>
+                    </div>
+                    <div class="modal__btns">
+                        <button type="submit" class="btn btn--primary">
                             <svg aria-hidden="true">
-                                <use xlink:href="{{ url('/images/sprite.svg#check-circle') }}"></use>
+                                <use xlink:href="{{ url('/images/sprite.svg#save') }}"></use>
                             </svg>
-                            <span>Претензия успешно создана</span>
-                        </span>
-                    </form>
+                            <span>Сохранить</span>
+                        </button>
+                    </div>
+
+                    {!! Form::close() !!}
+
                 </div>
             </div>
         </div>
     </div>
+
+@endsection
+
+@section('js')
+
+    {!! Html::script('/scripts/profile.js?v=3') !!}
 
 @endsection

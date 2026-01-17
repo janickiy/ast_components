@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\OrderProduct;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class OrderProductRepository extends BaseRepository
 {
@@ -22,10 +23,12 @@ class OrderProductRepository extends BaseRepository
 
         if ($orderProduct) {
             $orderProduct->product_info = $data['product_info'];
-            $orderProduct->count = $data['count'];
-            $orderProduct->price = $data['price'];
+            $orderProduct->count = (int) $data['count'];
+            $orderProduct->price = (float) $data['price'];
             $orderProduct->save();
         }
         return null;
     }
+
+
 }

@@ -167,7 +167,7 @@
             </div>
             <div class="header__btns">
                 <div class="header__cart-btn">
-                    <a href="./cart-auth.html" class="btn">
+                    <a href="{{ route('frontend.cart.index') }}" class="btn">
                         <svg aria-hidden="true" class="orange">
                             <use xlink:href="{{ url('/images/sprite.svg#car') }}t"></use>
                         </svg>
@@ -233,7 +233,7 @@
             </svg>
             <span>Каталог</span>
         </button>
-        <a href="./cart-auth.html" class="mobile-menu__btn">
+        <a href="{{ route('frontend.cart.index') }}" class="mobile-menu__btn">
             <svg aria-hidden="true" class="orange">
                 <use xlink:href="{{ url('/images/sprite.svg#cart') }}"></use>
             </svg>
@@ -593,7 +593,7 @@
                         </svg>
                         <span>В каталог</span>
                     </a>
-                    <a href="./cart-auth.html" class="btn btn--secondary" data-modal-trigger="sign-up">
+                    <a href="{{ route('frontend.cart.index') }}" class="btn btn--secondary" data-modal-trigger="sign-up">
                         <svg aria-hidden="true">
                             <use xlink:href="{{ url('/images/sprite.svg#cart') }}"></use>
                         </svg>

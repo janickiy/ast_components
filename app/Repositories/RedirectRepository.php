@@ -23,7 +23,7 @@ class RedirectRepository extends BaseRepository
         if ($catalog) {
             $catalog->from = $data['from'];
             $catalog->to = $data['to'];
-            $catalog->status = $data['status'];
+            $catalog->status = (int) $data['status'];
             $catalog->save();
         }
         return null;

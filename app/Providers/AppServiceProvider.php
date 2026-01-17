@@ -2,6 +2,17 @@
 
 namespace App\Providers;
 
+
+use \App\Helpers\{
+    PermissionsHelper,
+    StringHelper,
+    SettingsHelper,
+    MoneyFormatterHelper,
+};
+use App\Contracts\Complaints\ComplaintServiceInterface;
+use App\Contracts\Profile\ProfileServiceInterface;
+use App\Services\Complaints\ComplaintService;
+use App\Services\Profile\ProfileService;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 
@@ -13,9 +24,13 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $loader = \Illuminate\Foundation\AliasLoader::getInstance();
-        $loader->alias('PermissionsHelper', \App\Helpers\PermissionsHelper::class);
-        $loader->alias('StringHelper', \App\Helpers\StringHelper::class);
-        $loader->alias('SettingsHelper', \App\Helpers\SettingsHelper::class);
+        $loader->alias('PermissionsHelper', PermissionsHelper::class);
+        $loader->alias('StringHelper', StringHelper::class);
+        $loader->alias('SettingsHelper', SettingsHelper::class);
+        $loader->alias('MoneyFormatterHelper', MoneyFormatterHelper::class);
+
+        $this->app->bind(ProfileServiceInterface::class, ProfileService::class);
+        $this->app->bind(ComplaintServiceInterface::class, ComplaintService::class);
     }
 
     /**

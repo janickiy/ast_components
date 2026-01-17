@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+
+use App\Enums\ComplaintStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -10,10 +12,9 @@ class Complaints extends Model
     protected $table = 'complaints';
 
     public const TYPE_DEFECTIVE = 0;
-
     public const TYPE_NON_DELIVERY = 1;
-
     public const TYPE_RETURN = 2;
+
 
     /**
      * The attributes that are mass assignable.
@@ -58,5 +59,25 @@ class Complaints extends Model
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customers::class, 'customer_id', 'id');
+    }
+
+    public function getStatus()
+    {
+        return ComplaintStatus::tryFrom($this->status);
+    }
+
+    public static function getOption(): array
+    {
+        return [
+            ComplaintStatus::Created->value    => ComplaintStatus::Created->label(),
+            ComplaintStatus::InProgress->value => ComplaintStatus::InProgress->label(),
+            ComplaintStatus::Agreement->value  => ComplaintStatus::Agreement->label(),
+            ComplaintStatus::Expertise->value  => ComplaintStatus::Expertise->label(),
+            ComplaintStatus::Denied->value     => ComplaintStatus::Denied->label(),
+            ComplaintStatus::Approved->value   => ComplaintStatus::Approved->label(),
+            ComplaintStatus::Return->value     => ComplaintStatus::Return->label(),
+            ComplaintStatus::Closed->value     => ComplaintStatus::Closed->label(),
+            ComplaintStatus::Checked->value    => ComplaintStatus::Checked->label(),
+        ];
     }
 }

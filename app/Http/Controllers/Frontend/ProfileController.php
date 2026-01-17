@@ -2,20 +2,26 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use App\Contracts\Profile\ProfileServiceInterface;
 use App\Http\Controllers\Controller;
 use App\Helpers\MenuHelper;
 use App\Models\Catalog;
+use App\Models\Complaints;
 use App\Models\Feedback;
-use App\Models\Orders;
 use App\Models\Seo;
+use App\Http\Requests\Frontend\Profile\UpdateCompanyRequest;
+use App\Http\Requests\Frontend\Profile\UpdateProfileRequest;
+use App\Repositories\CompanyRepository;
+use App\Repositories\CustomerRepository;
+use App\Repositories\OrdersRepository;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\JsonResponse;
 
 class ProfileController extends Controller
 {
-    public function __construct()
+    public function __construct(private readonly ProfileServiceInterface $profileService, public OrdersRepository $ordersRepository)
     {
         $this->middleware('auth:customer');
     }
@@ -40,11 +46,14 @@ class ProfileController extends Controller
         $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
         $options = Feedback::getPlatformList();
 
-        $orders = Orders::where('customer_id', Auth::guard('customer')->user()->id)
-        ->limit(10)
-        ->orderBy('created_at')
-        ->get();
+        $customerId = (int) Auth::guard('customer')->id();
+        $orders =  $this->ordersRepository->paginateByCustomer($customerId);
 
+
+
+        $complaints = $this->profileService->getComplaintsForCustomer($customerId);
+        $complaintProducts = $this->profileService->getComplaintOrderProducts($customerId);
+        $complaintTypes = Complaints::$type_name;
 
         return view('frontend.profile.index', compact(
                 'meta_description',
@@ -55,6 +64,9 @@ class ProfileController extends Controller
                 'catalogs',
                 'catalogsList',
                 'orders',
+                'complaints',
+                'complaintProducts',
+                'complaintTypes',
                 'h1',
                 'seo_url_canonical',
                 'title'
@@ -62,14 +74,67 @@ class ProfileController extends Controller
         )->with('title', $title);
     }
 
-    public function orders()
+    /**
+     * Обновление общей информации
+     *
+     * @param UpdateProfileRequest $request
+     * @param CustomerRepository $customerRepository
+     * @return JsonResponse
+     */
+    public function updateGeneralInfo(UpdateProfileRequest $request, CustomerRepository $customerRepository): JsonResponse
     {
+        $customer = Auth::guard('customer')->user();
+        $customerId = (int) $customer->id;
 
+        $customerRepository->update($customerId, $request->validated());
+
+        return response()->json([
+            'message' => 'Изменения успешно сохранены',
+            'success' => 'Изменения успешно сохранены',
+            'data' => [
+                'id' => $customerId,
+                'phone' => $customer->phone,
+                'name' => $customer->name,
+            ],
+        ]);
     }
 
-    public function complaints()
+    /**
+     * Обновление информации о компании
+     *
+     * @param UpdateCompanyRequest $request
+     * @param CompanyRepository $companyRepository
+     * @return JsonResponse
+     */
+    public function updateCompanyInfo(UpdateCompanyRequest $request, CompanyRepository $companyRepository): JsonResponse
     {
+        $customerId = (int) Auth::guard('customer')->id();
 
+        $company = $companyRepository->updateByCustomer($customerId, $request->validated());
+
+        return response()->json([
+            'success' => true,
+            'data' => $company?->only(['name', 'inn', 'contact_person', 'phone', 'email']),
+        ]);
+    }
+
+    /**
+     * Получаем список заказов
+     *
+     * @return JsonResponse
+     */
+    public function orders(): JsonResponse
+    {
+        $customerId = (int) Auth::guard('customer')->id();
+        $orders =  $this->ordersRepository->paginateByCustomer($customerId);
+
+        return response()->json([
+            'html' => view('frontend.profile.partials.orders-rows', [
+                'orders' => $orders->items(),
+            ])->render(),
+            'hasMore' => $orders->hasMorePages(),
+            'nextPage' => $orders->currentPage() + 1,
+        ]);
     }
 
     /**

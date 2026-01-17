@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Frontend;
 
 
+use App\Helpers\StringHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Frontend\Auth\LoginRequest;
 use App\Http\Requests\Frontend\Auth\RegisterRequest;
 use App\Http\Requests\Frontend\Auth\ForgotPasswordRequest;
 use App\Models\Customers;
+use App\Models\Logs;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -38,6 +40,8 @@ class AuthController extends Controller
         if (Auth::guard('customer')->attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
+            auth()->guard('customer')->user()->log(Logs::ACTION_LOGIN);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Вы успешно авторизовались',
@@ -58,13 +62,15 @@ class AuthController extends Controller
      */
     public function register(RegisterRequest $request): JsonResponse
     {
-        $user = Customers::create([
+        $customer = Customers::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        Auth::guard('customer')->login($user);
+        Auth::guard('customer')->login($customer);
+
+        $customer->log(Logs::ACTION_REGISTRATION);
 
         return response()->json([
             'success' => true,
@@ -86,6 +92,11 @@ class AuthController extends Controller
             );
 
             if ($status === Password::RESET_LINK_SENT) {
+
+                $customer = Customers::where('email', $request->email)->first();
+
+                $customer->log(Logs::ACTION_PASSWORD_RESET);
+
                 return response()->json([
                     'success' => true,
                     'message' => 'Ссылка для сброса пароля отправлена на ваш email',

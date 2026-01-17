@@ -71,12 +71,12 @@
 
                             <div class="form-group">
 
-                                {!! Form::label('image', 'Фото') !!}
+                                {!! Form::label('image', 'Фото*') !!}
 
                                 <div class="input-group">
                                     <div class="custom-file">
                                         {!! Form::file('image',  [ 'class' => 'custom-file-input']) !!}
-                                        {!! Form::label('image', 'Выберите файл (jpeg,jpg,png)*', ['class' => 'custom-file-label']) !!}
+                                        {!! Form::label('image', 'Выберите файл (jpeg,jpg,png)', ['class' => 'custom-file-label']) !!}
                                     </div>
                                     <div class="input-group-append">
                                         <span class="input-group-text">Обзор...</span>
@@ -91,6 +91,10 @@
                                 @if ($errors->has('image'))
                                     <span class="text-danger">{{ $errors->first('image') }}</span>
                                 @endif
+
+                                <div class="note">
+                                    Максимальный размер: <strong>{{ $maxUploadFileSize }}</strong>
+                                </div>
 
                             </div>
 

@@ -3,25 +3,15 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use App\Enums\OrderStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 
 class Orders extends Model
 {
     protected $table = 'orders';
-
-    public const STATUS_CREATED = 0;
-
-    public const STATUS_IN_PROGRESS = 1;
-
-    public const STATUS_COMPLETED = 2;
-
-    public const STATUS_PAID = 3;
-
-    public const STATUS_READY = 4;
-
-    public const STATUS_GRANTED = 5;
 
     /**
      * The attributes that are mass assignable.
@@ -33,15 +23,6 @@ class Orders extends Model
         'customer_id',
         'delivery_date',
         'invoice',
-    ];
-
-    public static array $status_name = [
-        self::STATUS_CREATED => 'Создан',
-        self::STATUS_IN_PROGRESS => 'В работе',
-        self::STATUS_COMPLETED => 'Оформлен',
-        self::STATUS_PAID => 'Оплачен',
-        self::STATUS_READY => 'Готов к выдаче',
-        self::STATUS_GRANTED => 'Выдан'
     ];
 
     /**
@@ -69,19 +50,27 @@ class Orders extends Model
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function deliveryDateFormat(): string
+    public function deliveryDateFormat(): ?string
     {
-        return Carbon::parse($this->delivery_date)->format('d.m.Y');
+        return $this->delivery_date ? Carbon::parse($this->delivery_date)->format('d.m.Y') : null;
     }
 
     /**
      * @return string
      */
-    public function getInvoice(): string
+    public function deliveryEditDateFormat(): string
     {
-        return Storage::disk('public')->url('invoices/' . $this->invoice);
+        return Carbon::parse($this->delivery_date)->format('d/m/Y');
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getInvoice(): ?string
+    {
+        return Storage::disk('public')->exists('invoices/' . $this->invoice) === true ? Storage::disk('public')->url('invoices/' . $this->invoice) : null;
     }
 
     /**
@@ -90,13 +79,27 @@ class Orders extends Model
     public static function getOption(): array
     {
         return [
-            self::STATUS_CREATED => 'Создан',
-            self::STATUS_IN_PROGRESS => 'В работе',
-            self::STATUS_COMPLETED => 'Оформлен',
-            self::STATUS_PAID => 'Оплачен',
-            self::STATUS_READY => 'Готов к выдаче',
-            self::STATUS_GRANTED => 'Выдан'
+            OrderStatus::Created->value    => OrderStatus::Created->label(),
+            OrderStatus::InProgress->value => OrderStatus::InProgress->label(),
+            OrderStatus::Issued->value     => OrderStatus::Issued->label() ,
+            OrderStatus::Paid->value       => OrderStatus::Paid->label(),
+            OrderStatus::Ready->value      => OrderStatus::Ready->label(),
+            OrderStatus::Done->value       => OrderStatus::Done->label(),
         ];
     }
 
+    public function getStatus()
+    {
+        return OrderStatus::tryFrom($this->status);
+    }
+
+    /**
+     * Товары в заказе
+     *
+     * @return HasMany
+     */
+    public function items(): HasMany
+    {
+        return $this->hasMany(OrderProduct::class, 'order_id', 'id');
+    }
 }

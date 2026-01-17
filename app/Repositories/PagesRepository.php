@@ -29,13 +29,13 @@ class PagesRepository extends BaseRepository
             $page->slug = $data['slug'];
             $page->seo_h1 = $data['seo_h1'];
             $page->seo_url_canonical = $data['seo_url_canonical'];
-            $page->published = $data['published'];
+            $page->published = (int) $data['published'];
 
             if ($data['main'] === 1) {
                 Pages::where('main', 1)->update(['main' => 0]);
             }
 
-            $page->main = $data['main'];
+            $page->main = (int) $data['main'];
             $page->seo_sitemap = $data['seo_sitemap'];
             $page->save();
         }
