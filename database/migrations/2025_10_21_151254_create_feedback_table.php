@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->string('attach')->nullable();
             $table->string('ip', 50)->nullable();
             $table->tinyInteger('type')->default(0);
-            $table->tinyInteger('status', 1)->default(0);
+            $table->tinyInteger('status')->default(0);
             $table->timestamps();
         });
     }

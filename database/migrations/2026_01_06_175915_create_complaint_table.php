@@ -36,7 +36,6 @@ return new class extends Migration {
                 ->on('customers')
                 ->onDelete('cascade');
 
-
         });
     }
 
