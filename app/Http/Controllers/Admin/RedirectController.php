@@ -12,18 +12,11 @@ use Illuminate\Http\RedirectResponse;
 
 class RedirectController extends Controller
 {
-
-    /**
-     * @var RedirectRepository
-     */
-    private RedirectRepository $redirectRepository;
-
     /**
      * @param RedirectRepository $redirectRepository
      */
-    public function __construct(RedirectRepository $redirectRepository)
+    public function __construct(private RedirectRepository $redirectRepository)
     {
-        $this->redirectRepository = $redirectRepository;
         parent::__construct();
     }
 

@@ -10,7 +10,6 @@
 
 @section('css')
 
-
 @endsection
 
 @section('content')
@@ -27,6 +26,7 @@
             <div class="catalog__filters-title">
                 <h2>Фильтры</h2>
             </div>
+
             <div class="catalog__filters-accordions accordions">
                 <div class="accordion__item">
                     <button class="catalog__accordion-btn accordion__btn js-accordion-btn" aria-expanded="true">
@@ -37,7 +37,6 @@
                     </button>
                     <div class="accordion__content">
                         <div class="catalog__filters-list">
-
                             <div class="catalog__filters-checkbox form-checkbox">
                                 <input type="checkbox" id="product-group-1" checked>
                                 <label for="product-group-1">
@@ -45,10 +44,10 @@
                                     <sup class="catalog__item-count">100</sup>
                                 </label>
                             </div>
-
                         </div>
                     </div>
                 </div>
+
                 <div class="accordion__item">
                     <button class="catalog__accordion-btn accordion__btn js-accordion-btn" aria-expanded="true">
                         <span class="accordion__title">Наличие</span>
@@ -75,6 +74,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="accordion__item">
                     <button class="catalog__accordion-btn accordion__btn js-accordion-btn" aria-expanded="true">
                         <span class="accordion__title">Бренд</span>
@@ -84,11 +84,17 @@
                     </button>
                     <div class="accordion__content">
                         <div class="catalog__filters-list">
+                            @foreach(($manufacturers ?? []) as $manufacturer)
+                                @php
+                                    $cbId = 'brand-' . $manufacturer->id;
+                                @endphp
 
-                            @foreach($manufacturers ?? [] as $manufacturer)
                                 <div class="catalog__filters-checkbox form-checkbox">
-                                    <input type="checkbox" name="manufacturer_id" value="{{ $manufacturer->id }}" id="brand-group-1">
-                                    <label for="brand-group-1">
+                                    <input type="checkbox"
+                                           name="manufacturer_id"
+                                           value="{{ $manufacturer->id }}"
+                                           id="{{ $cbId }}">
+                                    <label for="{{ $cbId }}">
                                         <span>{{ $manufacturer->title }}</span>
                                         <sup class="catalog__item-count">100</sup>
                                     </label>
@@ -99,9 +105,12 @@
                     </div>
                 </div>
             </div>
+
             <button type="button" class="catalog__apply-btn btn btn--tertiary js-catalog-apply-btn">
-                <span>Применить</span></button>
+                <span>Применить</span>
+            </button>
         </div>
+
         <div class="catalog__content">
             <div class="catalog__controls">
                 <div class="catalog__controls-line">
@@ -122,7 +131,7 @@
                         <button type="button" class="catalog__chip btn btn--sm">
                             <span>Freescale</span>
                             <svg aria-hidden="true">
-                                <use xlink:href="{{ url('/images/sprite.svg#clos') }}e"></use>
+                                <use xlink:href="{{ url('/images/sprite.svg#close') }}"></use>
                             </svg>
                         </button>
 
@@ -142,24 +151,31 @@
                 </button>
             </div>
 
-
             <ul class="catalog__list">
-
                 @foreach($products ?? [] as $item)
-
+                    @php
+                        $qtyId = 'product-count-' . $item->id;
+                    @endphp
                     <li>
-                        <article class="product-card">
+                        @php
+                            $inCart = !empty($cartItems[$item->id]);
+                            $cartQty = (int)($cartItems[$item->id]['qty'] ?? 1);
+                        @endphp
+
+                        <article class="product-card" data-catalog-product="{{ $item->id }}">
                             <div class="product-card__img">
                                 <picture>
-                                    <img src="{{ $item->getThumbnailUrl() }}" title="{{ $item->image_title  }}"
+                                    <img src="{{ $item->getThumbnailUrl() }}"
+                                         title="{{ $item->image_title }}"
                                          alt="{{ $item->image_alt ?? $item->title }}">
                                 </picture>
                             </div>
+
                             <div class="product-card__info">
-                                <a href="{{ route('frontend.product', ['slug' => $item->slug]) }}"
-                                   class="product-card__title">
+                                <a href="{{ route('frontend.product', ['slug' => $item->slug]) }}" class="product-card__title">
                                     <h2>{{ $item->title }}</h2>
                                 </a>
+
                                 <div class="product-card__characteristics js-characteristics">
                                     <div class="product-card__characteristics-wrap js-characteristics-wrap">
                                         <dl class="product-card__list">
@@ -172,50 +188,72 @@
                                                 <dt class="product-card__list-title">Серия:</dt>
                                                 <dd class="product-card__list-text">microconverter aduc8xx</dd>
                                             </div>
-
-
                                         </dl>
                                     </div>
-
                                 </div>
                             </div>
+
                             <div class="product-card__controls">
                                 <div class="product-card__count form-input-count">
-                                    <label for="product-count-1">Количество</label>
-                                    <button type="button" class="btn btn--secondary btn--icon"
-                                            onclick="this.nextElementSibling.stepDown(); ">
+                                    <label for="{{ $qtyId }}">Количество</label>
+
+                                    <button type="button"
+                                            class="btn btn--secondary btn--icon"
+                                            data-qty-step="-1">
                                         <svg aria-hidden="true">
                                             <use xlink:href="{{ url('/images/sprite.svg#minus') }}"></use>
                                         </svg>
                                         <span class="sr-only">Уменьшить количество</span>
                                     </button>
-                                    <input type="number" id="product-count-1" min="0" value="1000">
-                                    <button type="button" class="btn btn--secondary btn--icon"
-                                            onclick="this.previousElementSibling.stepUp(); ">
+
+                                    <input type="number"
+                                           id="{{ $qtyId }}"
+                                           min="0"
+                                           value="{{ $inCart ? $cartQty : 1 }}"
+                                           data-catalog-qty>
+
+                                    <button type="button"
+                                            class="btn btn--secondary btn--icon"
+                                            data-qty-step="1">
                                         <svg aria-hidden="true">
                                             <use xlink:href="{{ url('/images/sprite.svg#plus') }}"></use>
                                         </svg>
                                         <span class="sr-only">Увеличить количество</span>
                                     </button>
                                 </div>
-                                <button type="button" class="product-card__add-btn btn btn--primary">
+
+                                <button type="button"
+                                        class="product-card__add-btn btn btn--primary"
+                                        data-catalog-add
+                                        style="{{ $inCart ? 'display:none' : '' }}">
                                     <svg aria-hidden="true">
                                         <use xlink:href="{{ url('/images/sprite.svg#cart-add') }}"></use>
                                     </svg>
                                     <span>Добавить в корзину</span>
                                 </button>
-                                <p class="product-card__price-text">@if($item->price > 0)
+
+
+                                <a href="{{ route('frontend.cart.index') }}"
+                                   class="product-card__add-btn btn btn--secondary"
+                                   data-catalog-incart
+                                   style="{{ $inCart ? '' : 'display:none' }}">
+                                    <svg aria-hidden="true">
+                                        <use xlink:href="{{ url('/images/sprite.svg#cart') }}"></use>
+                                    </svg>
+                                    <span>В корзине</span>
+                                </a>
+
+                                <p class="product-card__price-text">
+                                    @if($item->price > 0)
                                         {{ $item->price }}
                                     @else
                                         Цену уточняйте у&nbsp;менеджера
-                                    @endif</p>
+                                    @endif
+                                </p>
                             </div>
                         </article>
                     </li>
-
                 @endforeach
-
-
             </ul>
 
             {{ $products->links('layouts.frontend_pagination') }}
@@ -229,8 +267,7 @@
                 <h2>Нужен компонент,<br>которого нет в&nbsp;каталоге?</h2>
             </div>
             <p class="request-banner__description">Просто отправьте запрос — и мы найдём то, что&nbsp;вы&nbsp;ищете</p>
-            <a href="{{ route('frontend.nomenclature_request') }}"
-               class="request-banner__link btn btn--primary btn--lg">
+            <a href="{{ route('frontend.nomenclature_request.index') }}" class="request-banner__link btn btn--primary btn--lg">
                 <span>Отправить запрос</span>
                 <svg aria-hidden="true" class="white">
                     <use xlink:href="{{ url('/images/sprite.svg#arrow-right') }}"></use>
@@ -245,6 +282,4 @@
 
 @section('js')
 
-
 @endsection
-

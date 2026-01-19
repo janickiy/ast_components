@@ -353,6 +353,62 @@
         });
     }
 
+    // Инициализация показа моих запросов
+    function initRequest() {
+        let page = Number(new URLSearchParams(window.location.search).get('page') || 1);
+
+        const tab = document.querySelector('[data-tab="account-requests"]');
+        const tbody = tab?.querySelector('tbody');
+        const btn = tab?.querySelector('.account__more-btn');
+
+        function buildAjaxUrl(params) {
+            // ВАЖНО: URL строится от текущего origin => будет https на https-странице
+            const url = new URL('/profile/requests', window.location.origin); // <-- подставь свой путь
+            params.forEach((value, key) => url.searchParams.set(key, value));
+            return url.toString();
+        }
+
+        btn?.addEventListener('click', async () => {
+            if (!tbody) return;
+
+            btn.disabled = true;
+
+            const params = getParams();
+            const nextPage = page + 1;
+            params.set('page', String(nextPage));
+
+            try {
+                const res = await fetch(buildAjaxUrl(params), {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                    },
+                    credentials: 'same-origin',
+                });
+
+                if (!res.ok) {
+                    console.error('Request AJAX failed:', res.status, await res.text());
+                    btn.disabled = false;
+                    return;
+                }
+
+                const data = await res.json();
+
+                tbody.insertAdjacentHTML('beforeend', data.html);
+
+                page = nextPage;
+                //updateUrl(params);
+
+                if (!data.hasMore) btn.style.display = 'none';
+            } catch (e) {
+                console.error('Request AJAX error:', e);
+            } finally {
+                btn.disabled = false;
+            }
+        });
+    }
+
     // Инициализация показа моих заказов
     function initOrder() {
         let page = Number(new URLSearchParams(window.location.search).get('page') || 1);
@@ -387,15 +443,6 @@
             target.innerHTML = '';
             target.appendChild(tpl.content.cloneNode(true));
             openModal()
-        }
-
-        function getParams() {
-            return new URLSearchParams(window.location.search);
-        }
-
-        function updateUrl(params) {
-            const newUrl = `${window.location.pathname}?${params.toString()}`;
-            window.history.pushState({}, '', newUrl);
         }
 
         function buildAjaxUrl(params) {
@@ -443,7 +490,6 @@
             } finally {
                 btn.disabled = false;
             }
-
         });
 
         document.addEventListener('click', (e) => {
@@ -503,12 +549,23 @@
         productSelect.addEventListener('change', updateOrderCount);
     }
 
+    function getParams() {
+        return new URLSearchParams(window.location.search);
+    }
+
+    function updateUrl(params) {
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({}, '', newUrl);
+    }
+
     // Запускаем после загрузки DOM
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
+        document.addEventListener('DOMContentLoaded', initRequest);
         document.addEventListener('DOMContentLoaded', initOrder);
     } else {
         init();
+        initRequest();
         initOrder();
     }
 })();

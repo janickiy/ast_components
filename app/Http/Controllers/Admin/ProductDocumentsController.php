@@ -16,30 +16,12 @@ use Illuminate\View\View;
 class ProductDocumentsController extends Controller
 {
     /**
-     * @var ProductDocumentsRepository
-     */
-    private ProductDocumentsRepository $productDocumentsRepository;
-
-    /**
-     * @var ProductsRepository
-     */
-    private ProductsRepository $productsRepository;
-
-    /**
-     * @var ProductDocumentsService
-     */
-    private ProductDocumentsService $productDocumentsService;
-
-    /**
      * @param ProductDocumentsRepository $productDocumentsRepository
      * @param ProductsRepository $productsRepository
      * @param ProductDocumentsService $productDocumentsService
      */
-    public function __construct(ProductDocumentsRepository $productDocumentsRepository, ProductsRepository $productsRepository, ProductDocumentsService $productDocumentsService)
+    public function __construct(private ProductDocumentsRepository $productDocumentsRepository, private ProductsRepository $productsRepository, private ProductDocumentsService $productDocumentsService)
     {
-        $this->productDocumentsRepository = $productDocumentsRepository;
-        $this->productsRepository = $productsRepository;
-        $this->productDocumentsService = $productDocumentsService;
         parent::__construct();
     }
 

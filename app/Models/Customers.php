@@ -2,18 +2,19 @@
 
 namespace App\Models;
 
+use App\Helpers\StringHelper;
 use App\Notifications\ResetPasswordNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use App\Helpers\StringHelper;
+use Rappasoft\LaravelAuthenticationLog\Traits\AuthenticationLoggable;
 
 class Customers extends Authenticatable
 {
     /** @use HasFactory<\database\database\migrations\database\factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, AuthenticationLoggable;
 
     protected $table = 'customers';
 
@@ -95,27 +96,5 @@ class Customers extends Authenticatable
     public function company(): HasOne
     {
         return $this->hasOne(Company::class, 'customer_id');
-    }
-
-    /**
-     * @return HasMany
-     */
-    public function logs(): HasMany
-    {
-        return $this->hasMany(Logs::class, 'customer_id');
-    }
-
-    /**
-     * @param int $action
-     * @return void
-     */
-    public function log(int $action): void
-    {
-        Logs::create([
-            'customer_id' => $this->id,
-            'action' => $action,
-            'user_agent' => request()->userAgent(),
-            'ip' => StringHelper::getIp()
-        ]);
     }
 }

@@ -14,23 +14,11 @@ use Illuminate\View\View;
 class ManufacturersController extends Controller
 {
     /**
-     * @var ManufacturerRepository
-     */
-    public ManufacturerRepository $manufacturerRepository;
-
-    /**
-     * @var ManufacturerService
-     */
-    public ManufacturerService $manufacturerService;
-
-    /**
      * @param ManufacturerRepository $manufacturerRepository
      * @param ManufacturerService $manufacturerService
      */
-    public function __construct(ManufacturerRepository $manufacturerRepository, ManufacturerService $manufacturerService)
+    public function __construct(private ManufacturerRepository $manufacturerRepository, private ManufacturerService $manufacturerService)
     {
-        $this->manufacturerRepository = $manufacturerRepository;
-        $this->manufacturerService = $manufacturerService;
         parent::__construct();
     }
 

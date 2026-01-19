@@ -12,17 +12,10 @@ use Illuminate\View\View;
 
 class CatalogController extends Controller
 {
-    /**
-     * @var CatalogRepository
-     */
-    private CatalogRepository $categoryRepository;
 
-    /**
-     * @param CatalogRepository $categoryRepository
-     */
-    public function __construct(CatalogRepository $categoryRepository)
+
+    public function __construct(public CatalogRepository $categoryRepository)
     {
-        $this->categoryRepository = $categoryRepository;
         parent::__construct();
     }
 

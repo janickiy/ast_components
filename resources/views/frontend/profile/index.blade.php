@@ -66,175 +66,22 @@
             </li>
         </ul>
         <div class="account__tabs-content tabs-content">
+
+            @php
+                $lastIp = Auth::guard('customer')->user()?->lastSuccessfulLoginIp();
+                $lastLoginAt = Auth::guard('customer')->user()?->lastSuccessfulLoginAt();
+                $location = StringHelper::getLocation($lastIp);
+                $place = isset($location['country']) && isset($location['city']) ? ' ' . $location['country'] . ', ' . $location['city']:'';
+            @endphp
+
+            <p style="padding-bottom: 16px">Последний вход: {{ date('d.m.Y H:i:s', strtotime($lastLoginAt)) }}&nbsp;&nbsp;&nbsp;IP: {{ $lastIp }}{{ $place }} </p>
+
             @include('frontend.profile.tabs.account-profile')
+
             @include('frontend.profile.tabs.orders')
-            <div data-tab="account-requests" class="requests">
-                <section class="account__container">
-                    <div class="account__section-title">
-                        <h2>Мои запросы</h2>
-                    </div>
-                    <div class="account__table">
-                        <div class="account__table-wrap">
-                            <table>
-                                <thead>
-                                <tr>
-                                    <th>Номер запроса</th>
-                                    <th>Дата создания</th>
-                                    <th>Запрашиваемая<br>номенклатура</th>
-                                    <th>Запрашиваемое<br>количество</th>
-                                    <th>Статус запроса</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>120</td>
-                                    <td class="text-right">15.08.2025</td>
-                                    <td></td>
-                                    <td class="text-medium text-right"></td>
-                                    <td>
-                                        <div class="account__table-status create">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#new-doc"></use>
-                                            </svg>
-                                            <span>Создан</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>120</td>
-                                    <td class="text-right">15.08.2025</td>
-                                    <td></td>
-                                    <td class="text-medium text-right"></td>
-                                    <td>
-                                        <div class="account__table-status in-progress">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#cogwheel"></use>
-                                            </svg>
-                                            <span>В работе</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>121</td>
-                                    <td class="text-right">20.08.2025</td>
-                                    <td>34583687527368Asdf45</td>
-                                    <td class="text-medium text-right text-nowrap">10 000</td>
-                                    <td>
-                                        <div class="account__table-status done">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#check-circle"></use>
-                                            </svg>
-                                            <span>Обработан</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>121</td>
-                                    <td class="text-right">20.08.2025</td>
-                                    <td>34583687527368Asdf45</td>
-                                    <td class="text-medium text-right text-nowrap">10 000</td>
-                                    <td>
-                                        <div class="account__table-status done">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#check-circle"></use>
-                                            </svg>
-                                            <span>Обработан</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>121</td>
-                                    <td class="text-right">20.08.2025</td>
-                                    <td>34583687527368Asdf45</td>
-                                    <td class="text-medium text-right text-nowrap">10 000</td>
-                                    <td>
-                                        <div class="account__table-status done">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#check-circle"></use>
-                                            </svg>
-                                            <span>Обработан</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>121</td>
-                                    <td class="text-right">20.08.2025</td>
-                                    <td>34583687527368Asdf45</td>
-                                    <td class="text-medium text-right text-nowrap">10 000</td>
-                                    <td>
-                                        <div class="account__table-status done">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#check-circle"></use>
-                                            </svg>
-                                            <span>Обработан</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>121</td>
-                                    <td class="text-right">20.08.2025</td>
-                                    <td>34583687527368Asdf45</td>
-                                    <td class="text-medium text-right text-nowrap">10 000</td>
-                                    <td>
-                                        <div class="account__table-status done">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#check-circle"></use>
-                                            </svg>
-                                            <span>Обработан</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>121</td>
-                                    <td class="text-right">20.08.2025</td>
-                                    <td>34583687527368Asdf45</td>
-                                    <td class="text-medium text-right text-nowrap">10 000</td>
-                                    <td>
-                                        <div class="account__table-status done">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#check-circle"></use>
-                                            </svg>
-                                            <span>Обработан</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>121</td>
-                                    <td class="text-right">20.08.2025</td>
-                                    <td>34583687527368Asdf45</td>
-                                    <td class="text-medium text-right text-nowrap">10 000</td>
-                                    <td>
-                                        <div class="account__table-status done">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#check-circle"></use>
-                                            </svg>
-                                            <span>Обработан</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>121</td>
-                                    <td class="text-right">20.08.2025</td>
-                                    <td>34583687527368Asdf45</td>
-                                    <td class="text-medium text-right text-nowrap">10 000</td>
-                                    <td>
-                                        <div class="account__table-status done">
-                                            <svg aria-hidden="true">
-                                                <use xlink:href="images/sprite.svg#check-circle"></use>
-                                            </svg>
-                                            <span>Обработан</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <button type="button" class="account__more-btn btn btn--secondary">
-                        <span>Показать еще</span>
-                    </button>
-                </section>
-            </div>
+
+            @include('frontend.profile.tabs.requests')
+
             <div data-tab="account-claims" class="claims">
                 <section class="account__container">
                     <div class="account__section-header">
@@ -712,6 +559,6 @@
 
 @section('js')
 
-    {!! Html::script('/scripts/profile.js?v=3') !!}
+    {!! Html::script('/scripts/profile.js?v=4') !!}
 
 @endsection

@@ -29,23 +29,38 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script>
+        window.Cart = {
+            addUrl: @json(route('frontend.cart.add')),
+            qtyUrl: @json(route('frontend.cart.qty')),
+            removeUrl: @json(route('frontend.cart.remove')),
+            undoUrl: @json(route('frontend.cart.undo')),
+            toggleUrl: @json(route('frontend.cart.toggle')),
+            selectAllUrl: @json(route('frontend.cart.selectAll')),
+            checkoutUrl: @json(route('frontend.cart.checkout')),
+            cartUrl: @json(route('frontend.cart.index')),
+        };
+    </script>
 
     {!! Html::style('/css/styles.min.css?v=3') !!}
     {!! Html::style('/css/auth.css?v=2') !!}
 
     @yield('css')
 
+    {!! Html::script('/scripts/cart.js') !!}
     {!! Html::script('/scripts/script.min.js?v=1') !!}
     {!! Html::script('/scripts/auth.js?v=2') !!}
 
 </head>
 
 <body>
+
+
 <header class="header js-header">
     <div class="header__wrap">
         <div class="header__top js-header-menu">
             <nav class="header__nav">
-                @if($menu['top'])
+                @if(!empty($menu['top']))
                     <ul>
                         @foreach($menu['top'] ?? [] as $item)
                             @if($item['child'] )
@@ -169,11 +184,11 @@
                 <div class="header__cart-btn">
                     <a href="{{ route('frontend.cart.index') }}" class="btn">
                         <svg aria-hidden="true" class="orange">
-                            <use xlink:href="{{ url('/images/sprite.svg#car') }}t"></use>
+                            <use xlink:href="{{ url('/images/sprite.svg#cart') }}"></use>
                         </svg>
                         <span>Корзина</span>
                     </a>
-                    <span class="header__cart-count">10</span>
+                    <span class="header__cart-count" data-cart-count>{{ $cartCount }}</span>
                 </div>
 
                 @if (Auth::guard('customer')->check())
@@ -604,6 +619,40 @@
         </div>
     </div>
 </div>
+<div class="modal js-modal" data-modal-name="order-success">
+    <div class="modal__wrap">
+        <div class="modal__dialog js-modal-dialog" role="dialog" aria-modal="true">
+            <button type="button" class="modal__close-btn btn btn--icon btn--sm js-modal-close">
+                <span class="sr-only">Закрыть модальное окно</span>
+                <svg aria-hidden="true">
+                    <use xlink:href="{{ url('/images/sprite.svg#close') }}"></use>
+                </svg>
+            </button>
+
+            <div class="modal__content">
+                <div class="modal__title">
+                    <h2>Заказ отправлен</h2>
+                </div>
+
+                <p style="margin: 0 0 16px;">
+                    Спасибо! Ваш заказ успешно оформлен и передан менеджеру.
+                    <br>
+                    <span data-order-success-id style="font-weight: 600;"></span>
+                </p>
+
+                <div class="modal__btns">
+                    <button type="button" class="btn btn--primary js-order-success-ok">
+                        <svg aria-hidden="true">
+                            <use xlink:href="{{ url('/images/sprite.svg#check-circle') }}"></use>
+                        </svg>
+                        <span>Понятно</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="modal js-modal" data-modal-name="password-recovery">
     <div class="modal__wrap">
         <div class="modal__dialog js-modal-dialog" role="dialog" aria-modal="true">

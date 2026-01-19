@@ -1,8 +1,5 @@
 <?php
 
-
-use App\Models\Catalog;
-use App\Helpers\MenuHelper;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -38,17 +35,10 @@ return Application::configure(basePath: dirname(__DIR__))
             $seo_url_canonical = '';
             $h1 = $title;
 
-            $menu = MenuHelper::getMenuList();
-            $catalogsList = Catalog::getCatalogList();
-            $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
-
             return response()->view('errors.404', compact(
                 'meta_description',
                 'meta_keywords',
                 'meta_title',
-                'menu',
-                'catalogs',
-                'catalogsList',
                 'h1',
                 'seo_url_canonical',
                 'title'

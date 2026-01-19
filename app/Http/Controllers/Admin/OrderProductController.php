@@ -9,16 +9,10 @@ use Illuminate\View\View;
 class OrderProductController extends Controller
 {
     /**
-     * @var OrderProductRepository
-     */
-    private OrderProductRepository $orderProductRepository;
-
-    /**
      * @param OrderProductRepository $orderProductRepository
      */
-    public function __construct(OrderProductRepository $orderProductRepository)
+    public function __construct(private OrderProductRepository $orderProductRepository)
     {
-        $this->orderProductRepository = $orderProductRepository;
         parent::__construct();
     }
 

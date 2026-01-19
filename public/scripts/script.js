@@ -233,7 +233,7 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
-    headerCategoryItems[0].click();
+    if (headerCategoryItems && headerCategoryItems.length) headerCategoryItems[0].click();
 
     headerCatalogBtn.addEventListener('click', () => {
         if (!headerCatalog.classList.contains('is-open')) {

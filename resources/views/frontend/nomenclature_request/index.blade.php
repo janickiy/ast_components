@@ -10,7 +10,6 @@
 
 @section('css')
 
-
 @endsection
 
 @section('content')
@@ -21,13 +20,15 @@
         <p class="request__description">Не нашли необходимую позицию в&nbsp;каталоге?<br>Отправьте запрос через форму
             ниже, и&nbsp;наш менеджер связется с вами</p>
 
-        {!! Form::open(['url' => route('frontend.send_nomenclature_request'), 'method' => 'post', 'files' => true, 'class' => 'invite__form is-success']) !!}
+        @php  $user = Auth::guard('customer')->user() ?? null; @endphp
+
+        {!! Form::open(['url' => route('frontend.nomenclature_request.store'), 'method' => 'post', 'files' => true, 'class' => 'invite__form is-success']) !!}
 
         <div class="request__input-row">
             <div class="request__input-col">
                 <div class="form-input">
                     {!! Form::label('company', 'Название компании*') !!}
-                    {!! Form::text('company', old('company'), ['id' => 'request-company', 'placeholder' => 'ООО "Электромонтаж"', 'required']) !!}
+                    {!! Form::text('company', old('company', $user?->company->name ?? null), ['id' => 'request-company', 'placeholder' => 'ООО "Электромонтаж"', 'required']) !!}
                     <!-- <span class="is-error">Укажите название компании</span> -->
                     @if ($errors->has('company'))
                         <p class="text-danger">{{ $errors->first('company') }}</p>
@@ -35,21 +36,21 @@
                 </div>
                 <div class="form-input">
                     {!! Form::label('name', 'Ваше имя*') !!}
-                    {!! Form::text('name', old('name'), ['id' => 'request-name', 'placeholder' => 'Иванов Иван', 'required']) !!}
+                    {!! Form::text('name', old('name', $user->name ?? null), ['id' => 'request-name', 'placeholder' => 'Иванов Иван', 'required']) !!}
                     @if ($errors->has('name'))
                         <p class="text-danger">{{ $errors->first('name') }}</p>
                     @endif
                 </div>
                 <div class="form-input">
                     {!! Form::label('email', 'Электронная почта*') !!}
-                    {!! Form::email('email', old('email'), ['id' => 'request-email', 'placeholder' => 'customer@gmail.com', 'required']) !!}
+                    {!! Form::email('email', old('email', $user->email ?? null), ['id' => 'request-email', 'placeholder' => 'customer@gmail.com', 'required']) !!}
                     @if ($errors->has('email'))
                         <p class="text-danger">{{ $errors->first('email') }}</p>
                     @endif
                 </div>
                 <div class="form-input">
                     {!! Form::label('phone', 'Номер телефона*') !!}
-                    {!! Form::tel('phone', old('phone'), ['id' => 'request-phone', 'placeholder' => '+7 900 000-00-00', 'required']) !!}
+                    {!! Form::tel('phone', old('phone', $user->phone ?? null), ['id' => 'request-phone', 'placeholder' => '+7 900 000-00-00', 'required']) !!}
                     @if ($errors->has('phone'))
                         <p class="text-danger">{{ $errors->first('phone') }}</p>
                     @endif
@@ -57,10 +58,10 @@
             </div>
             <div class="request__input-col">
                 <div class="form-input">
-                    {!! Form::label('label', 'Маркировка*') !!}
-                    {!! Form::text('label', old('label'), ['id' => 'request-label', 'placeholder' => '9999999999999999999999999999', 'required']) !!}
-                    @if ($errors->has('label'))
-                        <p class="text-danger">{{ $errors->first('label') }}</p>
+                    {!! Form::label('nomenclature', 'Маркировка*') !!}
+                    {!! Form::text('nomenclature', old('nomenclature'), ['id' => 'request-label', 'placeholder' => '9999999999999999999999999999', 'required']) !!}
+                    @if ($errors->has('nomenclature'))
+                        <p class="text-danger">{{ $errors->first('nomenclature') }}</p>
                     @endif
                 </div>
                 <div class="form-input__line">
@@ -75,8 +76,8 @@
                     <div class="form-select">
                         {!! Form::label('unit', 'Ед.упаковки*') !!}
                         <select name="unit" id="request-unit" class="js-select">
-                            <option value="unit-1">штука</option>
-                            <option value="unit-2">коробка</option>
+                            <option value="0">штука</option>
+                            <option value="1">коробка</option>
                         </select>
                         @if ($errors->has('unit'))
                             <p class="text-danger">{{ $errors->first('unit') }}</p>
@@ -102,7 +103,7 @@
             </div>
         </div>
         <div class="request__checkbox form-checkbox">
-            <input type="checkbox" id="request-agreement">
+            <input type="checkbox" name="agreement" id="request-agreement">
             <label for="request-agreement">Я даю согласие на обработку персональных данных в&nbsp;соответствии с&nbsp;<a
                         href="{{ route('frontend.page', ['slug' => 'privacy-policy']) }}">Политикой конфиденциальности</a></label>
         </div>
@@ -118,7 +119,7 @@
                         <svg aria-hidden="true">
                             <use xlink:href="{{ url('/images/sprite.svg#check-circle') }}"></use>
                         </svg>
-                        <span>Ваш запрос успешно отправлен</span>
+                        <span>{{ session('success') }}</span>
                 </span>
             @endif
         </div>
@@ -130,7 +131,5 @@
 @endsection
 
 @section('js')
-
-
 
 @endsection

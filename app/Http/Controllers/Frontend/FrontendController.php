@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\Frontend;
 
-use App\Helpers\MenuHelper;
+
 use App\Helpers\SettingsHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Frontend\Contacts\FeedbackRequest;
 use App\Http\Requests\Frontend\Invite\SendRequest;
-use App\Http\Requests\Frontend\NomenclatureRequest\SendNomenclatureRequest;
 use App\Mail\InviteMailer;
 use App\Mail\NomenclatureRequestMailer;
 use App\Models\Catalog;
@@ -19,6 +18,7 @@ use App\Models\Products;
 use App\Models\Seo;
 use App\Repositories\ProductsRepository;
 use App\Services\FeedbackService;
+use App\Services\CartService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -27,17 +27,12 @@ use stdClass;
 
 class FrontendController extends Controller
 {
-    public FeedbackService $feedbackService;
-
     /**
-     * @var ProductsRepository
+     * @param FeedbackService $feedbackService
+     * @param ProductsRepository $productRepository
      */
-    public ProductsRepository $productRepository;
-
-    public function __construct(FeedbackService $feedbackService, ProductsRepository $productsRepository)
+    public function __construct(private FeedbackService $feedbackService, private ProductsRepository $productRepository)
     {
-        $this->feedbackService = $feedbackService;
-        $this->productRepository = $productsRepository;
     }
 
     /**
@@ -58,20 +53,13 @@ class FrontendController extends Controller
         $seo_url_canonical = $page->seo_url_canonical ?? '';
         $h1 = $page->seo_h1 ?? $title;
 
-        $menu = MenuHelper::getMenuList();
-        $catalogsList = Catalog::getCatalogList();
-        $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
-
         return view('frontend.page', compact(
                 'page',
-                'catalogs',
-                'catalogsList',
                 'meta_description',
                 'meta_keywords',
                 'meta_title',
                 'h1',
-                'seo_url_canonical',
-                'menu')
+                'seo_url_canonical')
         )->with('title', $title);
     }
 
@@ -94,9 +82,6 @@ class FrontendController extends Controller
         $meta_title = $page->meta_title ?? '';
         $seo_url_canonical = $page->seo_url_canonical ?? '';
         $h1 = $page->seo_h1 ?? $title;
-        $menu = MenuHelper::getMenuList();
-        $catalogsList = Catalog::getCatalogList();
-        $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
 
         if ($request->session()->has('productIds')) {
             $productIds = $request->session()->get('productIds');
@@ -106,15 +91,12 @@ class FrontendController extends Controller
 
         return view('frontend.page', compact(
                 'page',
-                'catalogs',
-                'catalogsList',
                 'productIds',
                 'meta_description',
                 'meta_keywords',
                 'meta_title',
                 'h1',
-                'seo_url_canonical',
-                'menu')
+                'seo_url_canonical')
         )->with('title', $title);
     }
 
@@ -133,22 +115,15 @@ class FrontendController extends Controller
         $seo_url_canonical = $seo['seo_url_canonical'];
         $h1 = $seo['h1'];
 
-        $menu = MenuHelper::getMenuList();
-        $catalogsList = Catalog::getCatalogList();
-        $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
         $options = Feedback::getPlatformList();
 
         return view('frontend.invite', compact(
                 'meta_description',
                 'meta_keywords',
                 'meta_title',
-                'menu',
                 'options',
-                'catalogs',
-                'catalogsList',
                 'h1',
-                'seo_url_canonical',
-                'title'
+                'seo_url_canonical'
             )
         )->with('title', $title);
     }
@@ -192,78 +167,6 @@ class FrontendController extends Controller
     }
 
     /**
-     * Запрос номенклатуры
-     *
-     * @return View
-     */
-    public function nomenclatureRequest(): View
-    {
-        $seo = Seo::getSeo('frontend.invite', 'Запрос номенклатуры');
-        $title = $seo['title'];
-        $meta_description = $seo['meta_description'];
-        $meta_keywords = $seo['meta_keywords'];
-        $meta_title = $seo['meta_title'];
-        $seo_url_canonical = $seo['seo_url_canonical'];
-        $h1 = $seo['h1'];
-
-        $menu = MenuHelper::getMenuList();
-        $catalogsList = Catalog::getCatalogList();
-        $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
-
-        return view('frontend.nomenclature_request', compact(
-                'meta_description',
-                'meta_keywords',
-                'meta_title',
-                'menu',
-                'catalogs',
-                'catalogsList',
-                'h1',
-                'seo_url_canonical',
-                'title'
-            )
-        )->with('title', $title);
-    }
-
-    /**
-     * @param SendNomenclatureRequest $request
-     * @return RedirectResponse
-     */
-    public function sendNomenclatureRequest(SendNomenclatureRequest $request): RedirectResponse
-    {
-        try {
-            $data = new stdClass();
-            $data->name = $request->name;
-            $data->company = $request->company;
-            $data->email = $request->email;
-            $data->phone = $request->phone;
-            $data->message = $request->message;
-
-            if ($request->hasFile('attach')) {
-                $filename = $this->feedbackService->storeFile($request);
-            }
-
-            $message = 'Маркировка: ' . $request->count . '<br>Количество: ' . $request->count . '<br>Ед.упаковки' . '<br><br>Комментарий: ' . $request->message;
-
-            Mail::to(explode(",", SettingsHelper::getInstance()->getValueForKey('EMAIL_NOTIFY')))->send(new NomenclatureRequestMailer($data));
-
-            Feedback::create(array_merge($request->all(), [
-                'name' => $request->name,
-                'email' => $request->email,
-                'phone' => $request->phone,
-                'message' => $message,
-                'type' => 2,
-                'ip' => $request->ip(),
-                'attach' => $filename ?? null
-            ]));
-
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
-        }
-
-        return redirect()->route('frontend.invite')->with('success', 'Ваше приглашение успешно отправлено');
-    }
-
-    /**
      * Список новостей
      *
      * @return View
@@ -278,22 +181,15 @@ class FrontendController extends Controller
         $seo_url_canonical = $seo['seo_url_canonical'];
         $h1 = $seo['h1'];
 
-        $menu = MenuHelper::getMenuList();
-        $catalogsList = Catalog::getCatalogList();
-        $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
         $news = News::orderBy('created_at')->published()->paginate(9);
 
         return view('frontend.news', compact(
                 'meta_description',
                 'meta_keywords',
                 'meta_title',
-                'menu',
                 'news',
-                'catalogs',
-                'catalogsList',
                 'h1',
-                'seo_url_canonical',
-                'title'
+                'seo_url_canonical'
             )
         )->with('title', $title);
     }
@@ -319,24 +215,17 @@ class FrontendController extends Controller
 
         $breadcrumbs[] = ['url' => route('frontend.news'), 'title' => 'Новости'];
 
-        $menu = MenuHelper::getMenuList();
-        $catalogsList = Catalog::getCatalogList();
-        $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
         $lastNews = News::inRandomOrder()->published()->limit(3)->get();
 
         return view('frontend.news_item', compact(
                 'meta_description',
                 'meta_keywords',
                 'meta_title',
-                'menu',
-                'catalogs',
-                'catalogsList',
                 'news',
                 'lastNews',
                 'breadcrumbs',
                 'h1',
-                'seo_url_canonical',
-                'title'
+                'seo_url_canonical'
             )
         )->with('title', $title);
     }
@@ -351,20 +240,12 @@ class FrontendController extends Controller
         $seo_url_canonical = $seo['seo_url_canonical'];
         $h1 = $seo['h1'];
 
-        $menu = MenuHelper::getMenuList();
-        $catalogsList = Catalog::getCatalogList();
-        $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
-
         return view('frontend.contacts', compact(
                 'meta_description',
                 'meta_keywords',
                 'meta_title',
-                'menu',
-                'catalogs',
-                'catalogsList',
                 'h1',
-                'seo_url_canonical',
-                'title'
+                'seo_url_canonical'
             )
         )->with('title', $title);
     }
@@ -414,20 +295,12 @@ class FrontendController extends Controller
         $seo_url_canonical = $seo['seo_url_canonical'];
         $h1 = $seo['h1'];
 
-        $menu = MenuHelper::getMenuList();
-        $catalogsList = Catalog::getCatalogList();
-        $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
-
         return view('frontend.converters', compact(
                 'meta_description',
                 'meta_keywords',
                 'meta_title',
-                'menu',
-                'catalogs',
-                'catalogsList',
                 'h1',
-                'seo_url_canonical',
-                'title'
+                'seo_url_canonical'
             )
         )->with('title', $title);
     }
@@ -448,9 +321,6 @@ class FrontendController extends Controller
         $seo_url_canonical = $seo['seo_url_canonical'];
         $h1 = $seo['h1'];
 
-        $menu = MenuHelper::getMenuList();
-        $catalogsList = Catalog::getCatalogList();
-        $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
         $manufacturers = Manufacturers::orderBy('title')->published()->get();
 
         if ($request->session()->has('productIds')) {
@@ -465,12 +335,8 @@ class FrontendController extends Controller
                 'meta_title',
                 'h1',
                 'seo_url_canonical',
-                'menu',
                 'productIds',
-                'catalogs',
-                'catalogsList',
-                'manufacturers',
-                'title'
+                'manufacturers'
             )
         )->with('title', $title);
     }
@@ -495,10 +361,6 @@ class FrontendController extends Controller
         $seo_url_canonical = $manufacturer->seo_url_canonical ?? '';
         $h1 = $manufacturer->seo_h1 ?? $title;
 
-        $menu = MenuHelper::getMenuList();
-        $catalogsList = Catalog::getCatalogList();
-        $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
-
         $breadcrumbs[] = ['url' => route('frontend.manufacturers'), 'title' => 'Производители'];
 
         if ($request->session()->has('productIds')) {
@@ -512,14 +374,10 @@ class FrontendController extends Controller
                 'meta_keywords',
                 'meta_title',
                 'productIds',
-                'menu',
-                'catalogs',
-                'catalogsList',
                 'manufacturer',
                 'breadcrumbs',
                 'h1',
-                'seo_url_canonical',
-                'title'
+                'seo_url_canonical'
             )
         )->with('title', $title);
     }
@@ -541,9 +399,6 @@ class FrontendController extends Controller
         $seo_url_canonical = $seo['seo_url_canonical'];
         $h1 = $seo['h1'];
 
-        $menu = MenuHelper::getMenuList();
-        $catalogsList = Catalog::getCatalogList();
-        $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
         $manufacturers = Manufacturers::orderBy('title')->published()->get();
 
         $breadcrumbs = null;
@@ -573,20 +428,19 @@ class FrontendController extends Controller
             $productIds = null;
         }
 
+        $cartItems = app(CartService::class)->items();
+
         return view('frontend.catalog', compact(
                 'meta_description',
                 'meta_keywords',
                 'meta_title',
-                'menu',
                 'products',
                 'manufacturers',
                 'productIds',
-                'catalogs',
-                'catalogsList',
                 'breadcrumbs',
                 'h1',
                 'seo_url_canonical',
-                'title'
+                'cartItems'
             )
         )->with('title', $title);
     }
@@ -606,17 +460,10 @@ class FrontendController extends Controller
         $seo_url_canonical = $seo['seo_url_canonical'];
         $h1 = $seo['h1'];
 
-        $menu = MenuHelper::getMenuList();
-        $catalogsList = Catalog::getCatalogList();
-        $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
-
         return view('frontend.conditions', compact(
                 'meta_description',
                 'meta_keywords',
                 'meta_title',
-                'menu',
-                'catalogs',
-                'catalogsList',
                 'h1',
                 'seo_url_canonical',
                 'title'
@@ -644,28 +491,22 @@ class FrontendController extends Controller
         $seo_url_canonical = $product->seo_url_canonical;
         $h1 = $product->seo_h1 ?? $title;
 
-        $menu = MenuHelper::getMenuList();
-        $catalogsList = Catalog::getCatalogList();
-        $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
-
         $breadcrumbs[] = ['url' => route('frontend.catalog'), 'title' => 'Каталог'];
         $breadcrumbs[] = ['url' => route('frontend.catalog', ['slug' => $product->catalog->slug]), 'title' => $product->catalog->name];
 
         $productIds = $this->productRepository->setViewed($request, $product->id);
 
+        $cartItems = app(\App\Services\CartService::class)->items();
         return view('frontend.product', compact(
                 'meta_description',
                 'meta_keywords',
                 'meta_title',
-                'menu',
                 'product',
-                'catalogs',
-                'catalogsList',
                 'productIds',
                 'breadcrumbs',
                 'h1',
                 'seo_url_canonical',
-                'title'
+                'cartItems'
             )
         )->with('title', $title);
     }

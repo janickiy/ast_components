@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Profile;
 
-use App\Contracts\Profile\ProfileServiceInterface;
+use App\Contracts\ProfileServiceInterface;
 use App\Models\Complaints;
 use App\Models\OrderProduct;
 use App\Models\Orders;

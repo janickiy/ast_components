@@ -16,16 +16,10 @@ use Illuminate\View\View;
 class UsersController extends Controller
 {
     /**
-     * @var UserRepository
-     */
-    private UserRepository $userRepository;
-
-    /**
      * @param UserRepository $userRepository
      */
-    public function __construct(UserRepository $userRepository)
+    public function __construct(private UserRepository $userRepository)
     {
-        $this->userRepository = $userRepository;
         parent::__construct();
     }
 
@@ -42,7 +36,7 @@ class UsersController extends Controller
      */
     public function create(): View
     {
-        $options = User::getOption();
+        $options = User::$role_name;
 
         return view('cp.users.create_edit', compact('options'))->with('title', 'Добавить администратора');
     }
@@ -68,7 +62,7 @@ class UsersController extends Controller
 
         if (!$user) abort(404);
 
-        $options = User::getOption();
+        $options = User::$role_name;
 
         return view('cp.users.create_edit', compact('user', 'options'))->with('title', 'Редактировать администратора');
     }

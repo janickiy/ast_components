@@ -11,28 +11,15 @@ use App\Repositories\OrdersRepository;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
-use App\Enums\ComplaintStatus;
 
 class OrdersController extends Controller
 {
     /**
-     * @var OrdersRepository
-     */
-    private OrdersRepository $ordersRepository;
-
-    /**
-     * @var OrdersService
-     */
-    private OrdersService $ordersService;
-
-    /**
      * @param OrdersRepository $ordersRepository
      * @param OrdersService $ordersService
      */
-    public function __construct(OrdersRepository $ordersRepository, OrdersService $ordersService)
+    public function __construct(private OrdersRepository $ordersRepository, private OrdersService $ordersService)
     {
-        $this->ordersRepository = $ordersRepository;
-        $this->ordersService = $ordersService;
         parent::__construct();
     }
 

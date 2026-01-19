@@ -26,11 +26,14 @@
 
     @yield('css')
 
+
     <script type="text/javascript">
         let SITE_URL = "{{ url('/') }}";
     </script>
+    <script src="/js/cart.js" defer></script>
 </head>
 <body class="hold-transition sidebar-mini">
+
 <!-- Site wrapper -->
 <div class="wrapper">
     <!-- Navbar -->

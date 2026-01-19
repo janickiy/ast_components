@@ -18,13 +18,13 @@ use App\Models\{
     ProductParameters,
     Orders,
     OrderProduct,
-    Logs,
 };
 use App\Helpers\StringHelper;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Yajra\DataTables\Facades\DataTables;
+use Rappasoft\LaravelAuthenticationLog\Models\AuthenticationLog;
 
 class DataTableController extends Controller
 {
@@ -356,11 +356,12 @@ class DataTableController extends Controller
      */
     public function logs(int $customer_id): JsonResponse
     {
-        $row = Logs::where('customer_id', $customer_id);
+        $customer = Customers::find($customer_id);
+        $row = AuthenticationLog::query()->forUser($customer);
 
         return Datatables::of($row)
-            ->editColumn('action', function ($row) {
-                return Logs::$action_name[$row->action];
+            ->editColumn('login_successful', function ($row) {
+                return $row->login_successful == 1 ? 'да':'нет';
             })
             ->rawColumns([])->make(true);
     }

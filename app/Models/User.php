@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Rappasoft\LaravelAuthenticationLog\Traits\AuthenticationLoggable;
 
 class User extends Authenticatable
 {
@@ -15,7 +16,7 @@ class User extends Authenticatable
 
 
     /** @use HasFactory<\database\database\migrations\database\factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, AuthenticationLoggable;
 
     /**
      * The attributes that are mass assignable.
@@ -57,16 +58,4 @@ class User extends Authenticatable
         self::ROLE_MODERATOR => 'Модератор',
         self::ROLE_EDITOR    => 'Редактор',
     ];
-
-    /**
-     * @return array
-     */
-    public static function getOption(): array
-    {
-        return [
-            self::ROLE_ADMIN     => 'Админ',
-            self::ROLE_MODERATOR => 'Модератор',
-            self::ROLE_EDITOR    => 'Редактор',
-        ];
-    }
 }

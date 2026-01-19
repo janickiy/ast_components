@@ -3,18 +3,16 @@
 namespace App\Providers;
 
 
-use \App\Helpers\{
-    PermissionsHelper,
-    StringHelper,
-    SettingsHelper,
-    MoneyFormatterHelper,
-};
-use App\Contracts\Complaints\ComplaintServiceInterface;
-use App\Contracts\Profile\ProfileServiceInterface;
+use App\Contracts\ComplaintServiceInterface;
+use App\Contracts\ProfileServiceInterface;
+use App\Helpers\{MoneyFormatterHelper, PermissionsHelper, SettingsHelper, StringHelper,};
+use App\Helpers\MenuHelper;
+use App\Models\Catalog;
+use App\Services\CartService;
 use App\Services\Complaints\ComplaintService;
 use App\Services\Profile\ProfileService;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -38,7 +36,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        View::composer('layouts.frontend', function ($view){
+            $view->with('catalogsList', Catalog::getCatalogList());
+            $view->with('catalogs', Catalog::orderBy('name')->where('parent_id', 0)->get());
+            $view->with('menu', MenuHelper::getMenuList());
+            $view->with('cartCount', app(CartService::class)->totalQty());
+        });
     }
 }
 

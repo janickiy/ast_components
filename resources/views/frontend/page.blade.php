@@ -10,7 +10,6 @@
 
 @section('css')
 
-
 @endsection
 
 @section('content')

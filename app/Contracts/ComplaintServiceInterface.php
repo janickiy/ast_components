@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Contracts\Complaints;
+namespace App\Contracts;
 
 use App\DTO\Complaints\ComplaintCreateData;
 use App\Models\Complaints;

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Frontend;
 
-use App\Contracts\Complaints\ComplaintServiceInterface;
+use App\Contracts\ComplaintServiceInterface;
 use App\DTO\Complaints\ComplaintCreateData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Frontend\Complaints\StoreComplaintRequest;

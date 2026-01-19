@@ -34,10 +34,13 @@
                                 <table id="itemList" class="table table-bordered table-striped">
                                     <thead>
                                     <tr>
+                                        <th>Время последней активности</th>
                                         <th>IP</th>
                                         <th>User agent</th>
-                                        <th>Действие</th>
-                                        <th>Дата</th>
+                                        <th>Устройство</th>
+                                        <th>Успешный вход</th>
+                                        <th>Вход</th>
+                                        <th>Выход</th>
                                     </tr>
                                     </thead>
                                     <tfoot>
@@ -45,15 +48,15 @@
                                     </tfoot>
                                 </table>
 
-                            <!-- /.card-body -->
+                                <!-- /.card-body -->
+                            </div>
+                            <!-- /.card -->
                         </div>
-                        <!-- /.card -->
+                        <!-- /.col -->
                     </div>
-                    <!-- /.col -->
+                    <!-- /.row -->
                 </div>
-                <!-- /.row -->
-            </div>
-            <!-- /.container-fluid -->
+                <!-- /.container-fluid -->
 
         </section>
         <!-- /.content -->
@@ -76,10 +79,9 @@
             {!! Html::script('/plugins/datatables-buttons/js/buttons.colVis.min.js') !!}
 
             <script>
-
-                $(function (){
-
+                $(function () {
                     $("#itemList").DataTable({
+                        "order": [[0, 'desc']],
                         "oLanguage": {
                             "sLengthMenu": "Отображено _MENU_ записей на страницу",
                             "sZeroRecords": "Ничего не найдено - извините",
@@ -105,10 +107,13 @@
                             url: '{{ route('admin.datatable.logs', ['customer_id' => $customer_id]) }}'
                         },
                         'columns': [
-                            {data: 'ip', name: 'ip'},
+                            {data: 'last_activity_at', name: 'last_activity_at'},
+                            {data: 'ip_address', name: 'ip_address'},
                             {data: 'user_agent', name: 'user_agent'},
-                            {data: 'action', name: 'action', searchable: false},
-                            {data: 'created_at', name: 'created_at'},
+                            {data: 'device_name', name: 'device_name'},
+                            {data: 'login_successful', name: 'login_successful', searchable: false},
+                            {data: 'login_at', name: 'login_at'},
+                            {data: 'logout_at', name: 'logout_at'},
                         ]
                     });
                 });

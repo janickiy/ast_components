@@ -2,26 +2,26 @@
 
 namespace App\Http\Controllers\Frontend;
 
-use App\Contracts\Profile\ProfileServiceInterface;
+use App\Contracts\ProfileServiceInterface;
 use App\Http\Controllers\Controller;
-use App\Helpers\MenuHelper;
-use App\Models\Catalog;
+use App\Http\Requests\Frontend\Profile\UpdateCompanyRequest;
+use App\Http\Requests\Frontend\Profile\UpdateProfileRequest;
 use App\Models\Complaints;
 use App\Models\Feedback;
 use App\Models\Seo;
-use App\Http\Requests\Frontend\Profile\UpdateCompanyRequest;
-use App\Http\Requests\Frontend\Profile\UpdateProfileRequest;
 use App\Repositories\CompanyRepository;
 use App\Repositories\CustomerRepository;
 use App\Repositories\OrdersRepository;
-use Illuminate\Http\RedirectResponse;
+use App\Repositories\RequestsRepository;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
+
 
 class ProfileController extends Controller
 {
-    public function __construct(private readonly ProfileServiceInterface $profileService, public OrdersRepository $ordersRepository)
+    public function __construct(private readonly ProfileServiceInterface $profileService, public OrdersRepository $ordersRepository, public RequestsRepository $requestsRepository)
     {
         $this->middleware('auth:customer');
     }
@@ -41,15 +41,11 @@ class ProfileController extends Controller
         $seo_url_canonical = $seo['seo_url_canonical'];
         $h1 = $seo['h1'];
 
-        $menu = MenuHelper::getMenuList();
-        $catalogsList = Catalog::getCatalogList();
-        $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
         $options = Feedback::getPlatformList();
 
         $customerId = (int) Auth::guard('customer')->id();
         $orders =  $this->ordersRepository->paginateByCustomer($customerId);
-
-
+        $requests =  $this->requestsRepository->paginateByCustomer($customerId);
 
         $complaints = $this->profileService->getComplaintsForCustomer($customerId);
         $complaintProducts = $this->profileService->getComplaintOrderProducts($customerId);
@@ -59,11 +55,9 @@ class ProfileController extends Controller
                 'meta_description',
                 'meta_keywords',
                 'meta_title',
-                'menu',
                 'options',
-                'catalogs',
-                'catalogsList',
                 'orders',
+                'requests',
                 'complaints',
                 'complaintProducts',
                 'complaintTypes',
@@ -138,6 +132,27 @@ class ProfileController extends Controller
     }
 
     /**
+     * Получаем список запросов
+     *
+     * @return JsonResponse
+     */
+    public function requests(): JsonResponse
+    {
+        $customerId = (int) Auth::guard('customer')->id();
+        $requests = $this->requestsRepository->paginateByCustomer($customerId);
+
+        return response()->json([
+            'html' => view('frontend.profile.partials.requests-rows', [
+                'requests' => $requests->items(),
+            ])->render(),
+            'hasMore' => $requests->hasMorePages(),
+            'nextPage' => $requests->currentPage() + 1,
+        ]);
+    }
+
+    /**
+     * Разлогиниваемся
+     *
      * @return RedirectResponse
      */
     public function logout(): RedirectResponse

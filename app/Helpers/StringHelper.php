@@ -2,6 +2,8 @@
 
 namespace App\Helpers;
 
+use Illuminate\Support\Facades\Cache;
+
 class StringHelper
 {
     /**
@@ -317,5 +319,30 @@ class StringHelper
             }
         }
         return request()->ip(); // it will return the server IP if the client IP is not found using this method.
+    }
+
+    /**
+     * @param string $ip
+     * @return array
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public static function getLocation(string $ip): array
+    {
+        if (Cache::has('location')) {
+            return Cache::get('location');
+        } else {
+            $details = [];
+
+            $client = new \GuzzleHttp\Client();
+            $response = $client->request('GET', 'http://ip-api.com/json/' . $ip . '?lang=ru');
+
+            if ($response->getStatusCode() == 200) {
+                $details = json_decode($response->getBody(), true);
+            }
+
+            Cache::put('location', $details);
+
+            return $details;
+        }
     }
 }

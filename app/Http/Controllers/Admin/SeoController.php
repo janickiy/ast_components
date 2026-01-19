@@ -11,16 +11,10 @@ use Illuminate\Http\RedirectResponse;
 class SeoController extends Controller
 {
     /**
-     * @var SeoRepository
-     */
-    private SeoRepository $seoRepository;
-
-    /**
      * @param SeoRepository $seoRepository
      */
-    public function __construct(SeoRepository $seoRepository)
+    public function __construct(private SeoRepository $seoRepository)
     {
-        $this->seoRepository = $seoRepository;
         parent::__construct();
     }
 

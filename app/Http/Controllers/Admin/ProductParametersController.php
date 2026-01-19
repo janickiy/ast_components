@@ -14,23 +14,11 @@ use Illuminate\View\View;
 class ProductParametersController extends Controller
 {
     /**
-     * @var ProductParametersRepository
-     */
-    private ProductParametersRepository $productParametersRepository;
-
-    /**
-     * @var ProductsRepository
-     */
-    private ProductsRepository $productsRepository;
-
-    /**
      * @param ProductParametersRepository $productParametersRepository
      * @param ProductsRepository $productsRepository
      */
-    public function __construct(ProductParametersRepository $productParametersRepository, ProductsRepository $productsRepository)
+    public function __construct(private ProductParametersRepository $productParametersRepository, private ProductsRepository $productsRepository)
     {
-        $this->productParametersRepository = $productParametersRepository;
-        $this->productsRepository = $productsRepository;
         parent::__construct();
     }
 

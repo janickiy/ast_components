@@ -4,8 +4,78 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6dfb1e0a341de288758002bfddd78ffc",
+    "content-hash": "2883739a4b3882b92318a046409aa00b",
     "packages": [
+        {
+            "name": "abstractapi/php-ip-geolocation",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/abstractapi/php-ip-geolocation.git",
+                "reference": "1040f5c31afa067e441792cbdaa10b2e33b13f8a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/abstractapi/php-ip-geolocation/zipball/1040f5c31afa067e441792cbdaa10b2e33b13f8a",
+                "reference": "1040f5c31afa067e441792cbdaa10b2e33b13f8a",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "php": ">=5.6"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "7.0.*",
+                "vlucas/phpdotenv": "^2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Abstractapi\\IpGeolocation\\": "src/AbstractIpGeolocation"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Benjamin Bouchet",
+                    "email": "libraries@abstractapi.com",
+                    "homepage": "https://www.abstractapi.com"
+                }
+            ],
+            "description": "AbstractIpGeolocation - Wrapper to quickly start using the powerful AbstractAPI's IP geolocation service in your projects.",
+            "homepage": "https://github.com/abstractapi/php-ip-geolocation",
+            "keywords": [
+                "IP",
+                "abstract",
+                "abstractapi",
+                "api",
+                "geolocation",
+                "geolocation-api",
+                "geolocation-application",
+                "geolocation-data",
+                "geolocation-database",
+                "geolocation-plugin",
+                "ip geolocation",
+                "ip-geo",
+                "ip-geolocation",
+                "ip-geolocation-api",
+                "ip-geolocation-ip2location",
+                "library",
+                "php",
+                "php-library",
+                "wrapper"
+            ],
+            "support": {
+                "docs": "https://app.abstractapi.com/api/ip-geolocation/documentation",
+                "issues": "https://github.com/abstractapi/php-ip-geolocation/issues",
+                "source": "https://github.com/abstractapi/php-ip-geolocation"
+            },
+            "time": "2021-04-15T00:00:00+00:00"
+        },
         {
             "name": "brick/math",
             "version": "0.14.1",
@@ -3880,6 +3950,77 @@
                 "source": "https://github.com/ramsey/uuid/tree/4.9.2"
             },
             "time": "2025-12-14T04:43:48+00:00"
+        },
+        {
+            "name": "rappasoft/laravel-authentication-log",
+            "version": "v6.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rappasoft/laravel-authentication-log.git",
+                "reference": "9a810376ea1624aeca3bc983c33be9a82593f991"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rappasoft/laravel-authentication-log/zipball/9a810376ea1624aeca3bc983c33be9a82593f991",
+                "reference": "9a810376ea1624aeca3bc983c33be9a82593f991",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/contracts": "^11.0|^12.0",
+                "php": "^8.1",
+                "spatie/laravel-package-tools": "^1.4.3"
+            },
+            "require-dev": {
+                "nunomaduro/collision": "^8.0",
+                "orchestra/testbench": "^8.0|^9.0|^10.0",
+                "pestphp/pest": "^3.7",
+                "pestphp/pest-plugin-laravel": "^3.1",
+                "spatie/laravel-ray": "^1.29",
+                "vimeo/psalm": "^4.20|^5.0|^6.6"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Rappasoft\\LaravelAuthenticationLog\\LaravelAuthenticationLogServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Rappasoft\\LaravelAuthenticationLog\\": "src",
+                    "Rappasoft\\LaravelAuthenticationLog\\Database\\Factories\\": "database/factories"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Anthony Rappa",
+                    "email": "rappa819@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Log user authentication details and send new device notifications.",
+            "homepage": "https://github.com/rappasoft/laravel-authentication-log",
+            "keywords": [
+                "laravel",
+                "laravel-authentication-log",
+                "rappasoft"
+            ],
+            "support": {
+                "issues": "https://github.com/rappasoft/laravel-authentication-log/issues",
+                "source": "https://github.com/rappasoft/laravel-authentication-log/tree/v6.0.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/rappasoft",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-12-08T14:26:03+00:00"
         },
         {
             "name": "spatie/browsershot",

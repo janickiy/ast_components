@@ -17,38 +17,13 @@ use Illuminate\Http\RedirectResponse;
 class ProductsController extends Controller
 {
     /**
-     * @var ProductsRepository
-     */
-    private ProductsRepository $productRepository;
-
-    /**
-     * @var ProductsService
-     */
-    private ProductsService $productService;
-
-    /**
-     * @var CatalogRepository
-     */
-    private CatalogRepository $categoryRepository;
-
-    /**
-     * @var ManufacturerRepository
-     */
-    private ManufacturerRepository $manufacturerRepository;
-
-
-    /**
      * @param ProductsRepository $productRepository
      * @param ProductsService $productService
      * @param CatalogRepository $categoryRepository
      * @param ManufacturerRepository $manufacturerRepository
      */
-    public function __construct(ProductsRepository $productRepository, ProductsService $productService, CatalogRepository $categoryRepository, ManufacturerRepository $manufacturerRepository)
+    public function __construct(private ProductsRepository $productRepository, private ProductsService $productService, private CatalogRepository $categoryRepository, private ManufacturerRepository $manufacturerRepository)
     {
-        $this->productRepository = $productRepository;
-        $this->productService = $productService;
-        $this->categoryRepository = $categoryRepository;
-        $this->manufacturerRepository = $manufacturerRepository;
         parent::__construct();
     }
 

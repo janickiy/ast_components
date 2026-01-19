@@ -12,16 +12,10 @@ use Illuminate\Http\RedirectResponse;
 class PagesController extends Controller
 {
     /**
-     * @var PagesRepository
-     */
-    private PagesRepository $pageRepository;
-
-    /**
      * @param PagesRepository $pageRepository
      */
-    public function __construct(PagesRepository $pageRepository)
+    public function __construct(private PagesRepository $pageRepository)
     {
-        $this->pageRepository = $pageRepository;
         parent::__construct();
     }
 

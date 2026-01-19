@@ -13,23 +13,11 @@ use Illuminate\View\View;
 class SettingsController extends Controller
 {
     /**
-     * @var SettingsService
-     */
-    protected SettingsService $settingsService;
-
-    /**
-     * @var SettingsRepository
-     */
-    private SettingsRepository $settingsRepository;
-
-    /**
      * @param SettingsService $settingsService
      * @param SettingsRepository $settingsRepository
      */
-    public function __construct(SettingsService $settingsService, SettingsRepository $settingsRepository)
+    public function __construct(private SettingsService $settingsService, private SettingsRepository $settingsRepository)
     {
-        $this->settingsService = $settingsService;
-        $this->settingsRepository = $settingsRepository;
         parent::__construct();
     }
 

@@ -2,7 +2,7 @@
 
 namespace App\Services\Complaints;
 
-use App\Contracts\Complaints\ComplaintServiceInterface;
+use App\Contracts\ComplaintServiceInterface;
 use App\DTO\Complaints\ComplaintCreateData;
 use App\Enums\ComplaintStatus;
 use App\Exceptions\ComplaintCreationException;

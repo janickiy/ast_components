@@ -14,23 +14,11 @@ use Illuminate\View\View;
 class NewsController extends Controller
 {
     /**
-     * @var NewsRepository
-     */
-    private NewsRepository $newsRepository;
-
-    /**
-     * @var NewsService
-     */
-    private NewsService $newsService;
-
-    /**
      * @param NewsRepository $newsRepository
      * @param NewsService $newsService
      */
-    public function __construct(NewsRepository $newsRepository, NewsService $newsService)
+    public function __construct(private NewsRepository $newsRepository, private NewsService $newsService)
     {
-        $this->newsRepository = $newsRepository;
-        $this->newsService = $newsService;
         parent::__construct();
     }
 

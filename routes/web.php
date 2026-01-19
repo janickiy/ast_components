@@ -8,6 +8,7 @@ use App\Http\Controllers\Frontend\{
     FrontendController,
     ProfileController,
     ResetPasswordController,
+    RequestsController,
 };
 use Illuminate\Support\Facades\Route;
 
@@ -30,9 +31,15 @@ Route::get('/page/{slug}', [FrontendController::class, 'page'])->name('frontend.
 //Пригласить на тендер
 Route::get('/invite', [FrontendController::class, 'invite'])->name('frontend.invite');
 Route::post('/invite', [FrontendController::class, 'sendInvite'])->name('frontend.send_invite');
-//Запрос номенклатуры
-Route::get('/nomenclature-request', [FrontendController::class, 'nomenclatureRequest'])->name('frontend.nomenclature_request');
-Route::post('/send-nomenclature-request', [FrontendController::class, 'sendNomenclatureRequest'])->name('frontend.send_nomenclature_request');
+
+// Запрос номенклатуры
+Route::group(['prefix' => 'nomenclature-request'], function () {
+    // Форма добавления
+    Route::get('', [RequestsController::class, 'index'])->name('frontend.nomenclature_request.index');
+    // Добавляем запрос на номенклатуру
+    Route::post('store', [RequestsController::class, 'add'])->name('frontend.nomenclature_request.store');
+});
+
 //Новости
 Route::get('/news', [FrontendController::class, 'news'])->name('frontend.news');
 //Описание новости
@@ -59,12 +66,25 @@ Route::get('product/{slug}', [FrontendController::class, 'product'])->name('fron
 // Корзина
 Route::get('/cart', [CartController::class, 'index'])->name('frontend.cart.index');
 
+Route::prefix('/cart')->name('frontend.cart.')->group(function () {
+    Route::get('/', [CartController::class, 'index'])->name('index');
+    Route::post('/add', [CartController::class, 'add'])->name('add');
+    Route::post('/qty', [CartController::class, 'setQty'])->name('qty');
+    Route::post('/remove', [CartController::class, 'remove'])->name('remove');
+    Route::post('/undo', [CartController::class, 'undoRemove'])->name('undo');
+    Route::post('/toggle', [CartController::class, 'toggle'])->name('toggle');
+    Route::post('/select-all', [CartController::class, 'selectAll'])->name('selectAll');
+    Route::post('/checkout', [CartController::class, 'checkout'])->name('checkout');
+});
+
 // Личный кабинет
 Route::group(['prefix' => 'profile'], function () {
     // Профиль
     Route::get('', [ProfileController::class, 'index'])->name('frontend.profile.index');
     // Получаем список заказов
     Route::get('orders', [ProfileController::class, 'orders'])->name('frontend.profile.orders');
+    // Получаем список запросов
+    Route::get('requests', [ProfileController::class, 'requests'])->name('frontend.profile.requests');
     // Редактирование общей информации
     Route::post('update', [ProfileController::class, 'updateGeneralInfo'])->name('frontend.profile.update.general');
     // Редактирование информации о компании

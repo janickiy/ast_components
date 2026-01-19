@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Logs;
+use App\Models\Customers;
 use Illuminate\View\View;
 
 class CustomerLogsController extends Controller
@@ -13,10 +13,10 @@ class CustomerLogsController extends Controller
      */
     public function __invoke(int $customer_id): View
     {
-        $log = Logs::where('customer_id', $customer_id)->first();
+        $customer = Customers::find($customer_id);
 
-        if (!$log) abort(404);
+        if (!$customer) abort(404);
 
-        return view('cp.customer_log.index', compact('log','customer_id'))->with('title', 'Логи: ' . $log->customer->name);
+        return view('cp.customer_log.index', compact('customer_id'))->with('title', 'Логи: ' . $customer->name);
     }
 }
