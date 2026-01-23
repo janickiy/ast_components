@@ -374,7 +374,7 @@
         <div class="float-right d-none d-sm-block">
             <b></b>
         </div>
-        <strong>&copy; {{ date('Y') }} АСТ Компонентс</strong>
+        <strong>&copy; {{ date('Y') }} АСТ Групп</strong>
     </footer>
 
     <!-- Control Sidebar -->

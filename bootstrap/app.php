@@ -29,7 +29,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (NotFoundHttpException $e, Request $request) {
             $title = '404';
-            $meta_description = 'АСТ Компонентс поставляет электронные компоненты для вашего бизнеса';
+            $meta_description = 'АСТ Групп поставляет электронные компоненты для вашего бизнеса';
             $meta_keywords = '';
             $meta_title = '';
             $seo_url_canonical = '';

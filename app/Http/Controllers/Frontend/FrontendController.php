@@ -100,7 +100,7 @@ class FrontendController extends Controller
      */
     public function invite(): View
     {
-        $seo = Seo::getSeo('frontend.invite', 'Пригласить АСТ Компонентс к участию в тендере');
+        $seo = Seo::getSeo('frontend.invite', 'Пригласить АСТ Групп к участию в тендере');
         $title = $seo['title'];
         $meta_description = $seo['meta_description'];
         $meta_keywords = $seo['meta_keywords'];
