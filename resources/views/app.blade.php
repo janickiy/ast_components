@@ -9,8 +9,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
 
     <!-- Font Awesome -->
     {!! Html::style('/plugins/fontawesome-free/css/all.min.css') !!}
@@ -26,11 +25,10 @@
 
     @yield('css')
 
-
     <script type="text/javascript">
         let SITE_URL = "{{ url('/') }}";
     </script>
-    <script src="/js/cart.js" defer></script>
+
 </head>
 <body class="hold-transition sidebar-mini">
 
@@ -104,7 +102,7 @@
 
                     <li class="nav-item{{ Request::is('cp/content*') ? ' menu-open' : '' }}">
                         <a href="#" class="nav-link{{ Request::is('cp/content*') ? ' active' : '' }}">
-                            <i class="nav-icon fas fa-file"></i>
+                            <i class="nav-icon fas fa-book"></i>
                             <p>
                                 Контент
                                 <i class="fas fa-angle-left right"></i>
@@ -236,17 +234,53 @@
 
                     @endif
 
-                    @if(PermissionsHelper::has_permission('admin|moderator'))
+                    <li class="nav-item{{ Request::is('cp/communication*') ? ' active menu-open' : '' }}">
+                        <a href="#" class="nav-link{{ Request::is('cp/communication*') ? ' active' : '' }}">
+                            <i class="nav-icon fas fa-comment"></i>
+                            <p>
+                                Обратная связь
+                                <i class="fas fa-angle-left right"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.feedback.index') }}"
+                                   class="nav-link{{ Request::is('cp/communication/feedback*') ? ' active' : '' }}"
+                                   title="Сообщения с сайта">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Сообщения с сайта</p>
+                                </a>
+                            </li>
 
-                        <li class="nav-item">
-                            <a href="{{ route('admin.feedback.index') }}"
-                               class="nav-link{{ Request::is('cp/feedback*') ? ' active' : '' }}"
-                               title="Сообщения с сайта">
-                                <i class="nav-icon fas fa-envelope"></i>
-                                <p>Сообщения с сайта</p>
-                            </a>
-                        </li>
-                    @endif
+                            <li class="nav-item">
+                                <a href="{{ route('admin.complaints.index') }}"
+                                   class="nav-link{{ Request::is('cp/communication/complaints*') ? ' active' : '' }}"
+                                   title="Претензии">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Претензии</p>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="{{ route('admin.invites.index') }}"
+                                   class="nav-link{{ Request::is('cp/communication/invites*') ? ' active' : '' }}"
+                                   title="Приглашение на тендер">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Приглашение на тендер</p>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="{{ route('admin.requests.index') }}"
+                                   class="nav-link{{ Request::is('cp/communication/requests*') ? ' active' : '' }}"
+                                   title="Запрос номенклатуры">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Запрос номенклатуры</p>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
 
                     <li class="nav-item">
                         <a href="{{ route('admin.orders.index') }}"
@@ -283,7 +317,7 @@
 
                     @endif
 
-                    @if(PermissionsHelper::has_permission(Auth::user()->role,'admin'))
+                    @if(PermissionsHelper::has_permission('admin'))
 
                         <li class="nav-item">
                             <a href="{{ route('admin.settings.index') }}"

@@ -19,6 +19,7 @@ class SendRequest extends FormRequest
             'phone' => 'required',
             'platform' => 'required',
             'numb' => 'required',
+            'agreement' => 'accepted',
         ];
     }
 }

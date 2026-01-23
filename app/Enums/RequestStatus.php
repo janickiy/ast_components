@@ -34,4 +34,13 @@ enum RequestStatus: int
             self::Done       => 'check-circle',
         };
     }
+
+    public function cssColor(): string
+    {
+        return match ($this) {
+            self::Created    => 'text-warning',
+            self::InProgress => 'text-primary',
+            self::Done       => 'text-success',
+        };
+    }
 }

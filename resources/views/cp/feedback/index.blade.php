@@ -30,14 +30,15 @@
                                 <table id="itemList" class="table table-bordered table-striped">
                                     <thead>
                                     <tr>
+                                        <th>ID</th>
+                                        <th>Статус</th>
+                                        <th>Добавлен</th>
                                         <th>Имя</th>
-                                        <th>Компания</th>
                                         <th>Телефон</th>
                                         <th>Email</th>
-                                        <th>Тип</th>
                                         <th>Сообщение</th>
                                         <th>IP</th>
-                                        <th>Добавлен</th>
+                                        <th>Действие</th>
                                     </tr>
                                     </thead>
                                     <tfoot>
@@ -79,6 +80,7 @@
 
                 $(function () {
                     $("#itemList").DataTable({
+                        order: [[2, 'desc']],
                         "oLanguage": {
                             "sLengthMenu": "Отображено _MENU_ записей на страницу",
                             "sZeroRecords": "Ничего не найдено - извините",
@@ -104,15 +106,53 @@
                             url: '{{ route('admin.datatable.feedback') }}'
                         },
                         'columns': [
+                            {data: 'id', name: 'id'},
+                            {data: 'status', name: 'status',  searchable: false},
+                            {data: 'created_at', name: 'created_at'},
                             {data: 'name', name: 'name'},
-                            {data: 'company', name: 'company'},
                             {data: 'phone', name: 'phone'},
                             {data: 'email', name: 'email'},
-                            {data: 'type', name: 'type', searchable: false},
                             {data: 'message', name: 'message', orderable: false, searchable: false},
                             {data: 'ip', name: 'ip'},
-                            {data: 'created_at', name: 'created_at'},
+                            {data: 'action', name: 'action', orderable: false, searchable: false},
                         ]
+                    });
+
+                    $('#itemList').on('click', 'a.deleteRow', function () {
+                        let rowid = $(this).attr('id');
+                        Swal.fire({
+                            title: "Вы уверены?",
+                            text: "Вы не сможете восстановить эту информацию!",
+                            showCancelButton: true,
+                            icon: 'warning',
+                            cancelButtonText: "Отмена",
+                            confirmButtonText: "Да, удалить!",
+                            reverseButtons: true,
+                            confirmButtonColor: "#DD6B55",
+                            customClass: {
+                                actions: 'my-actions',
+                                cancelButton: 'order-1',
+                            },
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $.ajax({
+                                    url: '{{ route('admin.feedback.destroy') }}',
+                                    type: "POST",
+                                    dataType: "html",
+                                    data: {id: rowid},
+                                    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                                    success: function () {
+                                        $("#rowid_" + rowid).remove();
+                                        Swal.fire("Сделано!", "Данные успешно удалены!", 'success');
+                                    },
+                                    error: function (xhr, ajaxOptions, thrownError) {
+                                        Swal.fire("Ошибка при удалении!", "Попробуйте еще раз", 'error');
+                                        console.log(ajaxOptions);
+                                        console.log(thrownError);
+                                    }
+                                });
+                            }
+                        });
                     });
                 });
 

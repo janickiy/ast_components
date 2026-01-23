@@ -1,4 +1,4 @@
-(function() {
+(function () {
     'use strict';
 
     // Получаем CSRF токен из meta тега
@@ -38,7 +38,7 @@
         // Создаем блок с ошибками
         const errorList = document.createElement('div');
         errorList.className = 'alert alert-danger';
-        
+
         const errorItems = [];
         for (const [field, messages] of Object.entries(errors)) {
             if (Array.isArray(messages)) {
@@ -190,27 +190,27 @@
             },
             body: formData
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-              //  updateDOM('profile', data.data);
-                showSuccess('general');
-                // Обновляем страницу для отображения всех изменений
-                setTimeout(() => {
-                    window.location = '/profile';
-                }, 2000)
-            } else {
-                showErrors('general', data.errors || {});
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showErrors('general', { general: ['Произошла ошибка при сохранении. Попробуйте позже.'] });
-        })
-        .finally(() => {
-            // ✅ скрываем "Загрузка..." всегда
-            setLoading('general', false);
-        });
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    //  updateDOM('profile', data.data);
+                    showSuccess('general');
+                    // Обновляем страницу для отображения всех изменений
+                    setTimeout(() => {
+                        window.location = '/profile';
+                    }, 2000)
+                } else {
+                    showErrors('general', data.errors || {});
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showErrors('general', {general: ['Произошла ошибка при сохранении. Попробуйте позже.']});
+            })
+            .finally(() => {
+                // ✅ скрываем "Загрузка..." всегда
+                setLoading('general', false);
+            });
     }
 
     /**
@@ -234,30 +234,30 @@
             },
             body: formData
         })
-        .then(response => response.json())
-        .then(data => {
+            .then(response => response.json())
+            .then(data => {
 
-            if (data.success) {
-                //updateDOM('company', data.data);
-                showSuccess('company');
+                if (data.success) {
+                    //updateDOM('company', data.data);
+                    showSuccess('company');
 
-                setTimeout(() => {
-                    window.location = '/profile';
-                }, 2000)
-                // Обновляем страницу для отображения всех изменений
-                //setTimeout(() => location.reload(), 1000);
-            } else {
-                showErrors('company', data.errors || {});
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showErrors('company', { general: ['Произошла ошибка при сохранении. Попробуйте позже.'] });
-        })
-        .finally(() => {
-            // ✅ показываем "Загрузка..."
-            setLoading('company', false);
-        });
+                    setTimeout(() => {
+                        window.location = '/profile';
+                    }, 2000)
+                    // Обновляем страницу для отображения всех изменений
+                    //setTimeout(() => location.reload(), 1000);
+                } else {
+                    showErrors('company', data.errors || {});
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showErrors('company', {general: ['Произошла ошибка при сохранении. Попробуйте позже.']});
+            })
+            .finally(() => {
+                // ✅ показываем "Загрузка..."
+                setLoading('company', false);
+            });
     }
 
     /**
@@ -284,8 +284,8 @@
         // Обработчики показа/скрытия пароля
         const passwordCheckboxes = document.querySelectorAll('#general-info-display-password, #general-info-display-repeat-password');
         passwordCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                const passwordField = this.id === 'general-info-display-password' 
+            checkbox.addEventListener('change', function () {
+                const passwordField = this.id === 'general-info-display-password'
                     ? document.getElementById('general-info-password')
                     : document.getElementById('general-info-repeat-password');
                 if (passwordField) {
@@ -298,7 +298,7 @@
         const forms = [profileForm, companyForm].filter(f => f);
         forms.forEach(form => {
             form.querySelectorAll('input, textarea, select').forEach(field => {
-                field.addEventListener('input', function() {
+                field.addEventListener('input', function () {
                     this.classList.remove('error');
                     const container = this.closest('.form-input, .form-password');
                     if (container) {
@@ -563,6 +563,7 @@
         document.addEventListener('DOMContentLoaded', init);
         document.addEventListener('DOMContentLoaded', initRequest);
         document.addEventListener('DOMContentLoaded', initOrder);
+        document.addEventListener('DOMContentLoaded', initSubCatalog);
     } else {
         init();
         initRequest();

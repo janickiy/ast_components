@@ -3,14 +3,16 @@
 namespace App\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 abstract class BaseRepository implements RepositoryInterface
 {
-    protected $model;
 
-    public function __construct(Model $model)
+    /**
+     * @param Model $model
+     */
+    public function __construct(protected Model $model)
     {
-        $this->model = $model;
     }
 
     /**
@@ -22,16 +24,46 @@ abstract class BaseRepository implements RepositoryInterface
         return $this->model->create($data);
     }
 
-    public function all()
+    /**
+     * @param int $id
+     * @param array $data
+     * @return Model|null
+     */
+    public function update(int $id, array $data): ?Model
+    {
+        $model = $this->model->find($id);
+
+        if ($model) {
+            foreach ($data as $key => $value) {
+                $model->$key = $value;
+            }
+
+            $model->save();
+        }
+        return null;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function all(): Collection
     {
         return $this->model->all();
     }
 
-    public function find(int $id)
+    /**
+     * @param int $id
+     * @return Model|null
+     */
+    public function find(int $id): ?Model
     {
         return $this->model->find($id);
     }
 
+    /**
+     * @param int $id
+     * @return bool
+     */
     public function delete(int $id): bool
     {
         $model = $this->model->find($id);

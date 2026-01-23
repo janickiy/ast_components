@@ -2,20 +2,18 @@
 
 namespace App\Repositories;
 
-use App\DTO\Complaints\RequestsCreateData;
+use App\DTO\RequestsCreateData;
 use App\Enums\RequestStatus;
 use App\Models\Requests;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Http\Request;
-use Illuminate\Database\DatabaseManager;
+
 
 class RequestsRepository extends BaseRepository
 {
     /**
-     * @param DatabaseManager $database
      * @param Requests $model
      */
-    public function __construct(private readonly DatabaseManager $database, Requests $model)
+    public function __construct(Requests $model)
     {
         parent::__construct($model);
     }
@@ -38,37 +36,24 @@ class RequestsRepository extends BaseRepository
             'ip' => $data->ip,
             'status' => RequestStatus::Created->value,
             'customer_id' => $data->customerId,
-            'attach' =>$data->attach,
+            'attach' => $data->attach,
         ]);
     }
 
     /**
      * @param int $id
      * @param array $data
-     * @return mixed
+     * @return Requests|null
      */
-    public function update(int $id, array $data): mixed
+    public function update(int $id, array $data): ?Requests
     {
-        $request = $this->model->find($id);
+        $model = $this->model->find($id);
 
-        if ($request) {
-            $request->name = $data['name'];
-            $request->company = $data['company'];
-            $request->phone = $data['phone'];
-            $request->email = $data['email'];
-            $request->message = $data['message'];
-            $request->nomenclature = $data['nomenclature'];
-            $request->count = (int) $data['count'];
-            $request->unit = (int) $data['unit'];
-            $request->ip = $data['ip'];
-            $request->status = (int) $data['status'];
-            $request->customer_id = (int) $data['customer_id'] ?? null;
+        if ($model) {
+            $model->status = (int) $data['status'];
+            $model->save();
 
-            if ($data['attach']) {
-                $request->attach = $data['attach'];
-            }
-
-            $request->save();
+            return $model;
         }
         return null;
     }
@@ -103,5 +88,18 @@ class RequestsRepository extends BaseRepository
         }
 
         return $q->paginate($perPage);
+    }
+
+    /**
+     * @param int $id
+     * @return void
+     */
+    public function remove(int $id): void
+    {
+        $model = $this->model->find($id);
+
+        if ($model) {
+            $model->remove();
+        }
     }
 }

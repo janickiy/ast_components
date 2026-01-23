@@ -57,7 +57,6 @@
                     </svg>
                 </a>
             </li>
-
         @endif
 
     </ul>

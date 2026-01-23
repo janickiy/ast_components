@@ -14,7 +14,15 @@
 
 @section('content')
 
-    @include('layouts._breadcrumbs')
+    <div class="page-header container-lg">
+        <div class="page-header__wrap">
+
+            @include('layouts._breadcrumbs')
+
+            <h1>{{ $h1 }}</h1>
+
+        </div>
+    </div>
 
     <div class="news-item container-xs">
         <picture>
@@ -22,11 +30,10 @@
         </picture>
         <div class="news-item__content">
             <div class="news-item__content-wrap">
-               {!! $news->text !!}
+                {!! $news->text !!}
             </div>
         </div>
     </div>
-
     <section class="other-news">
         <div class="container-md">
             <div class="section-title">
@@ -36,41 +43,38 @@
                 <div class="swiper-wrapper">
 
                     @foreach($lastNews ?? [] as $news)
-
-                    <div class="swiper-slide">
-                        <article class="news-card">
-
-                            <div class="news-card__img">
-                                <picture>
-                                    <img src="{{ $news->getImage() }}" alt="{{ $news->image_alt }}" title="{{ $news->image_title }}" loading="lazy">
-                                </picture>
-                            </div>
-                            <div class="news-card__info">
-                                <div class="news-card__title">
-                                    <h3>Новый склад в Москве</h3>
+                        <div class="swiper-slide">
+                            <article class="news-card">
+                                @if($news->promotion == 1) <span class="news-card__badge">акция</span> @endif
+                                <div class="news-card__img">
+                                    <picture>
+                                        <img src="{{ $news->getImage() }}" alt="{{ $news->image_alt }}" title="{{ $news->image_title }}" loading="lazy">
+                                    </picture>
                                 </div>
-                                <p class="news-card__description">{{ $news->preview }}</p>
-                                <div class="news-card__footer">
-                                    <span class="news-card__data">{{ $news->dateFormat() }}</span>
-                                    <a href="{{ route('frontend.news_item',['slug' => $news->slug]) }}" class="news-card__link btn btn--secondary">
-                                        <span>Подробнее</span>
-                                        <svg aria-hidden="true">
-                                            <use xlink:href="{{ url('/images/sprite.svg#chevron-right') }}"></use>
-                                        </svg>
-                                    </a>
+                                <div class="news-card__info">
+                                    <div class="news-card__title">
+                                        <h3>Новый склад в Москве</h3>
+                                    </div>
+                                    <p class="news-card__description">{{ $news->preview }}</p>
+                                    <div class="news-card__footer">
+                                        <span class="news-card__data">{{ $news->dateFormat() }}</span>
+                                        <a href="{{ route('frontend.news_item',['slug' => $news->slug]) }}" class="news-card__link btn btn--secondary">
+                                            <span>Подробнее</span>
+                                            <svg aria-hidden="true">
+                                                <use xlink:href="{{ url('/images/sprite.svg#chevron-right') }}"></use>
+                                            </svg>
+                                        </a>
+                                    </div>
                                 </div>
-                            </div>
-
-                        </article>
-                    </div>
-
+                            </article>
+                        </div>
                     @endforeach
 
                 </div>
 
                 <div class="swiper-button-prev">
                     <svg aria-hidden="true" class="orange">
-                        <use xlink:href="{{ url('/images/sprite.svg#chevron-lef') }}t"></use>
+                        <use xlink:href="{{ url('/images/sprite.svg#chevron-left') }}"></use>
                     </svg>
                 </div>
                 <div class="swiper-button-next">

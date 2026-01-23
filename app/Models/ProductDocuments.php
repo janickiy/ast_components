@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-
+use App\Traits\StaticTableName;
 use App\Helpers\StringHelper;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Cache;
 
 class ProductDocuments extends Model
 {
+    use StaticTableName;
+
     protected $table = 'product_documents';
 
     /**
@@ -46,7 +48,7 @@ class ProductDocuments extends Model
      */
     public function scopeRemove(): void
     {
-        if (Storage::disk('public')->exists('documents/' . $this->file) === true) Storage::disk('public')->delete('documents/' . $this->file);
+        if (Storage::disk('public')->exists($this->table . '/' . $this->file) === true) Storage::disk('public')->delete($this->table . '/' . $this->file);
 
         $this->delete();
     }
@@ -56,13 +58,13 @@ class ProductDocuments extends Model
      */
     public function getDocumentInfo(): string
     {
-        $key = md5('documents/' . $this->file);
+        $key = md5($this->table . '/' . $this->file);
 
         if (Cache::has($key)) {
             return Cache::get($key);
         } else {
-            if (Storage::disk('public')->exists('documents/' . $this->file) === true) {
-                $file = Storage::disk('public')->path('documents/' . $this->file);
+            if (Storage::disk('public')->exists($this->table . '/' . $this->file) === true) {
+                $file = Storage::disk('public')->path($this->table . '/' . $this->file);
 
                 $size = StringHelper::humanFilesize(filesize($file));
                 $ext = pathinfo($this->file, PATHINFO_EXTENSION);

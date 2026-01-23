@@ -2,7 +2,6 @@
 
 namespace App\Mail;
 
-use stdClass;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -12,24 +11,15 @@ class NomenclatureRequestMailer extends Mailable
 {
     use Queueable, SerializesModels;
 
-    private $data;
+    protected array $data;
 
-    public function __construct($feedback)
+    public function __construct(array $data)
     {
-        $this->data = $feedback;
+        $this->data = $data;
     }
 
     public function build(): void
     {
-        $this->subject('Запрос номенклатуры')
-            ->view('emails.nomenclature_request')
-            ->with([
-                'company' => $this->data->company,
-                'name' => $this->data->name,
-                'email' => $this->data->email,
-                'phone' => $this->data->phone,
-
-                'message' => $this->data->message,
-            ]);
+        $this->subject('Запрос номенклатуры')->view('emails.nomenclature_request', ['data' => $this->data]);
     }
 }

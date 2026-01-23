@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Frontend;
 
-use App\Contracts\ProfileServiceInterface;
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Frontend\Profile\UpdateCompanyRequest;
 use App\Http\Requests\Frontend\Profile\UpdateProfileRequest;
 use App\Models\Complaints;
-use App\Models\Feedback;
+use App\Models\Invites;
 use App\Models\Seo;
 use App\Repositories\CompanyRepository;
 use App\Repositories\CustomerRepository;
@@ -21,7 +21,10 @@ use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
-    public function __construct(private readonly ProfileServiceInterface $profileService, public OrdersRepository $ordersRepository, public RequestsRepository $requestsRepository)
+    public function __construct(
+        private CustomerRepository $customerRepository,
+        private OrdersRepository $ordersRepository,
+        private RequestsRepository $requestsRepository)
     {
         $this->middleware('auth:customer');
     }
@@ -41,14 +44,14 @@ class ProfileController extends Controller
         $seo_url_canonical = $seo['seo_url_canonical'];
         $h1 = $seo['h1'];
 
-        $options = Feedback::getPlatformList();
+        $options = Invites::getPlatformList();
 
         $customerId = (int) Auth::guard('customer')->id();
         $orders =  $this->ordersRepository->paginateByCustomer($customerId);
         $requests =  $this->requestsRepository->paginateByCustomer($customerId);
 
-        $complaints = $this->profileService->getComplaintsForCustomer($customerId);
-        $complaintProducts = $this->profileService->getComplaintOrderProducts($customerId);
+        $complaints = $this->customerRepository->getComplaintsForCustomer($customerId);
+        $complaintProducts = $this->customerRepository->getComplaintOrderProducts($customerId);
         $complaintTypes = Complaints::$type_name;
 
         return view('frontend.profile.index', compact(
@@ -72,15 +75,14 @@ class ProfileController extends Controller
      * Обновление общей информации
      *
      * @param UpdateProfileRequest $request
-     * @param CustomerRepository $customerRepository
      * @return JsonResponse
      */
-    public function updateGeneralInfo(UpdateProfileRequest $request, CustomerRepository $customerRepository): JsonResponse
+    public function updateGeneralInfo(UpdateProfileRequest $request): JsonResponse
     {
         $customer = Auth::guard('customer')->user();
         $customerId = (int) $customer->id;
 
-        $customerRepository->update($customerId, $request->validated());
+        $this->customerRepository->update($customerId, $request->validated());
 
         return response()->json([
             'message' => 'Изменения успешно сохранены',

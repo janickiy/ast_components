@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\Pages\DeleteRequest;
 use App\Repositories\PagesRepository;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Exception;
 
 class PagesController extends Controller
 {
@@ -43,29 +44,38 @@ class PagesController extends Controller
      */
     public function store(StoreRequest $request): RedirectResponse
     {
-        $published = 0;
+        try {
+            $published = 0;
 
-        if ($request->input('published')) {
-            $published = 1;
+            if ($request->input('published')) {
+                $published = 1;
+            }
+
+            $seo_sitemap = 0;
+
+            if ($request->input('seo_sitemap')) {
+                $seo_sitemap = 1;
+            }
+
+            $main = 0;
+
+            if ($request->input('main')) {
+                $main = 1;
+            }
+
+            $this->pageRepository->create(array_merge(array_merge($request->all()), [
+                'published' => $published,
+                'seo_sitemap' => $seo_sitemap,
+                'main' => $main,
+            ]));
+        } catch (Exception $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage())
+                ->withInput();
         }
-
-        $seo_sitemap = 0;
-
-        if ($request->input('seo_sitemap')) {
-            $seo_sitemap = 1;
-        }
-
-        $main = 0;
-
-        if ($request->input('main')) {
-            $main = 1;
-        }
-
-        $this->pageRepository->create(array_merge(array_merge($request->all()), [
-            'published' => $published,
-            'seo_sitemap' => $seo_sitemap,
-            'main' => $main,
-        ]));
 
         return redirect()->route('admin.pages.index')->with('success', 'Данные успешно добавлены');
     }

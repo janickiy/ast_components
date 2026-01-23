@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-
 use App\Helpers\StringHelper;
 use App\Http\Requests\Admin\Orders\EditRequest;
 use App\Models\Orders;
@@ -10,7 +9,7 @@ use App\Services\OrdersService;
 use App\Repositories\OrdersRepository;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-
+use Exception;
 
 class OrdersController extends Controller
 {
@@ -18,7 +17,9 @@ class OrdersController extends Controller
      * @param OrdersRepository $ordersRepository
      * @param OrdersService $ordersService
      */
-    public function __construct(private OrdersRepository $ordersRepository, private OrdersService $ordersService)
+    public function __construct(
+        private OrdersRepository $ordersRepository,
+        private OrdersService $ordersService)
     {
         parent::__construct();
     }
@@ -28,8 +29,6 @@ class OrdersController extends Controller
      */
     public function index(): View
     {
-  //      dd(ComplaintStatus::Created->label());
-
         return view('cp.orders.index')->with('title', 'Заказы');
     }
 
@@ -55,15 +54,24 @@ class OrdersController extends Controller
      */
     public function update(EditRequest $request): RedirectResponse
     {
-        $row = $this->ordersRepository->find($request->id);
+        try {
+            $row = $this->ordersRepository->find($request->id);
 
-        if ($request->hasFile('invoice')) {
-            $filename = $this->ordersService->updateFile($row, $request);
+            if ($request->hasFile('invoice')) {
+                $filename = $this->ordersService->updateFile($row, $request);
+            }
+
+            $this->ordersRepository->update($request->id, array_merge(array_merge($request->all()), [
+                'invoice' => $filename ?? null,
+            ]));
+        } catch (Exception $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage())
+                ->withInput();
         }
-
-        $this->ordersRepository->update($request->id, array_merge(array_merge($request->all()), [
-            'invoice' => $filename ?? null,
-        ]));
 
         return redirect()->route('admin.orders.index')->with('success', 'Данные обновлены');
     }

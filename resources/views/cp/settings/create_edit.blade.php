@@ -38,13 +38,9 @@
                                 {!! Form::label('key_cd', 'Ключ*') !!}
 
                                 @if(isset($row))
-
                                     {!! Form::text('key_cd', old('key_cd', $row->key_cd ?? null), ['class' => 'form-control', 'readonly']) !!}
-
                                 @else
-
                                     {!! Form::text('key_cd', old('key_cd'), ['class' => 'form-control']) !!}
-
                                 @endif
 
                                 @if ($errors->has('key_cd'))
@@ -57,13 +53,9 @@
                                 {!! Form::label('name', 'Название') !!}
 
                                 @if(isset($row))
-
                                     {!! Form::text('name', old('name', $row->name ?? null), ['class' => 'form-control']) !!}
-
                                 @else
-
                                     {!! Form::text('name', old('key_cd'), ['class' => 'form-control']) !!}
-
                                 @endif
 
                                 @if ($errors->has('name'))
@@ -72,15 +64,11 @@
                             </div>
 
                             <div class="form-group">
-
                                 {!! Form::label('type', 'Тип*') !!}
-
                                 {!! Form::text('type', old('type', isset($row) ? $row->type : $type), ['class' => 'form-control', 'readonly']) !!}
-
                                 @if ($errors->has('type'))
                                     <p class="text-danger">{{ $errors->first('type') }}</p>
                                 @endif
-
                             </div>
 
                             <div class="form-group">
@@ -102,15 +90,10 @@
 
                                 @elseif (isset($row) && $row->type == 'HTML' || $type == 'HTML')
                                     {!! Form::label('value', 'Значение*') !!}
-
                                     {!! Form::textarea('value', old('value', $row->value ?? null), ['rows' => "3", 'placeholder' => "",  'id' => 'summernote', 'style' => "display: none;"]) !!}
-
                                 @else
-
                                     {!! Form::label('value', 'Значение*') !!}
-
                                     {!! Form::text('value', old('value', $row->value ?? null ), ['class' => 'form-control']) !!}
-
                                 @endif
 
                                 @if ($errors->has('value'))
@@ -120,27 +103,19 @@
                             </div>
 
                             <div class="form-group">
-
                                 {!! Form::label('display_value', 'Описание') !!}
-
                                 {!! Form::textarea('display_value', old('display_value', $row->display_value ?? null), ['rows' => "3", 'placeholder' => "Описание", 'class' => 'form-control']) !!}
-
                                 @if ($errors->has('display_value'))
                                     <p class="text-danger">{{ $errors->first('display_value') }}</p>
                                 @endif
-
                             </div>
 
                             <div class="form-check">
-
                                 {!! Form::checkbox('published', 1, isset($row) ? ($row->published): 1, ['class' => 'form-check-input']) !!}
-
                                 {!! Form::label('published', 'Публиковать', ['class' => 'form-check-label']) !!}
-
                                 @if ($errors->has('published'))
                                     <p class="text-danger">{{ $errors->first('published') }}</p>
                                 @endif
-
                             </div>
 
                         </div>

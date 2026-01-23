@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-
 use App\Repositories\SeoRepository;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Exception;
 
 class SeoController extends Controller
 {
@@ -45,7 +45,16 @@ class SeoController extends Controller
      */
     public function update(Request $request): RedirectResponse
     {
-        $this->seoRepository->update($request->id, $request->all());
+        try {
+            $this->seoRepository->update($request->id, $request->all());
+        } catch (Exception $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage())
+                ->withInput();
+        }
 
         return redirect()->route('admin.seo.index')->with('success', 'Данные успешно обновлены');
     }

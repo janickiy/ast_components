@@ -16,18 +16,20 @@ class ProductDocumentsRepository extends BaseRepository
      * @param array $data
      * @return mixed
      */
-    public function update(int $id, array $data): mixed
+    public function update(int $id, array $data): ?ProductDocuments
     {
-        $productDocument = $this->model->find($id);
+        $model = $this->model->find($id);
 
-        if ($productDocument) {
+        if ($model) {
             if ($data['file']) {
-                $productDocument->file = $data['file'];
+                $model->file = $data['file'];
             }
 
-            $productDocument->name = $data['name'];
-            $productDocument->product_id = (int) $data['product_id'];
-            $productDocument->save();
+            $model->name = $data['name'];
+            $model->product_id = (int) $data['product_id'];
+            $model->save();
+
+            return $model;
         }
         return null;
     }

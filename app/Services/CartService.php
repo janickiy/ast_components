@@ -103,6 +103,11 @@ class CartService
         return $cart;
     }
 
+    /**
+     * @param int $productId
+     * @param int $qty
+     * @return array
+     */
     public function setQty(int $productId, int $qty): array
     {
         $qty = (int)$qty;

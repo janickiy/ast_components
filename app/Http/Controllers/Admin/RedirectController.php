@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-
 use App\Http\Requests\Admin\News\DeleteRequest;
 use App\Repositories\RedirectRepository;
 use App\Http\Requests\Admin\Redirect\EditRequest;
 use App\Http\Requests\Admin\Redirect\StoreRequest;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Exception;
 
 class RedirectController extends Controller
 {
@@ -42,7 +42,16 @@ class RedirectController extends Controller
      */
     public function store(StoreRequest $request): RedirectResponse
     {
-        $this->redirectRepository->create($request->all());
+        try {
+            $this->redirectRepository->create($request->all());
+        } catch (Exception $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage())
+                ->withInput();
+        }
 
         return redirect()->route('admin.redirect.index')->with('success', 'Информация успешно добавлена');
     }
@@ -66,7 +75,16 @@ class RedirectController extends Controller
      */
     public function update(EditRequest $request): RedirectResponse
     {
-        $this->redirectRepository->update($request->id, $request->all());
+        try {
+            $this->redirectRepository->update($request->id, $request->all());
+        } catch (Exception $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage())
+                ->withInput();
+        }
 
         return redirect()->route('admin.redirect.index')->with('success', 'Данные успешно обновлены');
     }

@@ -42,19 +42,19 @@
         };
     </script>
 
-    {!! Html::style('/css/styles.min.css?v=3') !!}
+    {!! Html::style('/css/styles.css?v=1') !!}
     {!! Html::style('/css/auth.css?v=2') !!}
 
     @yield('css')
 
     {!! Html::script('/scripts/cart.js') !!}
+    {!! Html::script('/scripts/catalog.js') !!}
     {!! Html::script('/scripts/script.min.js?v=1') !!}
     {!! Html::script('/scripts/auth.js?v=2') !!}
 
 </head>
 
 <body>
-
 
 <header class="header js-header">
     <div class="header__wrap">
@@ -137,48 +137,39 @@
                             @foreach($catalogs ?? [] as $catalog)
                                 <li class="header__category-item js-header-category-item">
                                     <span>
-                                        <a href="{{ route('frontend.catalog', ['slug' => $catalog->slug]) }}">{{ $catalog->name }}</a>
+                                        <a class="category-item" data-id="{{ $catalog->id }}"
+                                           href="{{ route('frontend.catalog', ['slug' => $catalog->slug]) }}">{{ $catalog->name }}</a>
                                         <sup class="header__item-count">{{ number_format($catalog->getTotalProductCount(), 0, '', ' ') }}</sup>
                                     </span>
-                                    <svg aria-hidden="true" class="orange">
-                                        <use xlink:href="{{ url('/images/sprite.svg#chevron-right') }}"></use>
-                                    </svg>
+                                    @if($catalog->hasChildren())
+                                        <svg aria-hidden="true" class="orange">
+                                            <use xlink:href="{{ url('/images/sprite.svg#chevron-right') }}"></use>
+                                        </svg>
+                                    @endif
                                 </li>
                             @endforeach
                         </ul>
                     </div>
 
-                    <div class="header__subcategory">
-                        <ul class="header__subcategory-list" id="subcategory-list">
+                    <div id="sub-category-menu"></div>
 
-                        </ul>
-                    </div>
                 </div>
+
                 <div class="header__search js-header-search">
                     <div class="header__search-control form-control">
-                        <label for="main-search" class="sr-only">Поиск электронных компонентов на сайте</label>
-                        <input type="text" id="main-search" placeholder="Поиск электронных компонентов на сайте"
-                               class="js-header-search-input">
+                        {!! Form::open(['url' => route('frontend.catalog'), 'method' => 'get']) !!}
+                        {!! Form::label('q', 'Поиск электронных компонентов на сайте', ['class' => "sr-only"]) !!}
+                        {!! Form::text('q', request()->get('q'), ['id' => 'main-search', 'placeholder' => 'Поиск электронных компонентов на сайте', 'class' => 'js-header-search-input']) !!}
                         <button type="button" class="header__search-btn btn btn--icon">
                             <svg aria-hidden="true" class="light-blue">
                                 <use xlink:href="{{ url('/images/sprite.svg#search') }}"></use>
                             </svg>
                             <span class="sr-only">Найти</span>
                         </button>
-                    </div>
-                    <div class="header__search-hint">
-                        <ul>
-                            <li><a href="./product-details.html">PIC16F628A-I/P, Микроконтроллер 8-Бит, PIC, 20МГц,
-                                    3.5КБ (2Кx14) Flash, 16 I/O [DIP-18]</a></li>
-                            <li><a href="./product-details.html">ATTINY13A-SSU, Микроконтроллер 8-Бит, picoPower, AVR,
-                                    20МГц, 1КБ Flash [SO-8, 0.150".]</a></li>
-                            <li><a href="./product-details.html">STM32F103C8T6, Микроконтроллер 32-Бит, Cortex-M3,
-                                    72МГц, 64КБ Flash, USB, CAN [LQFP-48.]</a></li>
-                            <li><a href="./product-details.html">STM32F405RGT6, Микроконтроллер 32-Бит, Cortex-M4 + FPU,
-                                    168МГц, 1МБ Flash, USB OTG HS/FS [LQFP-64.]</a></li>
-                        </ul>
+                        {!! Form::close() !!}
                     </div>
                 </div>
+
             </div>
             <div class="header__btns">
                 <div class="header__cart-btn">
@@ -283,27 +274,11 @@
         </button>
     </div>
     <ul class="mobile-search__hint-list js-mobile-search-hint">
-        <li><a href="./product-details.html">PIC16F628A-I/P, Микроконтроллер 8-Бит, PIC, 20МГц, 3.5КБ (2Кx14) Flash, 16
-                I/O [DIP-18]</a></li>
-        <li><a href="./product-details.html">ATTINY13A-SSU, Микроконтроллер 8-Бит, picoPower, AVR, 20МГц, 1КБ Flash
-                [SO-8, 0.150".]</a></li>
-        <li><a href="./product-details.html">STM32F103C8T6, Микроконтроллер 32-Бит, Cortex-M3, 72МГц, 64КБ Flash, USB,
-                CAN [LQFP-48.]</a></li>
-        <li><a href="./product-details.html">STM32F405RGT6, Микроконтроллер 32-Бит, Cortex-M4 + FPU, 168МГц, 1МБ Flash,
-                USB OTG HS/FS [LQFP-64.]</a></li>
-        <li><a href="./product-details.html">ATmega328P-AU, Микроконтроллер 8-Бит, picoPower, AVR, 20МГц, 32КБ Flash
-                [TQFP-32]</a></li>
-        <li><a href="./product-details.html">PIC16F628A-I/P, Микроконтроллер 8-Бит, PIC, 20МГц, 3.5КБ (2Кx14) Flash, 16
-                I/O [DIP-18]</a></li>
-        <li><a href="./product-details.html">ATTINY13A-SSU, Микроконтроллер 8-Бит, picoPower, AVR, 20МГц, 1КБ Flash
-                [SO-8, 0.150".]</a></li>
-        <li><a href="./product-details.html">STM32F103C8T6, Микроконтроллер 32-Бит, Cortex-M3, 72МГц, 64КБ Flash, USB,
-                CAN [LQFP-48.]</a></li>
-        <li><a href="./product-details.html">STM32F405RGT6, Микроконтроллер 32-Бит, Cortex-M4 + FPU, 168МГц, 1МБ Flash,
-                USB OTG HS/FS [LQFP-64.]</a></li>
-        <li><a href="./product-details.html">ATmega328P-AU, Микроконтроллер 8-Бит, picoPower, AVR, 20МГц, 32КБ Flash
-                [TQFP-32]</a></li>
-
+        @foreach($productsSearch ?? [] as $productSearch)
+            <li>
+                <a href="{{ route('frontend.product', ['slug' => $productSearch->slug]) }}">{{ $productSearch->title }}</a>
+            </li>
+        @endforeach
     </ul>
 </div>
 <div class="mobile-catalog js-mobile-catalog">
@@ -343,15 +318,9 @@
                         </span>
 
                         <span class="mobile-catalog__category">
-                            <a href="./catalog.html">Аттенюаторы</a>
-                            <sup class="mobile-catalog__item-count">10 000</sup>
-                    </span>
-
-                        <span class="mobile-catalog__subcategory">
-                            <a href="./catalog.html">Номенклатура 1</a>
+                            <a href="{{ route('frontend.catalog', ['slug' => $catalog->slug]) }}">{{ $catalog->name }}</a>
                             <sup class="mobile-catalog__item-count">10 000</sup>
                         </span>
-
 
                     </div>
                 </div>
@@ -464,7 +433,7 @@
             </div>
         </div>
         <div class="footer__bottom">
-            <span class="footer__copyright">©{{ env('APP_NAME', 'АСТ Компонентс') }}, {{ date('Y') }}</span>
+            <span class="footer__copyright">©{{ env('APP_NAME', 'АСТ Компонентс') }}, 2008-{{ date('Y') }}</span>
             <a href="{{ route('frontend.page', ['slug' => 'privacy-policy']) }}" class="footer__privacy-link">Политика
                 конфиденциальности</a>
             <div class="footer__up-btn">
@@ -608,7 +577,8 @@
                         </svg>
                         <span>В каталог</span>
                     </a>
-                    <a href="{{ route('frontend.cart.index') }}" class="btn btn--secondary" data-modal-trigger="sign-up">
+                    <a href="{{ route('frontend.cart.index') }}" class="btn btn--secondary"
+                       data-modal-trigger="sign-up">
                         <svg aria-hidden="true">
                             <use xlink:href="{{ url('/images/sprite.svg#cart') }}"></use>
                         </svg>

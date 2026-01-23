@@ -112,12 +112,7 @@ class AuthController extends Controller
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
 
         } catch (\Exception $e) {
-            Log::error('Password reset link error: ' . $e->getMessage(), [
-                'email' => $request->email,
-                'exception' => $e->getTraceAsString(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine()
-            ]);
+            report($e);
 
             return response()->json([
                 'success' => false,

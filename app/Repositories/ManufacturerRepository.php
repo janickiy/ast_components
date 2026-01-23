@@ -14,33 +14,35 @@ class ManufacturerRepository extends BaseRepository
     /**
      * @param int $id
      * @param array $data
-     * @return null
+     * @return Manufacturers|null
      */
-    public function update(int $id, array $data): mixed
+    public function update(int $id, array $data): ?Manufacturers
     {
-        $manufacturer = $this->model->find($id);
+        $model = $this->model->find($id);
 
-        if ($manufacturer) {
-            $manufacturer->title = $data['title'];
-            $manufacturer->country = $data['country'];
-            $manufacturer->description = $data['description'];
-            $manufacturer->meta_title = $data['meta_title'];
-            $manufacturer->meta_description = $data['meta_description'];
-            $manufacturer->meta_keywords = $data['meta_keywords'];
-            $manufacturer->slug = $data['slug'];
-            $manufacturer->seo_h1 = $data['seo_h1'];
-            $manufacturer->seo_url_canonical = $data['seo_url_canonical'];
-            $manufacturer->published = (int) $data['published'];
+        if ($model) {
+            $model->title = $data['title'];
+            $model->country = $data['country'];
+            $model->description = $data['description'];
+            $model->meta_title = $data['meta_title'];
+            $model->meta_description = $data['meta_description'];
+            $model->meta_keywords = $data['meta_keywords'];
+            $model->slug = $data['slug'];
+            $model->seo_h1 = $data['seo_h1'];
+            $model->seo_url_canonical = $data['seo_url_canonical'];
+            $model->published = (int) $data['published'];
 
             if ($data['image']) {
-                $manufacturer->image = $data['image'];
+                $model->image = $data['image'];
             }
 
-            $manufacturer->image_title = $data['image_title'];
-            $manufacturer->image_alt = $data['image_alt'];
+            $model->image_title = $data['image_title'];
+            $model->image_alt = $data['image_alt'];
+            $model->seo_sitemap = $data['seo_sitemap'];
+            $model->save();
 
-            $manufacturer->seo_sitemap = $data['seo_sitemap'];
-            $manufacturer->save();
+            return $model;
+
         }
         return null;
     }

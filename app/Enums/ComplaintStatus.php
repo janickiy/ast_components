@@ -44,6 +44,20 @@ enum ComplaintStatus: int
         };
     }
 
+    public function cssColor(): string
+    {
+        return match ($this) {
+            self::Created    => 'text-warning',
+            self::InProgress => 'text-primary',
+            self::Agreement  => 'text-info',
+            self::Approved   => 'text-success',
+            self::Denied     => 'text-danger',
+            self::Return     => 'text-primary',
+            self::Closed     => '',
+            self::Checked    => 'text-primary',
+        };
+    }
+
     public function statusIcon(): string
     {
         return match ($this) {

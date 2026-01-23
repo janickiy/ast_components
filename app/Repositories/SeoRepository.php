@@ -14,19 +14,21 @@ class SeoRepository extends BaseRepository
     /**
      * @param int $id
      * @param array $data
-     * @return mixed
+     * @return Seo|null
      */
-    public function update(int $id, array $data): mixed
+    public function update(int $id, array $data): ?Seo
     {
-        $seo = $this->model->find($id);
+        $model = $this->model->find($id);
 
-        if ($seo) {
-            $seo->h1 = $data['h1'];
-            $seo->title = $data['title'];
-            $seo->keyword = $data['keyword'];
-            $seo->description = $data['description'];
-            $seo->url_canonical = $data['url_canonical'];
-            $seo->save();
+        if ($model) {
+            $model->h1 = $data['h1'];
+            $model->title = $data['title'];
+            $model->keyword = $data['keyword'];
+            $model->description = $data['description'];
+            $model->url_canonical = $data['url_canonical'];
+            $model->save();
+
+            return $model;
         }
         return null;
     }

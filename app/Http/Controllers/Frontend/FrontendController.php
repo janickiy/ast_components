@@ -3,35 +3,33 @@
 namespace App\Http\Controllers\Frontend;
 
 
-use App\Helpers\SettingsHelper;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Frontend\Contacts\FeedbackRequest;
-use App\Http\Requests\Frontend\Invite\SendRequest;
-use App\Mail\InviteMailer;
-use App\Mail\NomenclatureRequestMailer;
 use App\Models\Catalog;
-use App\Models\Feedback;
+use App\Models\Invites;
 use App\Models\Manufacturers;
 use App\Models\News;
 use App\Models\Pages;
 use App\Models\Products;
 use App\Models\Seo;
+use App\Repositories\NewsRepository;
 use App\Repositories\ProductsRepository;
-use App\Services\FeedbackService;
+use App\Repositories\CatalogRepository;
 use App\Services\CartService;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-use stdClass;
+
 
 class FrontendController extends Controller
 {
     /**
-     * @param FeedbackService $feedbackService
      * @param ProductsRepository $productRepository
      */
-    public function __construct(private FeedbackService $feedbackService, private ProductsRepository $productRepository)
+    public function __construct(
+        private ProductsRepository $productRepository,
+        private CatalogRepository $catalogRepository,
+        private NewsRepository $newsRepository,
+    )
     {
     }
 
@@ -66,11 +64,10 @@ class FrontendController extends Controller
     /**
      * Контент
      *
-     * @param Request $request
      * @param string $slug
      * @return View
      */
-    public function page(Request $request, string $slug): View
+    public function page(string $slug): View
     {
         $page = Pages::where('slug', $slug)->published()->first();
 
@@ -83,11 +80,7 @@ class FrontendController extends Controller
         $seo_url_canonical = $page->seo_url_canonical ?? '';
         $h1 = $page->seo_h1 ?? $title;
 
-        if ($request->session()->has('productIds')) {
-            $productIds = $request->session()->get('productIds');
-        } else {
-            $productIds = null;
-        }
+        $productIds = $this->productRepository->viewedProducts();
 
         return view('frontend.page', compact(
                 'page',
@@ -115,7 +108,7 @@ class FrontendController extends Controller
         $seo_url_canonical = $seo['seo_url_canonical'];
         $h1 = $seo['h1'];
 
-        $options = Feedback::getPlatformList();
+        $options = Invites::getPlatformList();
 
         return view('frontend.invite', compact(
                 'meta_description',
@@ -126,44 +119,6 @@ class FrontendController extends Controller
                 'seo_url_canonical'
             )
         )->with('title', $title);
-    }
-
-    /**
-     *
-     *
-     * @param SendRequest $request
-     * @return RedirectResponse
-     */
-    public function sendInvite(SendRequest $request): RedirectResponse
-    {
-        try {
-            $data = new stdClass();
-            $data->name = $request->name;
-            $data->company = $request->company;
-            $data->email = $request->email;
-            $data->phone = $request->phone;
-            $data->platform = $request->platform;
-            $data->numb = $request->numb;
-            $data->message = $request->message;
-
-            $message = 'Номер извещения о закупочной процедуре: ' . $request->numb . '<br>Сообщение: ' . $request->message;
-
-            Mail::to(explode(",", SettingsHelper::getInstance()->getValueForKey('EMAIL_NOTIFY')))->send(new InviteMailer($data));
-
-            Feedback::create(array_merge($request->all(), [
-                'name' => $request->name,
-                'email' => $request->email,
-                'phone' => $request->phone,
-                'message' => $message,
-                'type' => 1,
-                'ip' => $request->ip()
-            ]));
-
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
-        }
-
-        return redirect()->route('frontend.invite')->with('success', 'Ваше приглашение успешно отправлено');
     }
 
     /**
@@ -183,11 +138,14 @@ class FrontendController extends Controller
 
         $news = News::orderBy('created_at')->published()->paginate(9);
 
+        $newsBanner = $this->newsRepository->newsBanner();
+
         return view('frontend.news', compact(
                 'meta_description',
                 'meta_keywords',
                 'meta_title',
                 'news',
+                'newsBanner',
                 'h1',
                 'seo_url_canonical'
             )
@@ -214,8 +172,7 @@ class FrontendController extends Controller
         $h1 = $news->seo_h1 ?? $title;
 
         $breadcrumbs[] = ['url' => route('frontend.news'), 'title' => 'Новости'];
-
-        $lastNews = News::inRandomOrder()->published()->limit(3)->get();
+        $lastNews = $this->newsRepository->lastNews(3);
 
         return view('frontend.news_item', compact(
                 'meta_description',
@@ -228,58 +185,6 @@ class FrontendController extends Controller
                 'seo_url_canonical'
             )
         )->with('title', $title);
-    }
-
-    public function contacts(): View
-    {
-        $seo = Seo::getSeo('frontend.contacts', 'Контакты');
-        $title = $seo['title'];
-        $meta_description = $seo['meta_description'];
-        $meta_keywords = $seo['meta_keywords'];
-        $meta_title = $seo['meta_title'];
-        $seo_url_canonical = $seo['seo_url_canonical'];
-        $h1 = $seo['h1'];
-
-        return view('frontend.contacts', compact(
-                'meta_description',
-                'meta_keywords',
-                'meta_title',
-                'h1',
-                'seo_url_canonical'
-            )
-        )->with('title', $title);
-    }
-
-    /**
-     * @param FeedbackRequest $request
-     * @return RedirectResponse
-     */
-    public function sendFeedback(FeedbackRequest $request): RedirectResponse
-    {
-        try {
-            $data = new stdClass();
-            $data->name = $request->name;
-            $data->email = $request->email;
-            $data->phone = $request->phone;
-            $data->message = $request->message;
-
-            Mail::to(explode(",", SettingsHelper::getInstance()->getValueForKey('EMAIL_NOTIFY')))->send(new NomenclatureRequestMailer($data));
-
-            Feedback::create(array_merge($request->all(), [
-                'name' => $request->name,
-                'email' => $request->email,
-                'phone' => $request->phone,
-                'message' => $request->message,
-                'type' => 0,
-                'ip' => $request->ip(),
-                'attach' => $filename ?? null
-            ]));
-
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
-        }
-
-        return redirect()->route('frontend.invite')->with('success', 'Ваш запрос успешно отправлен');
     }
 
     /**
@@ -308,10 +213,9 @@ class FrontendController extends Controller
     /**
      * Список производителей
      *
-     * @param Request $request
      * @return View
      */
-    public function manufacturers(Request $request): View
+    public function manufacturers(): View
     {
         $seo = Seo::getSeo('frontend.manufacturers', 'Производители');
         $title = $seo['title'];
@@ -322,12 +226,7 @@ class FrontendController extends Controller
         $h1 = $seo['h1'];
 
         $manufacturers = Manufacturers::orderBy('title')->published()->get();
-
-        if ($request->session()->has('productIds')) {
-            $productIds = $request->session()->get('productIds');
-        } else {
-            $productIds = null;
-        }
+        $productIds = $this->productRepository->viewedProducts();
 
         return view('frontend.manufacturers', compact(
                 'meta_description',
@@ -344,11 +243,10 @@ class FrontendController extends Controller
     /**
      * Страница производителя
      *
-     * @param Request $request
      * @param string $slug
      * @return View
      */
-    public function manufacturer(Request $request, string $slug): View
+    public function manufacturer(string $slug): View
     {
         $manufacturer = Manufacturers::where('slug', $slug)->published()->first();
 
@@ -363,17 +261,15 @@ class FrontendController extends Controller
 
         $breadcrumbs[] = ['url' => route('frontend.manufacturers'), 'title' => 'Производители'];
 
-        if ($request->session()->has('productIds')) {
-            $productIds = $request->session()->get('productIds');
-        } else {
-            $productIds = null;
-        }
+        $productIds = $this->productRepository->viewedProducts();
+        $otherCatalogs = $this->catalogRepository->getOtherCatalogs($manufacturer);
 
         return view('frontend.manufacturer', compact(
                 'meta_description',
                 'meta_keywords',
                 'meta_title',
                 'productIds',
+                'otherCatalogs',
                 'manufacturer',
                 'breadcrumbs',
                 'h1',
@@ -400,7 +296,6 @@ class FrontendController extends Controller
         $h1 = $seo['h1'];
 
         $manufacturers = Manufacturers::orderBy('title')->published()->get();
-
         $breadcrumbs = null;
 
         if ($slug) {
@@ -408,8 +303,7 @@ class FrontendController extends Controller
 
             if (!$catalog) abort(404);
 
-            $products = $catalog->products()->paginate(10);
-
+            $products = $catalog->products()->orderBy('in_stock', 'desc')->orderBy('price')->paginate(10);
             $breadcrumbs[] = ['url' => route('frontend.catalog'), 'title' => 'Каталог'];
 
             $title = $catalog->name;
@@ -419,18 +313,25 @@ class FrontendController extends Controller
             $seo_url_canonical = $catalog->seo_url_canonical;
             $h1 = $catalog->seo_h1 ?? $title;
         } else {
-            $products = Products::query()->paginate(10);
+            $search = $request->get('q');
+
+            $q = Products::query()
+                ->orderBy('in_stock', 'desc')
+                ->orderBy('price');
+
+            if ($search) {
+                $q->where('title', 'LIKE', "%{$search}%");
+                $q->orWhere('article', 'LIKE', "%{$search}%");
+                $q->orWhere('n_number', 'LIKE', "%{$search}%");
+            }
+
+            $products = $q->paginate(10);
         }
 
-        if ($request->session()->has('productIds')) {
-            $productIds = $request->session()->get('productIds');
-        } else {
-            $productIds = null;
-        }
-
+        $productIds = $this->productRepository->viewedProducts();
         $cartItems = app(CartService::class)->items();
 
-        return view('frontend.catalog', compact(
+        return view('frontend.catalog.index', compact(
                 'meta_description',
                 'meta_keywords',
                 'meta_title',
@@ -495,8 +396,8 @@ class FrontendController extends Controller
         $breadcrumbs[] = ['url' => route('frontend.catalog', ['slug' => $product->catalog->slug]), 'title' => $product->catalog->name];
 
         $productIds = $this->productRepository->setViewed($request, $product->id);
-
         $cartItems = app(\App\Services\CartService::class)->items();
+
         return view('frontend.product', compact(
                 'meta_description',
                 'meta_keywords',
@@ -509,5 +410,20 @@ class FrontendController extends Controller
                 'cartItems'
             )
         )->with('title', $title);
+    }
+
+    /**
+     * @param int $parent_id
+     * @return JsonResponse
+     */
+    public function subCatalogs(int $parent_id): JsonResponse
+    {
+        $catalogs = $this->catalogRepository->getCatalogsByParentId($parent_id);
+
+        return response()->json([
+            'html' => view('frontend.catalog.partials.sub-rows', [
+                'catalogs' => $catalogs,
+            ])->render(),
+        ]);
     }
 }

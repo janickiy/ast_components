@@ -74,7 +74,6 @@
             {!! Html::script('/plugins/datatables-buttons/js/buttons.colVis.min.js') !!}
 
             <script>
-
                 $(function () {
                     $("#itemList").DataTable({
                         "oLanguage": {

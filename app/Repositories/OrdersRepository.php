@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Orders;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class OrdersRepository extends BaseRepository
 {
@@ -16,25 +17,27 @@ class OrdersRepository extends BaseRepository
     /**
      * @param int $id
      * @param array $data
-     * @return mixed
+     * @return Collection|null
      */
-    public function update(int $id, array $data): mixed
+    public function update(int $id, array $data): ?Orders
     {
-        $order = $this->model->find($id);
+        $model = $this->model->find($id);
 
-        if ($order) {
-            $order->status = $data['status'];
-            $order->delivery_date = $data['delivery_date'];
+        if ($model) {
+            $model->status = $data['status'];
+            $model->delivery_date = $data['delivery_date'];
 
             if ($data['invoice']) {
-                $order->invoice = $data['invoice'];
+                $model->invoice = $data['invoice'];
             }
 
             if ($data['delivery_date']) {
-                $order->delivery_date = Carbon::createFromFormat('d/m/Y', $data['delivery_date'])->format('Y-m-d');
+                $model->delivery_date = Carbon::createFromFormat('d/m/Y', $data['delivery_date'])->format('Y-m-d');
             }
 
-            $order->save();
+            $model->save();
+
+            return $model;
         }
         return null;
     }

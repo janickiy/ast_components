@@ -3,14 +3,11 @@
 namespace App\Providers;
 
 
-use App\Contracts\ComplaintServiceInterface;
-use App\Contracts\ProfileServiceInterface;
+use App\Models\Products;
 use App\Helpers\{MoneyFormatterHelper, PermissionsHelper, SettingsHelper, StringHelper,};
 use App\Helpers\MenuHelper;
 use App\Models\Catalog;
 use App\Services\CartService;
-use App\Services\Complaints\ComplaintService;
-use App\Services\Profile\ProfileService;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -26,9 +23,6 @@ class AppServiceProvider extends ServiceProvider
         $loader->alias('StringHelper', StringHelper::class);
         $loader->alias('SettingsHelper', SettingsHelper::class);
         $loader->alias('MoneyFormatterHelper', MoneyFormatterHelper::class);
-
-        $this->app->bind(ProfileServiceInterface::class, ProfileService::class);
-        $this->app->bind(ComplaintServiceInterface::class, ComplaintService::class);
     }
 
     /**
@@ -41,6 +35,7 @@ class AppServiceProvider extends ServiceProvider
             $view->with('catalogs', Catalog::orderBy('name')->where('parent_id', 0)->get());
             $view->with('menu', MenuHelper::getMenuList());
             $view->with('cartCount', app(CartService::class)->totalQty());
+            $view->with('productsSearch', Products::query()->get());
         });
     }
 }

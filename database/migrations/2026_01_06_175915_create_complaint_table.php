@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('order_id');
             $table->unsignedBigInteger('product_id');
             $table->unsignedBigInteger('customer_id');
+            $table->string('blank')->nullable();
             $table->timestamps();
 
             $table->foreign('order_id')

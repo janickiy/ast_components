@@ -36,15 +36,11 @@
                             <p>*-обязательные поля</p>
 
                             <div class="form-group">
-
                                 {!! Form::label('name', 'Название*') !!}
-
                                 {!! Form::text('name', old('name', $row->name ?? null), ['class' => 'form-control']) !!}
-
                                 @if ($errors->has('name'))
                                     <p class="text-danger">{{ $errors->first('name') }}</p>
                                 @endif
-
                             </div>
 
                             <div class="form-group">

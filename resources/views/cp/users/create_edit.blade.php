@@ -24,13 +24,9 @@
                         {!! isset($row) ? Form::hidden('id', $row->id) : '' !!}
 
                         <div class="card-body">
-
                             <p>*-обязательные поля</p>
-
                             <div class="form-group">
-
                                 {!! Form::label('name', 'имя') !!}
-
                                 {!! Form::text('name', old('name', $row->name ?? null), ['class' => 'form-control', 'placeholder' => 'имя']) !!}
 
                                 @if ($errors->has('name'))
@@ -39,11 +35,8 @@
                             </div>
 
                             <div class="form-group">
-
                                 {!! Form::label('login', 'логин') !!}
-
                                 {!! Form::text('login', old('login', $row->login ?? null), [ 'placeholder' => 'логин', 'class' => 'form-control']) !!}
-
                                 @if ($errors->has('login'))
                                     <p class="text-danger">{{ $errors->first('login') }}</p>
                                 @endif
@@ -51,13 +44,9 @@
                             </div>
 
                             @if ((isset($row->id) && $row->id != Auth::user()->id) || !isset($row->id))
-
                                 <div class="form-group">
-
                                     {!! Form::label('role', 'роль') !!}
-
                                     {!! Form::select('role', $options, $row->role ?? 'admin', ['placeholder' => 'роль', 'class' => 'custom-select']) !!}
-
                                     @if ($errors->has('role'))
                                         <p class="text-danger">{{ $errors->first('role') }}</p>
                                     @endif
@@ -65,11 +54,8 @@
                                 </div>
 
                                 <div class="form-group">
-
                                     {!! Form::label('password', 'пароль') !!}
-
                                     {!! Form::password('password', ['class' => 'form-control']) !!}
-
                                     @if ($errors->has('password'))
                                         <p class="text-danger">{{ $errors->first('password') }}</p>
                                     @endif
@@ -77,11 +63,8 @@
                                 </div>
 
                                 <div class="form-group">
-
                                     {!! Form::label('password_again', 'повтор пароля') !!}
-
                                     {!! Form::password('password_again', ['class' => 'form-control']) !!}
-
                                     @if ($errors->has('password_again'))
                                         <p class="text-danger">{{ $errors->first('password_again') }}</p>
                                     @endif

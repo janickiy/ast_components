@@ -7,7 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\Admin\Sitemap\EditRequest;
 use Illuminate\View\View;
 
-class SitemapController  extends Controller
+class SitemapController extends Controller
 {
     /**
      * @return View
@@ -23,11 +23,11 @@ class SitemapController  extends Controller
      */
     public function export(Request $request)
     {
-        $file = public_path(). "/sitemap.xml";
+        $file = public_path() . "/sitemap.xml";
 
         $headers = ['Content-Type: text/xml'];
 
-        return \Response::download($file, 'sitemap.xml', $headers);
+        return response()->download($file, 'sitemap.xml', $headers);
     }
 
     /**
@@ -44,11 +44,9 @@ class SitemapController  extends Controller
      */
     public function import(EditRequest $request): RedirectResponse
     {
-        if ($request->isMethod('post')) {
-            if ($request->hasFile('file')) {
-                $file = $request->file('file');
-                $file->move(public_path(), 'sitemap.xml');
-            }
+        if ($request->isMethod('post') && $request->hasFile('file')) {
+            $file = $request->file('file');
+            $file->move(public_path(), 'sitemap.xml');
         }
 
         return redirect()->route('admin.sitemap.index')->with('success', 'Данные обновлены');

@@ -12,25 +12,15 @@ class InviteMailer extends Mailable
 {
     use Queueable, SerializesModels;
 
-    private $data;
+    protected array $data;
 
-    public function __construct($feedback)
+    public function __construct(array $data)
     {
-        $this->data = $feedback;
+        $this->data = $data;
     }
 
-    public function build(): void
+    public function build()
     {
-        $this->subject('Приглашение на участие в тендере')
-            ->view('emails.send_invite')
-            ->with([
-                'company' => $this->data->company,
-                'name' => $this->data->name,
-                'email' => $this->data->email,
-                'phone' => $this->data->phone,
-                'platform' => $this->data->platform,
-                'numb' => $this->data->numb,
-                'message' => $this->data->message,
-            ]);
+        return $this->subject('Приглашение на участие в тендере')->view('emails.send_invite', ['data' => $this->data]);
     }
 }

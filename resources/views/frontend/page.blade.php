@@ -14,7 +14,15 @@
 
 @section('content')
 
-    @include('layouts._breadcrumbs')
+    <div class="page-header container-lg">
+        <div class="page-header__wrap">
+
+            @include('layouts._breadcrumbs')
+
+            <h1>{{ $h1 }}</h1>
+
+        </div>
+    </div>
 
     @php
 

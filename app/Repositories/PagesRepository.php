@@ -16,28 +16,30 @@ class PagesRepository extends BaseRepository
      * @param array $data
      * @return null
      */
-    public function update(int $id, array $data): mixed
+    public function update(int $id, array $data): ?Pages
     {
-        $page = $this->model->find($id);
+        $model = $this->model->find($id);
 
-        if ($page) {
-            $page->title = $data['title'];
-            $page->text = $data['text'];
-            $page->meta_title = $data['meta_title'];
-            $page->meta_description = $data['meta_description'];
-            $page->meta_keywords = $data['meta_keywords'];
-            $page->slug = $data['slug'];
-            $page->seo_h1 = $data['seo_h1'];
-            $page->seo_url_canonical = $data['seo_url_canonical'];
-            $page->published = (int) $data['published'];
+        if ($model) {
+            $model->title = $data['title'];
+            $model->text = $data['text'];
+            $model->meta_title = $data['meta_title'];
+            $model->meta_description = $data['meta_description'];
+            $model->meta_keywords = $data['meta_keywords'];
+            $model->slug = $data['slug'];
+            $model->seo_h1 = $data['seo_h1'];
+            $model->seo_url_canonical = $data['seo_url_canonical'];
+            $model->published = (int) $data['published'];
 
             if ($data['main'] === 1) {
                 Pages::where('main', 1)->update(['main' => 0]);
             }
 
-            $page->main = (int) $data['main'];
-            $page->seo_sitemap = $data['seo_sitemap'];
-            $page->save();
+            $model->main = (int) $data['main'];
+            $model->seo_sitemap = $data['seo_sitemap'];
+            $model->save();
+
+            return $model;
         }
         return null;
     }
@@ -49,7 +51,7 @@ class PagesRepository extends BaseRepository
     {
         $options = [];
 
-        foreach (Pages::orderBy('id')->published()->get() as $page) {
+        foreach (Pages::orderBy('id')->published()->get() ?? [] as $page) {
             $options[$page->id] = $page->title;
         }
 

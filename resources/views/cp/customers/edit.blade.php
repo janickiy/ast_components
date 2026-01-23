@@ -28,23 +28,16 @@
                             <p>*-обязательные поля</p>
 
                             <div class="form-group">
-
                                 {!! Form::label('name', 'имя*') !!}
-
                                 {!! Form::text('name', old('name', $row->name ?? null), ['class' => 'form-control', 'placeholder' => 'имя']) !!}
-
                                 @if ($errors->has('name'))
                                     <p class="text-danger">{{ $errors->first('name') }}</p>
                                 @endif
-
                             </div>
 
                             <div class="form-group">
-
                                 {!! Form::label('phone', 'телефон') !!}
-
                                 {!! Form::text('phone', old('phone', $row->phone ?? null), ['class' => 'form-control', 'placeholder' => 'имя']) !!}
-
                                 @if ($errors->has('phone'))
                                     <p class="text-danger">{{ $errors->first('phone') }}</p>
                                 @endif

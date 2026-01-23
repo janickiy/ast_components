@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\StaticTableName;
 use App\Enums\RequestStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,6 +10,8 @@ use Illuminate\Support\Facades\Storage;
 
 class Requests extends Model
 {
+    use StaticTableName;
+
     protected $table = 'requests';
 
     protected $fillable = [
@@ -39,7 +42,7 @@ class Requests extends Model
      */
     public function getAttach(): string
     {
-        return Storage::disk('public')->url('requests/' . $this->attach);
+        return Storage::disk('public')->url($this->table . '/' . $this->attach);
     }
 
     public function getStatus()
@@ -54,6 +57,13 @@ class Requests extends Model
             RequestStatus::InProgress->value => RequestStatus::InProgress->label(),
             RequestStatus::Done->value       => RequestStatus::Done->label(),
         ];
+    }
+
+    public function scopeRemove(): void
+    {
+        if (Storage::disk('public')->exists($this->table . '/' . $this->attach) === true) Storage::disk('public')->delete($this->table . '/' . $this->attach);
+
+        $this->delete();
     }
 
 }

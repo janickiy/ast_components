@@ -6,6 +6,10 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Products;
 use App\Services\CartService;
+use App\Http\Requests\Frontend\Cart\AddRequest;
+use App\Http\Requests\Frontend\Cart\RemoveRequest;
+use App\Http\Requests\Frontend\Cart\ToggleRequest;
+use App\Http\Requests\Frontend\Cart\CheckoutRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\View\View;
@@ -87,17 +91,12 @@ class CartController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param AddRequest $request
      * @return JsonResponse
      */
-    public function add(Request $request): JsonResponse
+    public function add(AddRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'product_id' => ['required', 'integer'],
-            'qty' => ['nullable', 'integer'],
-        ]);
-
-        $this->cart->add((int)$data['product_id'], (int)($data['qty'] ?? 1));
+        $this->cart->add((int)$request->product_id, (int)($request->qty ?? 1));
 
         return response()->json([
             'ok' => true,
@@ -106,18 +105,13 @@ class CartController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param AddRequest $request
      * @return JsonResponse
      */
-    public function setQty(Request $request): JsonResponse
+    public function setQty(AddRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'product_id' => ['required', 'integer'],
-            'qty' => ['required', 'integer'],
-        ]);
-
-        $cart = $this->cart->setQty((int)$data['product_id'], (int)$data['qty']);
-        $pending = $cart['items'][(int)$data['product_id']]['pending_remove_until'] ?? null;
+        $cart = $this->cart->setQty((int)$request->product_id, (int)$request->qty);
+        $pending = $cart['items'][(int)$request->product_id]['pending_remove_until'] ?? null;
 
         return response()->json([
             'ok' => true,
@@ -127,17 +121,13 @@ class CartController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param RemoveRequest $request
      * @return JsonResponse
      */
-    public function remove(Request $request): JsonResponse
+    public function remove(RemoveRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'product_id' => ['required', 'integer'],
-        ]);
-
-        $cart = $this->cart->startRemove((int)$data['product_id']);
-        $pending = $cart['items'][(int)$data['product_id']]['pending_remove_until'] ?? null;
+        $cart = $this->cart->startRemove((int)$request->product_id);
+        $pending = $cart['items'][(int)$request->product_id]['pending_remove_until'] ?? null;
 
         return response()->json([
             'ok' => true,
@@ -146,16 +136,12 @@ class CartController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param RemoveRequest $request
      * @return JsonResponse
      */
-    public function undoRemove(Request $request): JsonResponse
+    public function undoRemove(RemoveRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'product_id' => ['required', 'integer'],
-        ]);
-
-        $this->cart->undoRemove((int)$data['product_id']);
+        $this->cart->undoRemove((int)$request->product_id);
 
         return response()->json([
             'ok' => true,
@@ -164,18 +150,13 @@ class CartController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param ToggleRequest $request
      * @return JsonResponse
      */
-    public function toggle(Request $request): JsonResponse
+    public function toggle(ToggleRequest $request): JsonResponse
     {
-        $data = $request->validate([
-            'product_id' => ['required', 'integer'],
-            'selected' => ['required'],
-        ]);
-
-        $selected = filter_var($data['selected'], FILTER_VALIDATE_BOOL);
-        $this->cart->toggleSelected((int)$data['product_id'], $selected);
+        $selected = filter_var($request->selected, FILTER_VALIDATE_BOOL);
+        $this->cart->toggleSelected((int)$request->product_id, $selected);
 
         return response()->json(['ok' => true]);
     }
@@ -197,10 +178,10 @@ class CartController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param CheckoutRequest $request
      * @return JsonResponse
      */
-    public function checkout(Request $request): JsonResponse
+    public function checkout(CheckoutRequest $request): JsonResponse
     {
         if (!auth()->guard('customer')->check()) {
             return response()->json([
@@ -210,12 +191,7 @@ class CartController extends Controller
         }
 
         $customerId = auth()->guard('customer')->id();
-
-        $data = $request->validate([
-            'delivery_date' => ['nullable', 'date'],
-        ]);
-
-        $order = $this->cart->checkout($customerId, $data['delivery_date'] ?? null);
+        $order = $this->cart->checkout($customerId, $request->delivery_date ?? null);
 
         return response()->json([
             'ok' => (bool)$order,

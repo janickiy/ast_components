@@ -14,8 +14,14 @@
 
 @section('content')
 
-    @include('layouts._breadcrumbs')
+    <div class="page-header container-lg">
+        <div class="page-header__wrap">
 
+            @include('layouts._breadcrumbs')
+
+            <h1>{{ $h1 }}</h1>
+        </div>
+    </div>
     <div class="conditions container-sm">
         <section>
             <div class="conditions__section-title">
@@ -97,7 +103,7 @@
                         <h3>Курьерская доставка</h3>
                     </div>
                     <p class="conditions__item-note">БЕСПЛАТНАЯ ДОСТАВКА курьером “прямо в руки” по Москве от 10 000 рублей.</p>
-                    <p class="conditions__item-text">Если у вас крупный заказ или специфические требования к доставке, мы готовы обсудить индивидуальные условия. <a href="{{ route('frontend.contacts') }}">Свяжитесь с нами</a> любым удобным способом.</p>
+                    <p class="conditions__item-text">Если у вас крупный заказ или специфические требования к доставке, мы готовы обсудить индивидуальные условия. <a href="{{ route('frontend.contacts.index') }}">Свяжитесь с нами</a> любым удобным способом.</p>
                 </li>
             </ul>
         </section>
@@ -157,12 +163,12 @@
                 </div>
             </div>
         </section>
+
     </div>
 
 @endsection
 
 @section('js')
-
 
 
 @endsection

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-
 use App\Http\Requests\Admin\Robots\UpdateRequest;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;

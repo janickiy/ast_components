@@ -16,7 +16,13 @@
 
 @section('content')
 
-    @include('layouts._breadcrumbs')
+    <div class="page-header container-lg">
+        <div class="page-header__wrap">
+            @include('layouts._breadcrumbs')
+            <h1>Личный кабинет</h1>
+
+        </div>
+    </div>
 
     <div class="account container-md">
         <ul class="account__tabs tabs">
@@ -243,6 +249,7 @@
                     <div class="modal__title">
                         <h2>Изменить информацию о&nbsp;компании</h2>
                     </div>
+                    <p>*-обязательные поля</p>
                     <form class="modal__form is-success" id="company-info-form">
                         <div class="form-input">
                             <label for="company-info-company-name">Название компании*</label>
@@ -304,143 +311,7 @@
             </div>
         </div>
     </div>
-    <div class="modal modal--order-details js-modal" data-modal-name="order-details">
-        <div class="modal__wrap">
-            <div class="modal__dialog js-modal-dialog" role="dialog" aria-modal="true">
-                <button type="button" class="modal__close-btn btn btn--icon btn--sm js-modal-close">
-                    <span class="sr-only">Закрыть модальное окно</span>
-                    <svg aria-hidden="true">
-                        <use xlink:href="{{ url('/images/sprite.svg#close') }}"></use>
-                    </svg>
-                </button>
-                <div class="modal__content">
-                    <div class="modal__title">
-                        <h2>Детали заказа</h2>
-                    </div>
-                    <div class="modal__order-list">
-                        <ul class="order-list">
-                            <li class="order-list__item">
-                                <div class="order-list__item-img">
-                                    <picture>
-                                        <source srcset="./images/products/product-1.webp" type="image/webp">
-                                        <img src="./images/products/product-1.jpg"
-                                             alt="ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52">
-                                    </picture>
-                                </div>
-                                <div class="order-list__item-info">
-                                    <a href="./product-details.html" class="order-list__item-title">ADUC812BSZ,
-                                        Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V
-                                        [MQFP-52]</a>
-                                    <span class="order-list__item-count">Количество: 10</span>
-                                </div>
-                            </li>
-                            <li class="order-list__item">
-                                <div class="order-list__item-img">
-                                    <picture>
-                                        <source srcset="./images/products/product-2.webp" type="image/webp">
-                                        <img src="./images/products/product-2.jpg"
-                                             alt="FSCQ0765RTYDTU, Импульсный регулятор напряжения [TO-220-5 FP (Formed Leads)]">
-                                    </picture>
-                                </div>
-                                <div class="order-list__item-info">
-                                    <a href="./product-details.html" class="order-list__item-title">FSCQ0765RTYDTU,
-                                        Импульсный регулятор напряжения [TO-220-5 FP (Formed Leads)]</a>
-                                    <span class="order-list__item-count">Количество: 10</span>
-                                </div>
-                            </li>
-                            <li class="order-list__item">
-                                <div class="order-list__item-img">
-                                    <picture>
-                                        <source srcset="./images/products/product-3.webp" type="image/webp">
-                                        <img src="./images/products/product-3.jpg"
-                                             alt="FSFR1800XSL, Контроллер резонансного ИИП со встроенным ключом 120Вт [SIP-9 L-Forming]">
-                                    </picture>
-                                </div>
-                                <div class="order-list__item-info">
-                                    <a href="./product-details.html" class="order-list__item-title">FSFR1800XSL,
-                                        Контроллер резонансного</a>
-                                    <span class="order-list__item-count">Количество: 10</span>
-                                </div>
-                            </li>
-                            <li class="order-list__item">
-                                <div class="order-list__item-img">
-                                    <picture>
-                                        <source srcset="./images/products/product-4.webp" type="image/webp">
-                                        <img src="./images/products/product-4.jpg"
-                                             alt="ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52]">
-                                    </picture>
-                                </div>
-                                <div class="order-list__item-info">
-                                    <a href="./product-details.html" class="order-list__item-title">ADUC812BSZ,
-                                        Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V
-                                        [MQFP-52]</a>
-                                    <span class="order-list__item-count">Количество: 10</span>
-                                </div>
-                            </li>
-                            <li class="order-list__item">
-                                <div class="order-list__item-img">
-                                    <picture>
-                                        <source srcset="./images/products/product-1.webp" type="image/webp">
-                                        <img src="./images/products/product-1.jpg"
-                                             alt="ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52">
-                                    </picture>
-                                </div>
-                                <div class="order-list__item-info">
-                                    <a href="./product-details.html" class="order-list__item-title">ADUC812BSZ,
-                                        Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V
-                                        [MQFP-52]</a>
-                                    <span class="order-list__item-count">Количество: 10</span>
-                                </div>
-                            </li>
-                            <li class="order-list__item">
-                                <div class="order-list__item-img">
-                                    <picture>
-                                        <source srcset="./images/products/product-2.webp" type="image/webp">
-                                        <img src="./images/products/product-2.jpg"
-                                             alt="FSCQ0765RTYDTU, Импульсный регулятор напряжения [TO-220-5 FP (Formed Leads)]">
-                                    </picture>
-                                </div>
-                                <div class="order-list__item-info">
-                                    <a href="./product-details.html" class="order-list__item-title">FSCQ0765RTYDTU,
-                                        Импульсный регулятор напряжения [TO-220-5 FP (Formed Leads)]</a>
-                                    <span class="order-list__item-count">Количество: 10</span>
-                                </div>
-                            </li>
-                            <li class="order-list__item">
-                                <div class="order-list__item-img">
-                                    <picture>
-                                        <source srcset="./images/products/product-3.webp" type="image/webp">
-                                        <img src="./images/products/product-3.jpg"
-                                             alt="FSFR1800XSL, Контроллер резонансного ИИП со встроенным ключом 120Вт [SIP-9 L-Forming]">
-                                    </picture>
-                                </div>
-                                <div class="order-list__item-info">
-                                    <a href="./product-details.html" class="order-list__item-title">FSFR1800XSL,
-                                        Контроллер резонансного</a>
-                                    <span class="order-list__item-count">Количество: 10</span>
-                                </div>
-                            </li>
-                            <li class="order-list__item">
-                                <div class="order-list__item-img">
-                                    <picture>
-                                        <source srcset="./images/products/product-4.webp" type="image/webp">
-                                        <img src="./images/products/product-4.jpg"
-                                             alt="ADUC812BSZ, Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V [MQFP-52]">
-                                    </picture>
-                                </div>
-                                <div class="order-list__item-info">
-                                    <a href="./product-details.html" class="order-list__item-title">ADUC812BSZ,
-                                        Микроконвертер, 12-Bit ADC, 8-bit ADuC8xx 8052 CISC 8KB Flash 3.3V/5V
-                                        [MQFP-52]</a>
-                                    <span class="order-list__item-count">Количество: 10</span>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+
     <div class="modal modal--create-claim js-modal" data-modal-name="create-claim">
         <div class="modal__wrap">
             <div class="modal__dialog js-modal-dialog" role="dialog" aria-modal="true">

@@ -5,8 +5,10 @@ use App\Http\Controllers\Admin\{
     AuthController,
     AjaxController,
     CatalogController,
+    ComplaintsController,
     CustomersController,
     CustomerLogsController,
+    InvitesController,
     DashboardController,
     DataTableController,
     FeedbackController,
@@ -24,7 +26,8 @@ use App\Http\Controllers\Admin\{
     SeoController,
     SitemapController,
     RobotsController,
-    RedirectController
+    RedirectController,
+    RequestsController
 };
 
 /*
@@ -71,6 +74,37 @@ Route::group(['prefix' => 'content'], function () {
         Route::post('destroy', [NewsController::class, 'destroy'])->name('admin.news.destroy');
     });
 });
+
+Route::group(['prefix' => 'communication'], function () {
+    // Обратная связь
+    Route::group(['prefix' => 'feedback'], function () {
+        Route::get('', [FeedbackController::class, 'index'])->name('admin.feedback.index');
+        Route::get('edit/{id}', [FeedbackController::class, 'edit'])->name('admin.feedback.edit')->where('id', '[0-9]+');
+        Route::put('update', [FeedbackController::class, 'update'])->name('admin.feedback.update');
+        Route::post('destroy', [FeedbackController::class, 'destroy'])->name('admin.feedback.destroy');
+    });
+    // Приглашение на тендер
+    Route::group(['prefix' => 'invites'], function () {
+        Route::get('', [InvitesController::class, 'index'])->name('admin.invites.index');
+        Route::get('edit/{id}', [InvitesController::class, 'edit'])->name('admin.invites.edit')->where('id', '[0-9]+');
+        Route::post('destroy', [InvitesController::class, 'destroy'])->name('admin.invites.destroy');
+    });
+    // Претензии
+    Route::group(['prefix' => 'complaints'], function () {
+        Route::get('', [ComplaintsController::class, 'index'])->name('admin.complaints.index');
+        Route::get('edit/{id}', [ComplaintsController::class, 'edit'])->name('admin.complaints.edit')->where('id', '[0-9]+');
+        Route::put('update', [ComplaintsController::class, 'update'])->name('admin.complaints.update');
+        Route::post('destroy', [ComplaintsController::class, 'destroy'])->name('admin.complaints.destroy');
+    });
+    // Запрос номенклатуры
+    Route::group(['prefix' => 'requests'], function () {
+        Route::get('', [RequestsController::class, 'index'])->name('admin.requests.index');
+        Route::get('edit/{id}', [RequestsController::class, 'edit'])->name('admin.requests.edit')->where('id', '[0-9]+');
+        Route::put('update', [RequestsController::class, 'update'])->name('admin.requests.update');
+        Route::post('destroy', [RequestsController::class, 'destroy'])->name('admin.requests.destroy');
+    });
+});
+
 
 Route::group(['prefix' => 'goods'], function () {
     //Каталог
@@ -124,9 +158,6 @@ Route::group(['prefix' => 'goods'], function () {
         Route::post('destroy', [ManufacturersController::class, 'destroy'])->name('admin.manufacturers.destroy');
     });
 });
-
-//Обратная связь
-Route::get('feedback', FeedbackController::class)->name('admin.feedback.index');
 
 //Раздел SEO
 Route::group(['prefix' => 'seo'], function () {
@@ -221,4 +252,8 @@ Route::group(['prefix' => 'datatable'], function () {
     Route::any('customers', [DataTableController::class, 'customers'])->name('admin.datatable.customers')->middleware(['permission:admin']);
     Route::any('order-product/{order_id}', [DataTableController::class, 'orderProduct'])->name('admin.datatable.order_product')->where('order_id', '[0-9]+');
     Route::any('logs/{customer_id}', [DataTableController::class, 'logs'])->name('admin.datatable.logs')->where('customer_id', '[0-9]+');
+    Route::any('invites', [DataTableController::class, 'invites'])->name('admin.datatable.invites');
+    Route::any('complaints', [DataTableController::class, 'complaints'])->name('admin.datatable.complaints');
+    Route::any('requests', [DataTableController::class, 'requests'])->name('admin.datatable.requests');
+
 });

@@ -9,6 +9,8 @@ use App\Http\Controllers\Frontend\{
     ProfileController,
     ResetPasswordController,
     RequestsController,
+    InvitesController,
+    FeedbackController
 };
 use Illuminate\Support\Facades\Route;
 
@@ -28,16 +30,19 @@ use Illuminate\Support\Facades\Route;
 Route::get('', [FrontendController::class, 'index'])->name('frontend.index');
 //Страницы и разделы
 Route::get('/page/{slug}', [FrontendController::class, 'page'])->name('frontend.page');
+
 //Пригласить на тендер
-Route::get('/invite', [FrontendController::class, 'invite'])->name('frontend.invite');
-Route::post('/invite', [FrontendController::class, 'sendInvite'])->name('frontend.send_invite');
+Route::group(['prefix' => 'invite'], function () {
+    Route::get('', [InvitesController::class, 'index'])->name('frontend.invite.index');
+    Route::post('add', [InvitesController::class, 'add'])->name('frontend.invite.store');
+});
 
 // Запрос номенклатуры
 Route::group(['prefix' => 'nomenclature-request'], function () {
     // Форма добавления
     Route::get('', [RequestsController::class, 'index'])->name('frontend.nomenclature_request.index');
     // Добавляем запрос на номенклатуру
-    Route::post('store', [RequestsController::class, 'add'])->name('frontend.nomenclature_request.store');
+    Route::post('add', [RequestsController::class, 'add'])->name('frontend.nomenclature_request.store');
 });
 
 //Новости
@@ -47,16 +52,16 @@ Route::get('/news/{slug}', [FrontendController::class, 'newsItem'])->name('front
 //каталог
 Route::get('/catalog/{slug?}', [FrontendController::class, 'catalog'])->name('frontend.catalog');
 //Контакты
-Route::get('/contacts', [FrontendController::class, 'contacts'])->name('frontend.contacts');
-Route::post('/contacts', [FrontendController::class, 'sendFeedback'])->name('frontend.send_feedback');
+Route::group(['prefix' => 'contacts'], function () {
+    Route::get('', [FeedbackController::class, 'index'])->name('frontend.contacts.index');
+    Route::post('send', [FeedbackController::class, 'send'])->name('frontend.contacts.send');
+});
 //Конверторы
 Route::get('/converters', [FrontendController::class, 'converters'])->name('frontend.converters');
 //Производители
 Route::get('/manufacturers', [FrontendController::class, 'manufacturers'])->name('frontend.manufacturers');
 // Описание производителя
 Route::get('/manufacturer/{slug}', [FrontendController::class, 'manufacturer'])->name('frontend.manufacturer');
-
-Route::any('/get-subcategory', [FrontendController::class, 'getSubcategory'])->name('frontend.get_subcategory');
 
 // Доставка и оплата
 Route::any('/conditions', [FrontendController::class, 'conditions'])->name('frontend.conditions');
@@ -101,5 +106,7 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('register', [AuthController::class, 'register'])->name('frontend.auth.register');
     Route::post('send-reset-link', [AuthController::class, 'sendResetLink'])->name('frontend.auth.send_reset_link');
 });
+
+Route::get('/sub-catalogs/{parent_id}', [FrontendController::class, 'subCatalogs'])->name('frontend.catalog.sub_catalogs')->where('parent_id}', '[0-9]+');
 
 Route::get('password-reset/{token}/{email}', ResetPasswordController::class)->name('frontend.password.reset');

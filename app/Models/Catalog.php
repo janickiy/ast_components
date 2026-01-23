@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\StaticTableName;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
@@ -10,6 +11,8 @@ use Illuminate\Support\Facades\Cache;
 
 class Catalog extends Model
 {
+    use StaticTableName;
+
     protected $table = 'catalogs';
 
     /**
@@ -27,7 +30,6 @@ class Catalog extends Model
         'seo_h1',
         'seo_url_canonical',
         'seo_sitemap',
-        'parent_id',
     ];
 
     /**
@@ -51,28 +53,17 @@ class Catalog extends Model
      */
     public function hasChildren(): bool
     {
-        return self::where('parent_id', $this->id)->count() > 0 ? true : false;
-    }
+        $key = 'has-Children-' . $this->id;
 
-    /**
-     * @param array $topbar
-     * @param int $parent_id
-     * @return array
-     */
-    public static function topbarMenu(array &$topbar, int $parent_id): array
-    {
-        $result = self::where('id', $parent_id);
+        if (Cache::has($key)) {
+            return Cache::get($key);
+        } else {
+            $value = self::where('parent_id', $this->id)->count() > 0 ? true : false;
 
-        if ($result->count() > 0) {
-            $catalog = $result->first();
-            $topbar[] = [$catalog->id, $catalog->name, $catalog->slug];
+            Cache::put($key, $value, 60);
 
-            self::topbarMenu($topbar, $catalog->parent_id);
+            return $value;
         }
-
-        sort($topbar);
-
-        return $topbar;
     }
 
     /**
@@ -80,28 +71,17 @@ class Catalog extends Model
      */
     public function getProductCount(): int
     {
-        Cache::remember('product-count', now()->addHour(), function () {
-            return (int)Products::where('catalog_id', $this->id)->count();
-        });
-    }
+        $key = 'product-count-' . $this->id;
 
-    /**
-     * @param int $parent_id
-     * @return void
-     */
-    public static function removeCatalogs(int $parent_id): void
-    {
-        $parent = self::findOrFail($parent_id);
-        $array_of_ids = self::getChildren($parent);
-        array_push($array_of_ids, $parent_id);
+        if (Cache::has($key)) {
+            return Cache::get($key);
+        } else {
+            $value = Products::where('catalog_id', $this->id)->count();
 
-        $catalogs = self::whereIn('id', $array_of_ids)->get();
+            Cache::put($key, $value);
 
-        foreach ($catalogs as $catalog) {
-            self::removeCatalog($catalog);
+            return $value;
         }
-
-        self::removeCatalog($parent);
     }
 
     /**
@@ -131,29 +111,12 @@ class Catalog extends Model
      */
     public function scopeRemove(): void
     {
-        foreach ($this->products as $product) {
+        foreach ($this->products ?? [] as $product) {
             $product->remove();
         }
 
         $this->delete();
     }
-
-    /**
-     * @param $category
-     * @return array
-     */
-    private static function getChildren($category): array
-    {
-        $ids = [];
-
-        foreach ($category->children ?? [] as $row) {
-            $ids[] = $row->id;
-            $ids = array_merge($ids, self::getChildren($row));
-        }
-
-        return $ids;
-    }
-
 
     /**
      * @return BelongsTo

@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Traits\StaticTableName;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Manufacturers extends Model
 {
+    use StaticTableName;
+
     protected $table = 'manufacturers';
 
     /**
@@ -60,8 +63,8 @@ class Manufacturers extends Model
      */
     public function getImage(): string
     {
-        if (Storage::disk('public')->exists('manufacturers/' . $this->image) === true) {
-            return Storage::disk('public')->url('manufacturers/' . $this->image);
+        if (Storage::disk('public')->exists($this->table . '/' . $this->image) === true) {
+            return Storage::disk('public')->url($this->table . '/' . $this->image);
         } else {
             return asset('/images/no_image.jpg');
         }
@@ -80,7 +83,7 @@ class Manufacturers extends Model
      */
     public function scopeRemove(): void
     {
-        if (Storage::disk('public')->exists('manufacturers/' . $this->image) === true) Storage::disk('public')->delete('manufacturers/' . $this->image);
+        if (Storage::disk('public')->exists($this->table . '/' . $this->image) === true) Storage::disk('public')->delete($this->table . '/' . $this->image);
 
         $this->delete();
     }

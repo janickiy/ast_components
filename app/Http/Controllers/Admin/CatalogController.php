@@ -2,19 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-
 use App\Repositories\CatalogRepository;
 use App\Http\Requests\Admin\Catalog\EditRequest;
 use App\Http\Requests\Admin\Catalog\StoreRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Exception;;
 
 class CatalogController extends Controller
 {
-
-
-    public function __construct(public CatalogRepository $categoryRepository)
+    public function __construct(private CatalogRepository $categoryRepository)
     {
         parent::__construct();
     }
@@ -37,7 +34,13 @@ class CatalogController extends Controller
     {
         $options = $this->categoryRepository->getOptions();
 
-        return view('cp.catalog.create_edit', compact('options', 'parent_id'))->with('title', 'Добавление категории');
+        $row = $this->categoryRepository->find($parent_id);
+
+        if (!$row) abort(404);
+
+        $title = $parent_id > 0 ? 'Добавление подкатегории в категорию ' . $row->name:'Добавление категории';
+
+        return view('cp.catalog.create_edit', compact('options', 'parent_id'))->with('title', $title);
     }
 
     /**
@@ -46,13 +49,22 @@ class CatalogController extends Controller
      */
     public function store(StoreRequest $request): RedirectResponse
     {
-        $seo_sitemap = 0;
+        try {
+            $seo_sitemap = 0;
 
-        if ($request->input('seo_sitemap')) {
-            $seo_sitemap = 1;
+            if ($request->input('seo_sitemap')) {
+                $seo_sitemap = 1;
+            }
+
+            $this->categoryRepository->create(array_merge($request->all(), ['seo_sitemap' => $seo_sitemap]));
+        } catch (Exception $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage())
+                ->withInput();
         }
-
-        $this->categoryRepository->create(array_merge($request->all(), ['seo_sitemap' => $seo_sitemap]));
 
         return redirect()->route('admin.catalog.index')->with('success', 'Информация успешно добавлена');
     }
@@ -68,8 +80,8 @@ class CatalogController extends Controller
         if (!$row) abort(404);
 
         $options = $this->categoryRepository->getOptions();
-        $parent_id = $row->parent_id;
         unset($options[$id]);
+        $parent_id = $row->parent_id;
 
         return view('cp.catalog.create_edit', compact('row', 'parent_id', 'options'))->with('title', 'Редактирование категории');
     }
@@ -80,24 +92,33 @@ class CatalogController extends Controller
      */
     public function update(EditRequest $request): RedirectResponse
     {
-        $seo_sitemap = 0;
+        try {
+            $seo_sitemap = 0;
 
-        if ($request->input('seo_sitemap')) {
-            $seo_sitemap = 1;
+            if ($request->input('seo_sitemap')) {
+                $seo_sitemap = 1;
+            }
+
+            $this->categoryRepository->update($request->id, array_merge($request->all(), ['seo_sitemap' => $seo_sitemap]));
+        } catch (Exception $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage())
+                ->withInput();
         }
-
-        $this->categoryRepository->update($request->id, array_merge($request->all(), ['seo_sitemap' => $seo_sitemap]));
 
         return redirect()->route('admin.catalog.index')->with('success', 'Данные обновлены');
     }
 
     /**
-     * @param Request $request
+     * @param int $parent_id
      * @return RedirectResponse
      */
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(int $parent_id): RedirectResponse
     {
-        $this->categoryRepository->delete($request->id);
+        $this->categoryRepository->remove($parent_id);
 
         return redirect()->route('admin.catalog.index')->with('success', 'Данные успешно удалены!');
     }

@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\StaticTableName;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
 class Seo extends Model
 {
+    use StaticTableName;
+
     protected $table = 'seo';
 
     /**

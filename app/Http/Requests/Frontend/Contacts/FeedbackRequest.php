@@ -18,6 +18,7 @@ class FeedbackRequest extends FormRequest
             'email' => 'required|email',
             'phone' => 'required',
             'message' => 'required',
+            'agreement' => 'accepted',
         ];
     }
 }

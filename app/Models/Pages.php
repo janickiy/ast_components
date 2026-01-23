@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-
+use App\Traits\StaticTableName;
 use App\Helpers\StringHelper;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Pages extends Model
 {
+    use StaticTableName;
+
     protected $table = 'pages';
 
     /**

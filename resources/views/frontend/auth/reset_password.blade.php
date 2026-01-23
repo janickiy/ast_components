@@ -20,7 +20,7 @@
             </p>
 
             <div class="error-hero__btn-wrap">
-                <a href="{{ route('frontend.contacts') }}" class="btn btn--secondary">
+                <a href="{{ route('frontend.contacts.index') }}" class="btn btn--secondary">
                     <svg aria-hidden="true">
                         <use xlink:href="{{ url('/images/sprite.svg#phone') }}"></use>
                     </svg>

@@ -56,11 +56,8 @@
                             </div>
 
                             <div class="form-group">
-
                                 {!! Form::label('status', 'Статус*') !!}
-
                                 {!! Form::select('status', $options, $row->status ?? 0, ['placeholder' => 'Статус', 'class' => 'custom-select']) !!}
-
                                 @if ($errors->has('status'))
                                     <p class="text-danger">{{ $errors->first('status') }}</p>
                                 @endif

@@ -14,7 +14,15 @@
 
 @section('content')
 
-    @include('layouts._breadcrumbs')
+    <div class="page-header container-lg">
+        <div class="page-header__wrap">
+
+            @include('layouts._breadcrumbs')
+
+            <h1>{{ $h1 }}</h1>
+
+        </div>
+    </div>
 
     <div class="contacts container-sm">
         <div class="contacts__content">
@@ -80,58 +88,68 @@
                 <h2>Есть вопросы? Задайте их нашим специалистам через чат на сайте или&nbsp;форму обратной связи</h2>
             </div>
 
-            {!! Form::open(['url' => route('frontend.send_feedback'), 'method' => 'post', 'class' => 'contacts__form is-success']) !!}
-                <div class="form-input">
-                    {!! Form::label('name', 'Ваше имя*') !!}
-                    {!! Form::text('name', old('name'), ['id' => 'contacts-user-name', 'placeholder' => 'Иванов Иван', 'required']) !!}
-                    @if ($errors->has('name'))
-                        <p class="text-danger">{{ $errors->first('name') }}</p>
-                    @endif
-                </div>
-                <div class="form-input">
-                    {!! Form::label('email', 'Электронная почта*') !!}
-                    {!! Form::email('email', old('email'), ['id' => 'contacts-email', 'placeholder' => 'customer@gmail.com', 'required']) !!}
-                    @if ($errors->has('email'))
-                        <p class="text-danger">{{ $errors->first('email') }}</p>
-                    @endif
-                </div>
-                <div class="form-input">
-                    {!! Form::label('phone', 'Номер телефона*') !!}
-                    {!! Form::tel('phone', old('phone'), ['id' => 'contacts-phone', 'placeholder' => '+7 900 000-00-00', 'required']) !!}
-                    @if ($errors->has('phone'))
-                        <p class="text-danger">{{ $errors->first('phone') }}</p>
-                    @endif
-                </div>
-                <div class="contacts__textarea form-input">
-                    {!! Form::label('message', 'Текст сообщения*') !!}
-                    {!! Form::textarea('message', old('message'), ['id' => "contacts-message", 'placeholder' => 'Текст комментария', 'required']) !!}
-                    @if ($errors->has('message'))
-                        <p class="text-danger">{{ $errors->first('message') }}</p>
-                    @endif
-                </div>
-                <div class="form-checkbox">
-                    <input type="checkbox" name="agreement" id="contacts-agreement">
-                    <label for="contacts-agreement">Я даю согласие на обработку персональных данных в&nbsp;соответствии с&nbsp;<a href="{{ route('frontend.page', ['slug' => 'privacy-policy']) }}">Политикой конфиденциальности</a></label>
-                    @if ($errors->has('agreement'))
-                        <p class="text-danger">{{ $errors->first('agreement') }}</p>
-                    @endif
-                </div>
-                <div class="contacts__btn">
-                    <button type="submit" class="btn btn--primary">
-                        <svg aria-hidden="true">
-                            <use xlink:href="{{ url('/images/sprite.svg#mail') }}"></use>
-                        </svg>
-                        <span>Отправить</span>
-                    </button>
-                    @if (session('success'))
+            @php $user = Auth::guard('customer')->user() ?? null; @endphp
+
+            {!! Form::open(['url' => route('frontend.contacts.send'), 'method' => 'post', 'class' => 'contacts__form is-success']) !!}
+            <div class="form-input">
+                {!! Form::label('name', 'Ваше имя*') !!}
+                {!! Form::text('name', old('name', $user->name ?? null), ['id' => 'contacts-user-name', 'placeholder' => 'Иванов Иван', 'required']) !!}
+                @if ($errors->has('name'))
+                    <p class="text-danger">{{ $errors->first('name') }}</p>
+                @endif
+            </div>
+            <div class="form-input">
+                {!! Form::label('email', 'Электронная почта*') !!}
+                {!! Form::email('email', old('email', $user->email ?? null), ['id' => 'contacts-email', 'placeholder' => 'customer@gmail.com', 'required']) !!}
+                @if ($errors->has('email'))
+                    <p class="text-danger">{{ $errors->first('email') }}</p>
+                @endif
+            </div>
+            <div class="form-input">
+                {!! Form::label('phone', 'Номер телефона*') !!}
+                {!! Form::tel('phone', old('phone', $user->phone ?? null), ['id' => 'contacts-phone', 'placeholder' => '+7 900 000-00-00', 'required']) !!}
+                @if ($errors->has('phone'))
+                    <p class="text-danger">{{ $errors->first('phone') }}</p>
+                @endif
+            </div>
+            <div class="contacts__textarea form-input">
+                {!! Form::label('message', 'Текст сообщения*') !!}
+                {!! Form::textarea('message', old('message'), ['id' => "contacts-message", 'placeholder' => 'Текст комментария', 'required']) !!}
+                @if ($errors->has('message'))
+                    <p class="text-danger">{{ $errors->first('message') }}</p>
+                @endif
+            </div>
+            <div class="form-checkbox">
+                <input type="checkbox" name="agreement" id="contacts-agreement">
+                <label for="contacts-agreement">Я даю согласие на обработку персональных данных в&nbsp;соответствии с&nbsp;<a
+                            href="{{ route('frontend.page', ['slug' => 'privacy-policy']) }}">Политикой
+                        конфиденциальности</a></label>
+                @if ($errors->has('agreement'))
+                    <p class="text-danger">{{ $errors->first('agreement') }}</p>
+                @endif
+            </div>
+            <div class="contacts__btn">
+                <button type="submit" class="btn btn--primary">
+                    <svg aria-hidden="true">
+                        <use xlink:href="{{ url('/images/sprite.svg#mail') }}"></use>
+                    </svg>
+                    <span>Отправить</span>
+                </button>
+                @if (session('success'))
                     <span class="success-message">
                             <svg aria-hidden="true">
                                 <use xlink:href="{{ url('/images/sprite.svg#check-circle') }}"></use>
                             </svg>
-                            <span>Ваш запрос успешно отправлен</span>
+                            <span>Ваше сообщение успешно отправлено. В ближайшее время с Вами свяжется наш менеджер.</span>
                     </span>
-                    @endif
-                </div>
+                @endif
+
+                @if (session('error'))
+                    <span class="message-error">
+                        <span>{{ session('error') }}</span>
+                </span>
+                @endif
+            </div>
 
             {!! Form::close() !!}
 
@@ -141,8 +159,6 @@
 @endsection
 
 @section('js')
-
-
 
 @endsection
 

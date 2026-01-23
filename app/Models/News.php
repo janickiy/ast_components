@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\StaticTableName;
 use App\Helpers\StringHelper;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -9,6 +10,8 @@ use Illuminate\Support\Facades\Storage;
 
 class News extends Model
 {
+    use StaticTableName;
+
     protected $table = 'news';
 
     /**
@@ -50,8 +53,8 @@ class News extends Model
      */
     public function getImage(): string
     {
-        if (Storage::disk('public')->exists('news/' . $this->image) === true) {
-            return Storage::disk('public')->url('news/' . $this->image);
+        if (Storage::disk('public')->exists($this->table . '/' . $this->image) === true) {
+            return Storage::disk('public')->url($this->table . '/' . $this->image);
         } else {
             return asset('/images/no_image.jpg');
         }
@@ -71,7 +74,7 @@ class News extends Model
      */
     public function scopeRemove(): void
     {
-        if (Storage::disk('public')->exists('news/' . $this->image) === true) Storage::disk('public')->delete('news/' . $this->image);
+        if (Storage::disk('public')->exists($this->table . '/' . $this->image) === true) Storage::disk('public')->delete($this->table . '/' . $this->image);
 
         $this->delete();
     }

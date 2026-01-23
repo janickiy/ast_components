@@ -27,31 +27,21 @@
                         {!! Form::hidden('product_id', $product_id) !!}
 
                         <div class="card-body">
-
                             <p>*-обязательные поля</p>
-
                             <div class="form-group">
-
                                 {!! Form::label('name', 'Название*') !!}
-
                                 {!! Form::text('name', old('title', $row->name ?? null), ['class' => 'form-control']) !!}
-
                                 @if ($errors->has('name'))
                                     <p class="text-danger">{{ $errors->first('name') }}</p>
                                 @endif
-
                             </div>
 
                             <div class="form-group">
-
                                 {!! Form::label('value', 'Название*') !!}
-
                                 {!! Form::text('value', old('title', $row->value ?? null), ['class' => 'form-control']) !!}
-
                                 @if ($errors->has('value'))
                                     <p class="text-danger">{{ $errors->first('value') }}</p>
                                 @endif
-
                             </div>
 
                         </div>

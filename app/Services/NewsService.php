@@ -7,12 +7,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
+use Exception;
 
 class NewsService
 {
     /**
      * @param Request $request
      * @return string
+     * @throws Exception
      */
     public function storeImage(Request $request): string
     {
@@ -20,12 +22,14 @@ class NewsService
         $filename = time();
         $originName = $filename . '.' . $extension;
 
-        if ($request->file('image')->move('uploads/news', $originName)) {
-            $manager = new ImageManager(new Driver());
-            $image = $manager->read(Storage::disk('public')->path('news/' . $originName));
-            $image->scale(width: 1200);
-            $image->save(Storage::disk('public')->path('news/' . $originName));
+        if ($request->file('image')->move('uploads/' . News::getTableName(), $originName) === false) {
+            throw new Exception('Не удалось сохранить файл!');
         }
+
+        $manager = new ImageManager(new Driver());
+        $image = $manager->read(Storage::disk('public')->path(News::getTableName() . '/' . $originName));
+        $image->scale(width: 1200);
+        $image->save(Storage::disk('public')->path(News::getTableName() . '/' . $originName));
 
         return $originName;
     }
@@ -34,29 +38,30 @@ class NewsService
      * @param News $news
      * @param Request $request
      * @return string
+     * @throws Exception
      */
     public function updateImage(News $news, Request $request): string
     {
         $image = $request->pic;
 
         if ($image != null) {
-            if (Storage::disk('public')->exists('news/' . $news->image) === true) Storage::disk('public')->delete('news/' . $news->image);
+            if (Storage::disk('public')->exists(News::getTableName() . '/' . $news->image) === true) Storage::disk('public')->delete(News::getTableName() . '/' . $news->image);
         }
 
-        if (Storage::disk('public')->exists('news/' . $news->image) === true) Storage::disk('public')->delete('news/' . $news->image);
+        if (Storage::disk('public')->exists(News::getTableName() . '/' . $news->image) === true) Storage::disk('public')->delete(News::getTableName() . '/' . $news->image);
 
         $extension = $request->file('image')->getClientOriginalExtension();
-        $filename = time() . '.' . $extension;
+        $originName = time() . '.' . $extension;
 
-        if ($request->file('image')->storeAs('public/news', $filename)) {
-            $img = Image::make(Storage::path('/public/news/') . $filename);
-            $img->resize(null, 300, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-
-            if ($img->save(Storage::path('/public/news/') . $filename)) $news->image = $filename;
+        if ($request->file('image')->move('uploads/' . News::getTableName(), $originName) === false) {
+            throw new Exception('Не удалось сохранить файл!');
         }
 
-        return $filename;
+        $manager = new ImageManager(new Driver());
+        $image = $manager->read(Storage::disk('public')->path(News::getTableName() . '/' . $originName));
+        $image->scale(width: 1200);
+        $image->save(Storage::disk('public')->path(News::getTableName() . '/' . $originName));
+
+        return $originName;
     }
 }

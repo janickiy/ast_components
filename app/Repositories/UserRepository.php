@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
+
 class UserRepository extends BaseRepository
 {
     public function __construct(User $model)
@@ -15,24 +16,25 @@ class UserRepository extends BaseRepository
     /**
      * @param int $id
      * @param array $data
-     * @return mixed
+     * @return User|null
      */
-    public function update(int $id, array $data): mixed
+    public function update(int $id, array $data): ?User
     {
-        $user = $this->model->find($id);
+        $model = $this->model->find($id);
 
-        if ($user) {
-            $user->login = $data['login'];
-            $user->name = $data['name'];
-            $user->description = $data['description'];
+        if ($model) {
+            $model->login = $data['login'] ?? $model->login;
+            $model->name = $data['name'] ?? $model->name;
 
-            if (!empty($request->role)) $user->role = $request->input('role');
+            if (!empty($model->role)) $model->role = $data['role'];
 
             if (isset($data['password'])) {
-                $user->password = Hash::make($data['password']);
+                $model->password = Hash::make($data['password']);
             }
 
-            $user->save();
+            $model->save();
+
+            return $model;
         }
         return null;
     }

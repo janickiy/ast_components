@@ -9,7 +9,15 @@
 
 @section('content')
 
-    @include('layouts._breadcrumbs')
+    <div class="page-header container-lg">
+        <div class="page-header__wrap">
+            <ul class="breadcrumbs">
+                <li><a href="{{ url('/') }}" class="breadcrumbs-item">Главная</a></li>
+                <li><span class="breadcrumbs-item">Корзина</span></li>
+            </ul>
+            <h1>Корзина</h1>
+        </div>
+    </div>
 
     <div class="cart container-sm">
         <div class="cart__content is-empty">

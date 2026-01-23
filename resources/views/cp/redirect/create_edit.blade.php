@@ -25,43 +25,29 @@
                         {!! isset($row) ? Form::hidden('id', $row->id) : '' !!}
 
                         <div class="card-body">
-
                             <p>*-обязательные поля</p>
-
                             <div class="form-group">
-
                                 {!! Form::label('from', 'from*') !!}
-
                                 {!! Form::text('from', old('title', $row->from ?? null), ['class' => 'form-control']) !!}
-
                                 @if ($errors->has('from'))
                                     <p class="text-danger">{{ $errors->first('from') }}</p>
                                 @endif
-
                             </div>
 
                             <div class="form-group">
-
                                 {!! Form::label('to', 'to*') !!}
-
                                 {!! Form::text('to', old('to', $row->to ?? null), ['class' => 'form-control']) !!}
-
                                 @if ($errors->has('to'))
                                     <p class="text-danger">{{ $errors->first('to') }}</p>
                                 @endif
-
                             </div>
 
                             <div class="form-group">
-
                                 {!! Form::label('status', 'Статус*') !!}
-
                                 {!! Form::select('status', ['301' => '301', '302' => '302'], $row->status ?? '301', ['placeholder' => 'Статус', 'class' => 'custom-select']) !!}
-
                                 @if ($errors->has('status'))
                                     <p class="text-danger">{{ $errors->first('status') }}</p>
                                 @endif
-
                             </div>
 
                         </div>

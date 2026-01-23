@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-
 use App\Repositories\CatalogRepository;
 use App\Repositories\ProductsRepository;
 use App\Repositories\ManufacturerRepository;
@@ -13,6 +12,7 @@ use App\Http\Requests\Admin\Products\StoreRequest;
 use App\Http\Requests\Admin\Products\DeleteRequest;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Exception;
 
 class ProductsController extends Controller
 {
@@ -22,7 +22,11 @@ class ProductsController extends Controller
      * @param CatalogRepository $categoryRepository
      * @param ManufacturerRepository $manufacturerRepository
      */
-    public function __construct(private ProductsRepository $productRepository, private ProductsService $productService, private CatalogRepository $categoryRepository, private ManufacturerRepository $manufacturerRepository)
+    public function __construct(
+        private ProductsRepository     $productRepository,
+        private ProductsService        $productService,
+        private CatalogRepository      $categoryRepository,
+        private ManufacturerRepository $manufacturerRepository)
     {
         parent::__construct();
     }
@@ -53,25 +57,34 @@ class ProductsController extends Controller
      */
     public function store(StoreRequest $request): RedirectResponse
     {
-        $request->n_number = (int)$request->n_number;
+        try {
+            $request->n_number = (int)$request->n_number;
 
-        if ($request->hasFile('image')) {
-            $filename = $this->productService->storeImage($request);
-            $fileNameToStore = 'origin_' . $filename;
-            $thumbnailFileNameToStore = 'thumbnail_' . $filename;
+            if ($request->hasFile('image')) {
+                $filename = $this->productService->storeImage($request);
+                $fileNameToStore = 'origin_' . $filename;
+                $thumbnailFileNameToStore = 'thumbnail_' . $filename;
+            }
+
+            $seo_sitemap = 0;
+
+            if ($request->input('seo_sitemap')) {
+                $seo_sitemap = 1;
+            }
+
+            $this->productRepository->create(array_merge(array_merge($request->all()), [
+                'thumbnail' => $thumbnailFileNameToStore ?? null,
+                'origin' => $fileNameToStore ?? null,
+                'seo_sitemap' => $seo_sitemap,
+            ]));
+        } catch (Exception $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage())
+                ->withInput();
         }
-
-        $seo_sitemap = 0;
-
-        if ($request->input('seo_sitemap')) {
-            $seo_sitemap = 1;
-        }
-
-        $this->productRepository->create(array_merge(array_merge($request->all()), [
-            'thumbnail' => $thumbnailFileNameToStore ?? null,
-            'origin' => $fileNameToStore ?? null,
-            'seo_sitemap' => $seo_sitemap,
-        ]));
 
         return redirect()->route('admin.products.index')->with('success', 'Информация успешно добавлена');
     }
@@ -99,34 +112,43 @@ class ProductsController extends Controller
      */
     public function update(EditRequest $request): RedirectResponse
     {
-        if ($request->hasFile('image')) {
-            $product = $this->productRepository->find($request->id);
-            $this->productService->updateImage($request, $product);
+        try {
+            if ($request->hasFile('image')) {
+                $product = $this->productRepository->find($request->id);
+                $this->productService->updateImage($request, $product);
+            }
+
+            $in_stock = 0;
+
+            if ($request->input('in_stock')) {
+                $in_stock = 1;
+            }
+
+            $under_order = 0;
+
+            if ($request->input('under_order')) {
+                $under_order = 1;
+            }
+
+            $seo_sitemap = 0;
+
+            if ($request->input('seo_sitemap')) {
+                $seo_sitemap = 1;
+            }
+
+            $this->productRepository->update($request->id, array_merge($request->all(), [
+                'in_stock' => $in_stock,
+                'under_order' => $under_order,
+                'seo_sitemap' => $seo_sitemap,
+            ]));
+        } catch (Exception $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage())
+                ->withInput();
         }
-
-        $in_stock = 0;
-
-        if ($request->input('in_stock')) {
-            $in_stock = 1;
-        }
-
-        $under_order = 0;
-
-        if ($request->input('under_order')) {
-            $under_order = 1;
-        }
-
-        $seo_sitemap = 0;
-
-        if ($request->input('seo_sitemap')) {
-            $seo_sitemap = 1;
-        }
-
-        $this->productRepository->update($request->id, array_merge($request->all(),[
-            'in_stock' => $in_stock,
-            'under_order' => $under_order,
-            'seo_sitemap' => $seo_sitemap,
-        ]));
 
         return redirect()->route('admin.products.index')->with('success', 'Данные обновлены');
     }

@@ -27,11 +27,8 @@
                             <p>*-обязательные поля</p>
 
                             <div class="form-group">
-
                                 {!! Form::label('content', 'Содержимое Robots.txt*') !!}
-
                                 {!! Form::textarea('content', old('content', $file ?? null), ['rows' => "3", 'class' => 'form-control']) !!}
-
                                 @if ($errors->has('content'))
                                     <span class="text-danger">{{ $errors->first('content') }}</span>
                                 @endif

@@ -9,6 +9,7 @@ use App\Http\Requests\Admin\Settings\EditRequest;
 use App\Http\Requests\Admin\Settings\DeleteRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use Exception;
 
 class SettingsController extends Controller
 {
@@ -44,24 +45,29 @@ class SettingsController extends Controller
      */
     public function store(StoreRequest $request): RedirectResponse
     {
-        if ($request->hasFile('value')) {
-            $res = $this->settingsService->storeFile($request);
-
-            if ($res === false) {
-                return redirect()->route('admin.settings.index')->with('error', 'Не удалось сохранить файл!');
+        try {
+            if ($request->hasFile('value')) {
+                $this->settingsService->storeFile($request);
             }
+
+            $published = 0;
+
+            if ($request->input('published')) {
+                $published = 1;
+            }
+
+            $this->settingsRepository->create(array_merge(array_merge($request->all()), [
+                'value' => $res ?? $request->input('value'),
+                'published' => $published,
+            ]));
+        } catch (Exception $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage())
+                ->withInput();
         }
-
-        $published = 0;
-
-        if ($request->input('published')) {
-            $published = 1;
-        }
-
-        $this->settingsRepository->create(array_merge(array_merge($request->all()), [
-            'value' => $res ?? $request->input('value'),
-            'published' => $published,
-        ]));
 
         return redirect()->route('admin.settings.index')->with('success', 'Информация успешно добавлена');
     }

@@ -14,7 +14,13 @@
 
 @section('content')
 
-    @include('layouts._breadcrumbs')
+    <div class="page-header container-lg">
+        <div class="page-header__wrap">
+
+            @include('layouts._breadcrumbs')
+
+        </div>
+    </div>
 
     @php
         $arr = $product->parameters?->toArray() ?? [];
@@ -22,14 +28,16 @@
         $cartQty = (int)($cartItems[$product->id]['qty'] ?? 1);
     @endphp
 
+
     <div class="product-hero container-lg" data-product-page data-product-id="{{ $product->id }}">
         <div class="product-hero__wrap">
+
             <div class="product-hero__container">
 
                 <div class="product-hero__content">
                     <div class="product-hero__left">
                         <div class="product-hero__title">
-                            <h1>{{ $product->title }}</h1>
+                            <h1>{{ $h1 }}</h1>
                         </div>
                         <div class="product-hero__img-wrap">
                             <div class="product-hero__img">
@@ -39,17 +47,13 @@
                                          title="{{ $product->image_title }}">
                                 </picture>
                             </div>
-                            <p class="product-hero__img-text">
-                                Изображения служат только для ознакомления, см.&nbsp;техническую документацию
-                            </p>
+                            <p class="product-hero__img-text">Изображения служат только для ознакомления, см.&nbsp;техническую документацию</p>
                         </div>
                     </div>
-
                     <div class="product-hero__right">
                         <div class="product-hero__title">
-                            <h1>{{ $product->manufacturer->title }}</h1>
+                            <h1>{{ $h1 }}</h1>
                         </div>
-
                         <div class="product-hero__info">
                             <div class="product-hero__info-left">
                                 <div class="product-hero__characteristics">
@@ -66,11 +70,10 @@
                                     <a href="#product-characteristics" class="btn btn--secondary js-anchor-link">
                                         <span>Все характеристики</span>
                                         <svg aria-hidden="true">
-                                            <use xlink:href="{{ url('/images/sprite.svg#chevron-down') }}"></use>
+                                            <use xlink:href="images/sprite.svg#chevron-down"></use>
                                         </svg>
                                     </a>
                                 </div>
-
                                 <dl class="product-hero__numbs">
                                     <div class="product-hero__numbs-row">
                                         <dt class="product-hero__list-title">Номенклатурный номер:</dt>
@@ -99,7 +102,6 @@
                                     </div>
                                 </dl>
                             </div>
-
                             <div class="product-hero__info-right">
                                 <div class="product-hero__info-count form-input-count">
                                     <label for="product-count">Количество</label>
@@ -165,14 +167,11 @@
                                 </a>
                             </div>
                         </div>
-
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
-
     <div class="product-desc container-sm">
         <section>
             <div class="product-desc__title">
@@ -180,7 +179,6 @@
             </div>
             <p class="product-desc__description">{{ $product->description }}</p>
         </section>
-
         <section>
             <div class="product-desc__title">
                 <h2>Техническая документация</h2>
@@ -200,7 +198,6 @@
                 @endforeach
             </div>
         </section>
-
         <section id="product-characteristics" class="product-desc__characteristics">
             <div class="product-desc__title">
                 <h2>Технические характеристики</h2>

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-
 use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Http\Requests\Admin\Users\EditRequest;
@@ -12,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
+use Exception;;
 
 class UsersController extends Controller
 {
@@ -47,9 +47,18 @@ class UsersController extends Controller
      */
     public function store(StoreRequest $request): RedirectResponse
     {
-        $this->userRepository->create(array_merge($request->all(), ['password' => Hash::make($request->password)]));
+        try {
+            $this->userRepository->create(array_merge($request->all(), ['password' => Hash::make($request->password)]));
+        } catch (Exception $e) {
+            report($e);
 
-        return redirect()->route('cp.users.index')->with('success', 'Информация успешно добавлена!');
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage())
+                ->withInput();
+        }
+
+        return redirect()->route('admin.users.index')->with('success', 'Информация успешно добавлена!');
     }
 
     /**
@@ -58,13 +67,13 @@ class UsersController extends Controller
      */
     public function edit(int $id): View
     {
-        $user = $this->userRepository->find($id);
+        $row = $this->userRepository->find($id);
 
-        if (!$user) abort(404);
+        if (!$row) abort(404);
 
         $options = User::$role_name;
 
-        return view('cp.users.create_edit', compact('user', 'options'))->with('title', 'Редактировать администратора');
+        return view('cp.users.create_edit', compact('row', 'options'))->with('title', 'Редактировать администратора');
     }
 
     /**
@@ -73,9 +82,18 @@ class UsersController extends Controller
      */
     public function update(EditRequest $request): RedirectResponse
     {
-        $this->userRepository->update($request->id, $request->all());
+        try {
+            $this->userRepository->update($request->id, $request->all());
+        } catch (Exception $e) {
+            report($e);
 
-        return redirect()->route('cp.users.index')->with('success', 'Данные успешно обновлены!');
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage())
+                ->withInput();
+        }
+
+        return redirect()->route('admin.users.index')->with('success', 'Данные успешно обновлены!');
     }
 
     /**

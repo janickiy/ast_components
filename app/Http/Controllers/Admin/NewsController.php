@@ -10,6 +10,7 @@ use App\Repositories\NewsRepository;
 use App\Services\NewsService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use Exception;
 
 class NewsController extends Controller
 {
@@ -46,13 +47,22 @@ class NewsController extends Controller
      */
     public function store(StoreRequest $request): RedirectResponse
     {
-        if ($request->hasFile('image')) {
-            $filename = $this->newsService->storeImage($request);
-        }
+        try {
+            if ($request->hasFile('image')) {
+                $filename = $this->newsService->storeImage($request);
+            }
 
-        $this->newsRepository->create(array_merge(array_merge($request->all()), [
-            'image' => $filename ?? null,
-        ]));
+            $this->newsRepository->create(array_merge(array_merge($request->all()), [
+                'image' => $filename ?? null,
+            ]));
+        } catch (Exception $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage())
+                ->withInput();
+        }
 
         return redirect()->route('admin.news.index')->with('success', 'Данные успешно добавлены');
     }
@@ -78,15 +88,24 @@ class NewsController extends Controller
      */
     public function update(EditRequest $request): RedirectResponse
     {
-        $news = $this->newsRepository->find($request->id);
+        try {
+            $news = $this->newsRepository->find($request->id);
 
-        if ($request->hasFile('image')) {
-            $filename = $this->newsService->updateImage($news, $request);
+            if ($request->hasFile('image')) {
+                $filename = $this->newsService->updateImage($news, $request);
+            }
+
+            $this->newsRepository->update($request->id, array_merge(array_merge($request->all()), [
+                'image' => $filename ?? null,
+            ]));
+        } catch (Exception $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage())
+                ->withInput();
         }
-
-        $this->newsRepository->update($request->id, array_merge(array_merge($request->all()), [
-            'image' => $filename ?? null,
-        ]));
 
         return redirect()->route('admin.news.index')->with('success', 'Данные успешно обновлены');
     }

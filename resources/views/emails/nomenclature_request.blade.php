@@ -13,10 +13,10 @@
 </h2>
 
 <p>
-    Название компании: {{ $company }}<br>
-    Имя: {{ $name }}<br>
-    Электронная почта: {{ $email }}<br>
-    Телефон: {{ $phone }}<br>
+    Название компании: {{ $data['company'] ?? null  }}<br>
+    Имя: {{ $data['name'] ?? null  }}<br>
+    Электронная почта: {{ $data['email'] ?? null  }}<br>
+    Телефон: {{ $data['phone'] ?? null }}<br>
 </p>
 
 <h2>
@@ -24,18 +24,18 @@
 </h2>
 
 <p>
-    Маркировка: {{ $label }}<br>
-    Количество: {{ $count }}<br>
-    Ед.упаковки: {{ $unit }}<br>
+    Маркировка: {{ $data['nomenclature'] ?? null }}<br>
+    Количество: {{ $data['count'] ?? null  }}<br>
+    Ед.упаковки: {{  $data['unit'] ?? null  }}<br>
 </p>
 
-@if($message)
+@if($data['message'])
     <h2>
         Соообщение
     </h2>
 
     <p>
-        {{ $message }}
+        {{  $data['message']  }}
     </p>
 @endif()
 

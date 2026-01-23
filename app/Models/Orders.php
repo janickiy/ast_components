@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\StaticTableName;
 use Carbon\Carbon;
 use App\Enums\OrderStatus;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +12,8 @@ use Illuminate\Support\Facades\Storage;
 
 class Orders extends Model
 {
+    use StaticTableName;
+
     protected $table = 'orders';
 
     /**
@@ -70,7 +73,7 @@ class Orders extends Model
      */
     public function getInvoice(): ?string
     {
-        return Storage::disk('public')->exists('invoices/' . $this->invoice) === true ? Storage::disk('public')->url('invoices/' . $this->invoice) : null;
+        return Storage::disk('public')->exists($this->table . '/' . $this->invoice) === true ? Storage::disk('public')->url($this->table . '/' . $this->invoice) : null;
     }
 
     /**

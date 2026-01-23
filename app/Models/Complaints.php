@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
-
+use App\Traits\StaticTableName;
 use App\Enums\ComplaintStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class Complaints extends Model
 {
+    use StaticTableName;
+
     protected $table = 'complaints';
 
     public const TYPE_DEFECTIVE = 0;
@@ -79,5 +82,12 @@ class Complaints extends Model
             ComplaintStatus::Closed->value     => ComplaintStatus::Closed->label(),
             ComplaintStatus::Checked->value    => ComplaintStatus::Checked->label(),
         ];
+    }
+
+    public function scopeRemove(): void
+    {
+        if (Storage::disk('public')->exists($this->table . '/' . $this->blank) === true) Storage::disk('public')->delete($this->table . '/' . $this->blank);
+
+        $this->delete();
     }
 }

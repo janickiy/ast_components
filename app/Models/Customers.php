@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Helpers\StringHelper;
+use App\Traits\StaticTableName;
 use App\Notifications\ResetPasswordNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -14,7 +14,7 @@ use Rappasoft\LaravelAuthenticationLog\Traits\AuthenticationLoggable;
 class Customers extends Authenticatable
 {
     /** @use HasFactory<\database\database\migrations\database\factories\UserFactory> */
-    use HasFactory, Notifiable, AuthenticationLoggable;
+    use HasFactory, Notifiable, AuthenticationLoggable, StaticTableName;
 
     protected $table = 'customers';
 

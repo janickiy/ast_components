@@ -34,11 +34,8 @@
                             <p>*-обязательные поля</p>
 
                             <div class="form-group">
-
                                 {!! Form::label('title', 'Название*') !!}
-
                                 {!! Form::text('title', old('title', $row->title ?? null), ['class' => 'form-control']) !!}
-
                                 @if ($errors->has('title'))
                                     <p class="text-danger">{{ $errors->first('title') }}</p>
                                 @endif
@@ -46,11 +43,8 @@
                             </div>
 
                             <div class="form-group">
-
                                 {!! Form::label('description', 'Описание*') !!}
-
                                 {!! Form::textarea('description', old('description', $row->description ?? null), ['rows' => "3", 'placeholder' => "Описание",  'id' => 'summernote', 'style' => "display: none;"]) !!}
-
                                 @if ($errors->has('description'))
                                     <p class="text-danger">{{ $errors->first('description') }}</p>
                                 @endif
@@ -58,21 +52,15 @@
                             </div>
 
                             <div class="form-group">
-
                                 {!! Form::label('country', 'Страна') !!}
-
                                 {!! Form::text('country', old('country', $row->country ?? null), ['class' => 'form-control']) !!}
-
                                 @if ($errors->has('country'))
                                     <p class="text-danger">{{ $errors->first('country') }}</p>
                                 @endif
-
                             </div>
 
                             <div class="form-group">
-
                                 {!! Form::label('image', 'Фото') !!}
-
                                 <div class="input-group">
                                     <div class="custom-file">
                                         {!! Form::file('image',  [ 'class' => 'custom-file-input']) !!}
@@ -100,11 +88,8 @@
                             </div>
 
                             <div class="form-group">
-
                                 {!! Form::label('image_title', 'IMAGE TITLE') !!}
-
                                 {!! Form::text('image_title', old('image_title', $row->image_title ?? null), ['class' => 'form-control']) !!}
-
                                 @if ($errors->has('image_title'))
                                     <p class="text-danger">{{ $errors->first('image_title') }}</p>
                                 @endif
@@ -112,11 +97,8 @@
                             </div>
 
                             <div class="form-group">
-
                                 {!! Form::label('image_alt', 'IMAGE ALT') !!}
-
                                 {!! Form::text('image_alt', old('image_alt', $row->image_alt ?? null), ['class' => 'form-control']) !!}
-
                                 @if ($errors->has('image_alt'))
                                     <p class="text-danger">{{ $errors->first('image_alt') }}</p>
                                 @endif
@@ -124,11 +106,8 @@
                             </div>
 
                             <div class="form-group">
-
                                 {!! Form::label('slug', 'ЧПУ*') !!}
-
                                 {!! Form::text('slug', old('slug', $row->slug ?? null), ['class' => 'form-control', 'id' => 'slug']) !!}
-
                                 @if ($errors->has('slug'))
                                     <p class="text-danger">{{ $errors->first('slug') }}</p>
                                 @endif
@@ -136,11 +115,8 @@
                             </div>
 
                             <div class="form-group">
-
                                 {!! Form::label('meta_title', 'Seo title') !!}
-
                                 {!! Form::text('meta_title', old('meta_title', $row->meta_title ?? null), ['class' => 'form-control']) !!}
-
                                 @if ($errors->has('meta_title'))
                                     <p class="text-danger">{{ $errors->first('meta_title') }}</p>
                                 @endif
@@ -148,12 +124,8 @@
                             </div>
 
                             <div class="form-group">
-
                                 {!! Form::label('meta_title', 'Meta description') !!}
-
                                 {!! Form::textarea('meta_description', old('meta_description', $row->meta_description ?? null), ['rows' => "3", 'class' => 'form-control']) !!}
-
-
                                 @if ($errors->has('meta_description'))
                                     <p class="text-danger">{{ $errors->first('meta_description') }}</p>
                                 @endif
@@ -161,23 +133,16 @@
                             </div>
 
                             <div class="form-group">
-
                                 {!! Form::label('meta_keywords', 'Meta keywords') !!}
-
                                 {!! Form::textarea('meta_keywords', old('meta_keywords', $row->meta_keywords ?? null), ['rows' => "3", 'class' => 'form-control']) !!}
-
                                 @if ($errors->has('meta_keywords'))
                                     <p class="text-danger">{{ $errors->first('meta_keywords') }}</p>
                                 @endif
-
                             </div>
 
                             <div class="form-group">
-
                                 {!! Form::label('seo_h1', 'Seo h1') !!}
-
                                 {!! Form::text('seo_h1', old('seo_h1', $row->seo_h1 ?? null), ['class' => 'form-control']) !!}
-
                                 @if ($errors->has('seo_h1'))
                                     <p class="text-danger">{{ $errors->first('seo_h1') }}</p>
                                 @endif
@@ -185,11 +150,8 @@
                             </div>
 
                             <div class="form-group">
-
                                 {!! Form::label('seo_url_canonical', 'Seo url canonical') !!}
-
                                 {!! Form::text('seo_url_canonical', old('seo_url_canonical', $row->seo_url_canonical ?? null), ['class' => 'form-control']) !!}
-
                                 @if ($errors->has('seo_url_canonical'))
                                     <p class="text-danger">{{ $errors->first('seo_url_canonical') }}</p>
                                 @endif
@@ -197,11 +159,8 @@
                             </div>
 
                             <div class="form-check">
-
                                 {!! Form::checkbox('seo_sitemap', 1, isset($row) ? ($row->seo_sitemap): 1, ['class' => 'form-check-input']) !!}
-
                                 {!! Form::label('seo_sitemap', 'Отображать в карте сайта', ['class' => 'form-check-label']) !!}
-
                                 @if ($errors->has('seo_sitemap'))
                                     <p class="text-danger">{{ $errors->first('seo_sitemap') }}</p>
                                 @endif
@@ -209,11 +168,8 @@
                             </div>
 
                             <div class="form-check">
-
                                 {!! Form::checkbox('published', 1, isset($row) ? ($row->published): 1, ['class' => 'form-check-input']) !!}
-
                                 {!! Form::label('published', 'Публиковать', ['class' => 'form-check-label']) !!}
-
                                 @if ($errors->has('published'))
                                     <p class="text-danger">{{ $errors->first('published') }}</p>
                                 @endif

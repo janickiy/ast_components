@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-
 use App\Http\Requests\Admin\ProductDocuments\EditRequest;
 use App\Http\Requests\Admin\ProductDocuments\StoreRequest;
 use App\Http\Requests\Admin\ProductParameters\DeleteRequest;
@@ -12,6 +11,8 @@ use App\Services\ProductDocumentsService;
 use App\Helpers\StringHelper;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use Exception;
+
 
 class ProductDocumentsController extends Controller
 {
@@ -20,7 +21,10 @@ class ProductDocumentsController extends Controller
      * @param ProductsRepository $productsRepository
      * @param ProductDocumentsService $productDocumentsService
      */
-    public function __construct(private ProductDocumentsRepository $productDocumentsRepository, private ProductsRepository $productsRepository, private ProductDocumentsService $productDocumentsService)
+    public function __construct(
+        private ProductDocumentsRepository $productDocumentsRepository,
+        private ProductsRepository $productsRepository,
+        private ProductDocumentsService $productDocumentsService)
     {
         parent::__construct();
     }
@@ -64,8 +68,17 @@ class ProductDocumentsController extends Controller
      */
     public function store(StoreRequest $request): RedirectResponse
     {
-        $filename = $this->productDocumentsService->storeFile($request);
-        $this->productDocumentsRepository->create(array_merge($request->all(), ['file' => $filename]));
+        try {
+            $filename = $this->productDocumentsService->storeFile($request);
+            $this->productDocumentsRepository->create(array_merge($request->all(), ['file' => $filename]));
+        } catch (Exception $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage())
+                ->withInput();
+        }
 
         return redirect()->route('admin.product_documents.index', ['product_id' => $request->product_id])->with('success', 'Информация успешно добавлена');
     }
@@ -95,15 +108,24 @@ class ProductDocumentsController extends Controller
      */
     public function update(EditRequest $request): RedirectResponse
     {
-        $row = $this->productDocumentsRepository->find($request->id);
+        try {
+            $row = $this->productDocumentsRepository->find($request->id);
 
-        if ($request->hasFile('file')) {
-            $filename = $this->productDocumentsService->updateFile($row->id, $request);
+            if ($request->hasFile('file')) {
+                $filename = $this->productDocumentsService->updateFile($row->id, $request);
+            }
+
+            $this->productDocumentsRepository->update($request->id, array_merge(array_merge($request->all()), [
+                'file' => $filename ?? null,
+            ]));
+        } catch (Exception $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage())
+                ->withInput();
         }
-
-        $this->productDocumentsRepository->update($request->id, array_merge(array_merge($request->all()), [
-            'file' => $filename ?? null,
-        ]));
 
         return redirect()->route('admin.product_documents.index', ['product_id' => $row->product_id])->with('success', 'Данные обновлены');
     }

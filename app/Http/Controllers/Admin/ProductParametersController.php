@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-
 use App\Repositories\ProductParametersRepository;
 use App\Repositories\ProductsRepository;
 use App\Http\Requests\Admin\ProductParameters\EditRequest;
@@ -10,6 +9,7 @@ use App\Http\Requests\Admin\ProductParameters\StoreRequest;
 use App\Http\Requests\Admin\ProductParameters\DeleteRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use Exception;
 
 class ProductParametersController extends Controller
 {
@@ -59,7 +59,16 @@ class ProductParametersController extends Controller
      */
     public function store(StoreRequest $request): RedirectResponse
     {
-        $this->productParametersRepository->create(array_merge($request->all(), ['category_id' => $request->category_id ?? 0]));;
+        try {
+            $this->productParametersRepository->create(array_merge($request->all(), ['category_id' => $request->category_id ?? 0]));
+        } catch (Exception $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage())
+                ->withInput();
+        }
 
         return redirect()->route('admin.product_parameters.index', ['product_id' => $request->product_id])->with('success', 'Информация успешно добавлена');
     }
@@ -92,7 +101,16 @@ class ProductParametersController extends Controller
 
         if (!$row) abort(404);
 
-        $this->productParametersRepository->update($request->id, $request->all());
+        try {
+            $this->productParametersRepository->update($request->id, $request->all());
+        } catch (Exception $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage())
+                ->withInput();
+        }
 
         return redirect()->route('admin.product_parameters.index', ['product_id' => $row->product_id])->with('success', 'Данные обновлены');
     }

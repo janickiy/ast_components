@@ -14,17 +14,19 @@ class RedirectRepository extends BaseRepository
     /**
      * @param int $id
      * @param array $data
-     * @return null
+     * @return Redirect|null
      */
-    public function update(int $id, array $data): mixed
+    public function update(int $id, array $data): ?Redirect
     {
-        $catalog = $this->model->find($id);
+        $model = $this->model->find($id);
 
-        if ($catalog) {
-            $catalog->from = $data['from'];
-            $catalog->to = $data['to'];
-            $catalog->status = (int) $data['status'];
-            $catalog->save();
+        if ($model) {
+            $model->from = $data['from'];
+            $model->to = $data['to'];
+            $model->status = (int) $data['status'];
+            $model->save();
+
+            return $model;
         }
         return null;
     }

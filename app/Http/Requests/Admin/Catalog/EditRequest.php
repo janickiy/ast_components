@@ -24,8 +24,8 @@ class EditRequest extends FormRequest
         return [
             'id'   => 'required|integer|exists:catalogs,id',
             'name' => 'required',
-            'slug' => 'required|unique:catalog,slug,' . $this->id,
-            'parent_id' => 'integer|nullable'
+            'slug' => 'required|unique:catalogs,slug,' . $this->id,
+            'parent_id' => $this->parent_id > 0 ? 'nullable|integer|exists:catalogs,id' : 'nullable|integer',
         ];
     }
 }

@@ -14,17 +14,19 @@ class ProductParametersRepository extends BaseRepository
     /**
      * @param int $id
      * @param array $data
-     * @return null
+     * @return ProductParameters|null
      */
-    public function update(int $id, array $data): mixed
+    public function update(int $id, array $data): ?ProductParameters
     {
-        $productParameters = $this->model->find($id);
+        $model = $this->model->find($id);
 
-        if ($productParameters) {
-            $productParameters->name = $data['name'];
-            $productParameters->value = $data['value'];
-            $productParameters->product_id = (int) $data['product_id'];
-            $productParameters->save();
+        if ($model) {
+            $model->name = $data['name'];
+            $model->value = $data['value'];
+            $model->product_id = (int) $data['product_id'];
+            $model->save();
+
+            return $model;
         }
         return null;
     }

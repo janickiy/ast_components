@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\OrderProduct;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 class OrderProductRepository extends BaseRepository
 {
@@ -15,20 +14,20 @@ class OrderProductRepository extends BaseRepository
     /**
      * @param int $id
      * @param array $data
-     * @return mixed
+     * @return OrderProduct|null
      */
-    public function update(int $id, array $data): mixed
+    public function update(int $id, array $data): ?OrderProduct
     {
-        $orderProduct = $this->model->find($id);
+        $model = $this->model->find($id);
 
-        if ($orderProduct) {
-            $orderProduct->product_info = $data['product_info'];
-            $orderProduct->count = (int) $data['count'];
-            $orderProduct->price = (float) $data['price'];
-            $orderProduct->save();
+        if ($model) {
+            $model->product_info = $data['product_info'];
+            $model->count = (int) $data['count'];
+            $model->price = (float) $data['price'];
+            $model->save();
+
+            return $model;
         }
         return null;
     }
-
-
 }

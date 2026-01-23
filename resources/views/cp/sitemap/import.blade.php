@@ -31,7 +31,6 @@
                                 <div class="input-group">
                                     <div class="custom-file">
                                         {!! Form::file('file',  [ 'class' => 'custom-file-input']) !!}
-
                                         {!! Form::label('file', 'Файл sitemap.xml*', ['class' => 'custom-file-label']) !!}
                                     </div>
                                     <div class="input-group-append">

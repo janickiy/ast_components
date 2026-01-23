@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers\Frontend;
 
-
-use App\Helpers\MenuHelper;
-use App\Models\Catalog;
 use App\Models\Customers;
-use App\Models\Feedback;
 use App\Http\Controllers\Controller;
+use App\Models\Invites;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
@@ -27,10 +24,7 @@ class ResetPasswordController extends Controller
     {
         $title = 'Сброс пароля';
 
-        $menu = MenuHelper::getMenuList();
-        $catalogsList = Catalog::getCatalogList();
-        $catalogs = Catalog::orderBy('name')->where('parent_id', 0)->get();
-        $options = Feedback::getPlatformList();
+        $options = Invites::getPlatformList();
         $password = Str::password();
 
         $status = Password::broker('customer')->reset(
@@ -52,18 +46,12 @@ class ResetPasswordController extends Controller
         if ($status === Password::PASSWORD_RESET) {
             return view('frontend.auth.reset_password', [
                 'msg' => 'Новый пароль создан и отправлен на адрес электронной почты указанный в профиле',
-                'menu' => $menu,
-                'catalogsList' => $catalogsList,
-                'catalogs' => $catalogs,
                 'options' => $options,
             ])->with('title', $title);
         }
 
         return view('frontend.auth.reset_password', [
             'error' => __($status),
-            'menu' => $menu,
-            'catalogsList' => $catalogsList,
-            'catalogs' => $catalogs,
             'options' => $options,
         ])->with('title', $title);
     }

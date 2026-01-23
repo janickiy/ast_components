@@ -10,6 +10,7 @@ use App\Repositories\ManufacturerRepository;
 use App\Services\ManufacturerService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use Exception;
 
 class ManufacturersController extends Controller
 {
@@ -46,27 +47,36 @@ class ManufacturersController extends Controller
      */
     public function store(StoreRequest $request): RedirectResponse
     {
-        if ($request->hasFile('image')) {
-            $originName = $this->manufacturerService->storeImage($request);
+        try {
+            if ($request->hasFile('image')) {
+                $originName = $this->manufacturerService->storeImage($request);
+            }
+
+            $published = 0;
+
+            if ($request->input('published')) {
+                $published = 1;
+            }
+
+            $seo_sitemap = 0;
+
+            if ($request->input('seo_sitemap')) {
+                $seo_sitemap = 1;
+            }
+
+            $this->manufacturerRepository->create(array_merge(array_merge($request->all()), [
+                'image' => $originName ?? null,
+                'published' => $published,
+                'seo_sitemap' => $seo_sitemap,
+            ]));
+        } catch (Exception $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage())
+                ->withInput();
         }
-
-        $published = 0;
-
-        if ($request->input('published')) {
-            $published = 1;
-        }
-
-        $seo_sitemap = 0;
-
-        if ($request->input('seo_sitemap')) {
-            $seo_sitemap = 1;
-        }
-
-        $this->manufacturerRepository->create(array_merge(array_merge($request->all()), [
-            'image' => $originName ?? null,
-            'published' => $published,
-            'seo_sitemap' => $seo_sitemap,
-        ]));
 
         return redirect()->route('admin.manufacturers.index')->with('success', 'Данные успешно добавлены');
     }
@@ -92,35 +102,44 @@ class ManufacturersController extends Controller
      */
     public function update(EditRequest $request): RedirectResponse
     {
-        $row = $this->manufacturerRepository->find($request->input('id'));
+        try {
+            $row = $this->manufacturerRepository->find($request->input('id'));
 
-        $image = $request->pic;
+            $image = $request->pic;
 
-        if ($image != null) {
-            $this->manufacturerService->deleteImage($row);
+            if ($image != null) {
+                $this->manufacturerService->deleteImage($row);
+            }
+
+            if ($request->hasFile('image')) {
+                $originName = $this->manufacturerService->updateImage($row, $request);
+            }
+
+            $published = 0;
+
+            if ($request->input('published')) {
+                $published = 1;
+            }
+
+            $seo_sitemap = 0;
+
+            if ($request->input('seo_sitemap')) {
+                $seo_sitemap = 1;
+            }
+
+            $this->manufacturerRepository->update($request->id, array_merge($request->all(), [
+                'seo_sitemap' => $seo_sitemap,
+                'image' => $originName ?? null,
+                'published' => $published,
+            ]));
+        } catch (Exception $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage())
+                ->withInput();
         }
-
-        if ($request->hasFile('image')) {
-            $originName = $this->manufacturerService->updateImage($row, $request);
-        }
-
-        $published = 0;
-
-        if ($request->input('published')) {
-            $published = 1;
-        }
-
-        $seo_sitemap = 0;
-
-        if ($request->input('seo_sitemap')) {
-            $seo_sitemap = 1;
-        }
-
-        $this->manufacturerRepository->update($request->id, array_merge($request->all(), [
-            'seo_sitemap' => $seo_sitemap,
-            'image' => $originName ?? null,
-            'published' => $published,
-        ]));
 
         return redirect()->route('admin.manufacturers.index')->with('success', 'Данные успешно обновлены');
     }

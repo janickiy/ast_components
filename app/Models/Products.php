@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\StaticTableName;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Products extends Model
 {
+    use StaticTableName;
+
     protected $table = 'products';
 
     /**
@@ -85,8 +88,8 @@ class Products extends Model
      */
     public function getThumbnailUrl(): string
     {
-        if (Storage::disk('public')->exists('products/' . $this->thumbnail) === true) {
-            return Storage::disk('public')->url('products/' . $this->thumbnail);
+        if (Storage::disk('public')->exists($this->table . '/' . $this->thumbnail) === true) {
+            return Storage::disk('public')->url($this->table . '/' . $this->thumbnail);
         } else {
             return asset('/images/no_image.jpg');
         }
@@ -97,8 +100,8 @@ class Products extends Model
      */
     public function getOriginUrl(): string
     {
-        if (Storage::disk('public')->exists('products/' . $this->origin) === true) {
-            return Storage::disk('public')->url('products/' . $this->origin);
+        if (Storage::disk('public')->exists($this->table . '/' . $this->origin) === true) {
+            return Storage::disk('public')->url($this->table . '/' . $this->origin);
         } else {
             return asset('/images/no_image.jpg');
         }
@@ -143,13 +146,13 @@ class Products extends Model
      */
     public function scopeRemove(): void
     {
-        if (Storage::disk('public')->exists('products/' . $this->thumbnail) === true) Storage::disk('public')->delete('products/' . $this->thumbnail);
-        if (Storage::disk('public')->exists('products/' . $this->origin) === true) Storage::disk('public')->delete('products/' . $this->origin);
+        if (Storage::disk('public')->exists($this->table . '/' . $this->thumbnail) === true) Storage::disk('public')->delete($this->table . '/' . $this->thumbnail);
+        if (Storage::disk('public')->exists($this->table . '/' . $this->origin) === true) Storage::disk('public')->delete($this->table . '/' . $this->origin);
 
         $this->photos()->delete();
 
         foreach ($this->documents as $document) {
-            if (Storage::disk('public')->exists('documents/' . $document->path) === true) Storage::disk('public')->delete('documents/' . $document->path);
+            if (Storage::disk('public')->exists($this->table . '/' . $document->path) === true) Storage::disk('public')->delete($this->table . '/' . $document->path);
         }
 
         $this->documents()->delete();

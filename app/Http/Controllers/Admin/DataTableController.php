@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 
-use App\Models\{
-    Customers,
+use Carbon\Carbon;
+use App\Models\{Customers,
+    Complaints,
     News,
+    Requests,
     User,
     Feedback,
     Pages,
@@ -18,7 +20,7 @@ use App\Models\{
     ProductParameters,
     Orders,
     OrderProduct,
-};
+    Invites};
 use App\Helpers\StringHelper;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
@@ -44,6 +46,9 @@ class DataTableController extends Controller
 
                 return '<div class="nobr"> ' . $editBtn . $deleteBtn . '</div>';
             })
+            ->editColumn('created_at', function ($row) {
+                return Carbon::parse($row->created_at)->format('d/m/Y H:i');
+            })
             ->rawColumns(['actions'])->make(true);
     }
 
@@ -62,6 +67,9 @@ class DataTableController extends Controller
 
                 return '<div class="nobr"> ' . $editBtn . $deleteBtn . '</div>';
             })
+            ->editColumn('created_at', function ($row) {
+                return Carbon::parse($row->created_at)->format('d/m/Y H:i');
+            })
             ->rawColumns(['actions'])->make(true);
     }
 
@@ -79,6 +87,9 @@ class DataTableController extends Controller
                 $deleteBtn = '<a title="удалить" class="btn btn-xs btn-danger deleteRow" id="' . $row->id . '"><span class="fa fa-trash"></span></a>';
 
                 return '<div class="nobr"> ' . $editBtn . $deleteBtn . '</div>';
+            })
+            ->editColumn('created_at', function ($row) {
+                return Carbon::parse($row->created_at)->format('d/m/Y H:i');
             })
             ->rawColumns(['actions'])->make(true);
     }
@@ -101,6 +112,9 @@ class DataTableController extends Controller
             ->editColumn('description', function ($row) {
                 return StringHelper::shortText(StringHelper::clearHtmlTags($row->description), 800);
             })
+            ->editColumn('created_at', function ($row) {
+                return Carbon::parse($row->created_at)->format('d/m/Y H:i');
+            })
             ->rawColumns(['actions'])->make(true);
     }
 
@@ -118,6 +132,9 @@ class DataTableController extends Controller
 
                 return '<div class="nobr"> ' . $editBtn . '</div>';
             })
+            ->editColumn('created_at', function ($row) {
+                return Carbon::parse($row->created_at)->format('d/m/Y H:i');
+            })
             ->rawColumns(['actions'])->make(true);
     }
 
@@ -134,7 +151,7 @@ class DataTableController extends Controller
                 $editBtn = '<a title="редактировать" class="btn btn-xs btn-primary"  href="' . URL::route('admin.users.edit', ['id' => $row->id]) . '"><span  class="fa fa-edit"></span></a> &nbsp;';
 
                 if ($row->id !== Auth::id())
-                    $deleteBtn = '<a title="удалить" class="btn btn-xs btn-danger deleteRow" id="' . $row->id . '"><span class="fa fa-remove"></span></a>';
+                    $deleteBtn = '<a title="удалить" class="btn btn-xs btn-danger deleteRow" id="' . $row->id . '"><span class="fa fa-trash"></span></a>';
                 else
                     $deleteBtn = '';
 
@@ -152,6 +169,9 @@ class DataTableController extends Controller
                         return '';
                 }
             })
+            ->editColumn('created_at', function ($row) {
+                return Carbon::parse($row->created_at)->format('d/m/Y H:i');
+            })
             ->rawColumns(['action', 'id'])->make(true);
     }
 
@@ -164,15 +184,19 @@ class DataTableController extends Controller
         $row = Feedback::query();
 
         return Datatables::of($row)
-            ->addColumn('actions', function ($row) {
+            ->addColumn('action', function ($row) {
+                $editBtn = '<a title="редактировать" class="btn btn-xs btn-primary"  href="' . URL::route('admin.feedback.edit', ['id' => $row->id]) . '"><span  class="fa fa-edit"></span></a> &nbsp;';
                 $deleteBtn = '<a title="удалить" class="btn btn-xs btn-danger deleteRow" id="' . $row->id . '"><span class="fa fa-trash"></span></a>';
 
-                return '<div class="nobr"> ' . $deleteBtn . '</div>';
+                return '<div class="nobr"> ' . $editBtn . $deleteBtn . '</div>';
             })
-            ->editColumn('type', function ($row) {
-                return Feedback::$type_name[$row->type];
+            ->editColumn('status', function ($row) {
+                return '<p class="' . $row->getStatus()?->cssColor() . '">' . $row->getStatus()?->label() . '</p>';
             })
-            ->rawColumns(['actions'])->make(true);
+            ->editColumn('created_at', function ($row) {
+                return Carbon::parse($row->created_at)->format('d/m/Y H:i');
+            })
+            ->rawColumns(['action', 'status'])->make(true);
     }
 
     /**
@@ -181,7 +205,7 @@ class DataTableController extends Controller
      */
     public function products(): JsonResponse
     {
-        $row = Products::selectRaw('products.id,products.title,products.article,products.n_number,products.price,products.in_stock,products.catalog_id,products.slug,products.created_at,products.description,catalogs.name AS catalog, manufacturers.title AS manufacturer')
+        $row = Products::selectRaw('products.*,catalogs.name AS catalog, manufacturers.title AS manufacturer')
             ->leftJoin('catalogs', 'catalogs.id', '=', 'products.catalog_id')
             ->leftJoin('manufacturers', 'manufacturers.id', '=', 'products.manufacturer_id')
             ->groupBy('catalogs.name')
@@ -205,6 +229,9 @@ class DataTableController extends Controller
 
                 return '<div class="nobr"> ' . $editBtn . $deleteBtn . '</div>';
             })
+            ->editColumn('message', function ($row) {
+                return $row->message ? StringHelper::shortText($row->message) : '';
+            })
             ->editColumn('title', function ($row) {
                 $title = $row->title;
                 $title .= '<br><a href="' . URL::route('admin.product_documents.index', ['product_id' => $row->id]) . '">Техническая документация</a><br>';
@@ -218,7 +245,10 @@ class DataTableController extends Controller
                 return '<img  width="150" src="' . url($product->getThumbnailUrl()) . '" alt="" loading="lazy">';
             })
             ->editColumn('in_stock', function ($row) {
-                return $row->in_stock == 1 ? 'да' : 'нет';
+                return $row->in_stock;
+            })
+            ->editColumn('created_at', function ($row) {
+                return Carbon::parse($row->created_at)->format('d/m/Y H:i');
             })
             ->rawColumns(['actions', 'title', 'thumbnail'])->make(true);
     }
@@ -241,6 +271,9 @@ class DataTableController extends Controller
             ->editColumn('published', function ($row) {
                 return $row->published == 1 ? 'да' : 'нет';
             })
+            ->editColumn('created_at', function ($row) {
+                return Carbon::parse($row->created_at)->format('d/m/Y H:i');
+            })
             ->rawColumns(['actions'])->make(true);
     }
 
@@ -259,6 +292,9 @@ class DataTableController extends Controller
                 $deleteBtn = '<a title="удалить" class="btn btn-xs btn-danger deleteRow" id="' . $row->id . '"><span class="fa fa-trash"></span></a>';
 
                 return '<div class="nobr"> ' . $editBtn . $deleteBtn . '</div>';
+            })
+            ->editColumn('created_at', function ($row) {
+                return Carbon::parse($row->created_at)->format('d/m/Y H:i');
             })
             ->rawColumns(['actions'])->make(true);
     }
@@ -279,6 +315,9 @@ class DataTableController extends Controller
 
                 return '<div class="nobr"> ' . $editBtn . $deleteBtn . '</div>';
             })
+            ->editColumn('created_at', function ($row) {
+                return Carbon::parse($row->created_at)->format('d/m/Y H:i');
+            })
             ->rawColumns(['actions'])->make(true);
     }
 
@@ -288,7 +327,7 @@ class DataTableController extends Controller
      */
     public function orders(): JsonResponse
     {
-        $row = Orders::selectRaw('orders.id,orders.status,orders.delivery_date,orders.invoice,orders.created_at,SUM(order_product.price * order_product.count) as sum, customers.name AS customer')
+        $row = Orders::selectRaw('orders.*,SUM(order_product.price * order_product.count) as sum, customers.name AS customer')
             ->leftJoin('customers', 'customers.id', '=', 'orders.customer_id')
             ->leftJoin('order_product', 'order_product.order_id', '=', 'orders.id')
             ->groupBy('orders.id')
@@ -311,7 +350,10 @@ class DataTableController extends Controller
                 return '<a href="' . URL::route('admin.order_product.index', ['order_id' => $row->id]) . '">' . $row->customer . '</a>';
             })
             ->editColumn('status', function ($row) {
-                return '<p class="' . $row->getStatus()?->cssColor() . '">' .$row->getStatus()?->label() . '</p>';
+                return '<p class="' . $row->getStatus()?->cssColor() . '">' . $row->getStatus()?->label() . '</p>';
+            })
+            ->editColumn('created_at', function ($row) {
+                return Carbon::parse($row->created_at)->format('d/m/Y H:i');
             })
             ->rawColumns(['actions', 'customer', 'status'])->make(true);
     }
@@ -332,6 +374,9 @@ class DataTableController extends Controller
             })
             ->editColumn('name', function ($row) {
                 return '<a href="' . URL::route('admin.customer_log.index', ['customer_id' => $row->id]) . '">' . $row->name . '</a>';
+            })
+            ->editColumn('created_at', function ($row) {
+                return Carbon::parse($row->created_at)->format('d/m/Y H:i');
             })
             ->rawColumns(['actions', 'name'])->make(true);
     }
@@ -361,8 +406,102 @@ class DataTableController extends Controller
 
         return Datatables::of($row)
             ->editColumn('login_successful', function ($row) {
-                return $row->login_successful == 1 ? 'да':'нет';
+                return $row->login_successful == 1 ? 'да' : 'нет';
+            })
+            ->editColumn('created_at', function ($row) {
+                return Carbon::parse($row->created_at)->format('d/m/Y H:i');
             })
             ->rawColumns([])->make(true);
+    }
+
+    /**
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function invites(): JsonResponse
+    {
+        $row = Invites::query();
+
+        return Datatables::of($row)
+            ->addColumn('actions', function ($row) {
+                $editBtn = '<a title="редактировать" class="btn btn-xs btn-primary"  href="' . URL::route('admin.invites.edit', ['id' => $row->id]) . '"><span  class="fa fa-edit"></span></a> &nbsp;';
+                $deleteBtn = '<a title="удалить" class="btn btn-xs btn-danger deleteRow" id="' . $row->id . '"><span class="fa fa-trash"></span></a>';
+
+                return '<div class="nobr"> ' . $editBtn . $deleteBtn . '</div>';
+            })
+            ->editColumn('platform', function ($row) {
+                return Invites::getPlatformList()[$row->platform] ?? '';
+            })
+            ->editColumn('created_at', function ($row) {
+                return Carbon::parse($row->created_at)->format('d/m/Y H:i');
+            })
+            ->rawColumns(['actions'])->make(true);
+    }
+
+    /**
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function complaints(): JsonResponse
+    {
+        $row = Complaints::selectRaw('complaints.*, products.title AS product, customers.name AS customer')
+            ->join('products', 'products.id', '=', 'complaints.product_id')
+            ->join('customers', 'customers.id', '=', 'complaints.customer_id')
+            ->groupBy('complaints.id')
+            ->groupBy('complaints.created_at')
+            ->groupBy('complaints.result')
+            ->groupBy('complaints.status')
+            ->groupBy('complaints.customer_id')
+            ->groupBy('complaints.return_count')
+            ->groupBy('complaints.order_id')
+            ->groupBy('complaints.order_id')
+            ->groupBy('products.title')
+            ->groupBy('customers.name');
+
+        return Datatables::of($row)
+            ->addColumn('action', function ($row) {
+                $editBtn = '<a title="редактировать" class="btn btn-xs btn-primary"  href="' . URL::route('admin.complaints.edit', ['id' => $row->id]) . '"><span  class="fa fa-edit"></span></a> &nbsp;';
+                $deleteBtn = '<a title="удалить" class="btn btn-xs btn-danger deleteRow" id="' . $row->id . '"><span class="fa fa-trash"></span></a>';
+
+                return '<div class="nobr"> ' . $editBtn . $deleteBtn . '</div>';
+            })
+            ->editColumn('created_at', function ($row) {
+                return Carbon::parse($row->created_at)->format('d/m/Y H:i');
+            })
+            ->editColumn('status', function ($row) {
+                return '<p class="' . $row->getStatus()?->cssColor() . '">' . $row->getStatus()?->label() . '</p>';
+            })
+            ->editColumn('type', function ($row) {
+                return Complaints::$type_name[$row->type] ?? '';
+            })
+            ->editColumn('product', function ($row) {
+                return $row->product;
+            })
+            ->rawColumns(['action', 'status'])->make(true);
+
+    }
+
+    /**
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function requests(): JsonResponse
+    {
+        $row = Requests::query();
+
+        return Datatables::of($row)
+            ->addColumn('action', function ($row) {
+                $editBtn = '<a title="редактировать" class="btn btn-xs btn-primary"  href="' . URL::route('admin.requests.edit', ['id' => $row->id]) . '"><span  class="fa fa-edit"></span></a> &nbsp;';
+                $deleteBtn = '<a title="удалить" class="btn btn-xs btn-danger deleteRow" id="' . $row->id . '"><span class="fa fa-trash"></span></a>';
+
+                return '<div class="nobr"> ' . $editBtn . $deleteBtn . '</div>';
+            })
+            ->editColumn('created_at', function ($row) {
+                return Carbon::parse($row->created_at)->format('d/m/Y H:i');
+            })
+            ->editColumn('status', function ($row) {
+                return '<p class="' . $row->getStatus()?->cssColor() . '">' . $row->getStatus()?->label() . '</p>';
+            })
+            ->rawColumns(['action', 'status'])->make(true);
     }
 }

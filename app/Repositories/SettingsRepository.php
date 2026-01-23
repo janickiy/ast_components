@@ -14,19 +14,21 @@ class SettingsRepository extends BaseRepository
     /**
      * @param int $id
      * @param array $data
-     * @return mixed
+     * @return Settings|null
      */
-    public function update(int $id, array $data): mixed
+    public function update(int $id, array $data): ?Settings
     {
-        $settings = $this->model->find($id);
+        $model = $this->model->find($id);
 
-        if ($settings) {
-            $settings->key_cd = $data['key_cd'] ?? null;
-            $settings->name = $data['name'] ;
-            $settings->display_value = $data['display_value'] ?? null;
-            $settings->value = $data['value'] ?? null;
-            $settings->published = (int) $data['published'];
-            $settings->save();
+        if ($model) {
+            $model->key_cd = $data['key_cd'] ?? null;
+            $model->name = $data['name'] ;
+            $model->display_value = $data['display_value'] ?? null;
+            $model->value = $data['value'] ?? null;
+            $model->published = (int) $data['published'];
+            $model->save();
+
+            return $model;
         }
         return null;
     }

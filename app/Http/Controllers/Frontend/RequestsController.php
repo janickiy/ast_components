@@ -2,25 +2,26 @@
 
 namespace App\Http\Controllers\Frontend;
 
-
-use App\DTO\Complaints\RequestsCreateData;
+use App\DTO\RequestsCreateData;
+use App\Helpers\SettingsHelper;
 use App\Http\Controllers\Controller;
-use App\Services\RequestsService;
-
-use App\Repositories\RequestsRepository;
-
-
-use App\Http\Requests\Frontend\NomenclatureRequest\NomenclatureRequest;
+use App\Http\Requests\Frontend\NomenclatureRequest\AddRequest;
+use App\Mail\NomenclatureRequestMailer;
 use App\Models\Customers;
 use App\Models\Seo;
+use App\Repositories\RequestsRepository;
+use App\Services\RequestsService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
-use Throwable;
+use Exception;
 
 class RequestsController extends Controller
 {
-    public function __construct(private RequestsRepository $requestsRepository, private RequestsService $requestsService)
+    public function __construct(
+        private RequestsRepository $requestsRepository,
+        private RequestsService $requestsService)
     {
     }
 
@@ -52,19 +53,32 @@ class RequestsController extends Controller
     /**
      * Добавляем запрос на номенклатуру
      *
-     * @param NomenclatureRequest $request
+     * @param AddRequest $request
      * @return RedirectResponse
      */
-    public function add(NomenclatureRequest $request): RedirectResponse
+    public function add(AddRequest $request): RedirectResponse
     {
         /** @var Customers $customer */
         $customer = Auth::guard('customer')->user();
 
         try {
-
             if ($request->hasFile('attach')) {
                 $attach = $this->requestsService->storeFile($request);
             }
+
+            $data = [
+                'company' => $request->input('company'),
+                'name' => $request->input('name'),
+                'email' => $request->input('email'),
+                'phone' => $request->input('phone'),
+                'attach' => $attach ?? null,
+                'message' => $request->input('message'),
+                'nomenclature' => $request->input('nomenclature'),
+                'count' => $request->input('count'),
+                'unit' => $request->input('unit'),
+            ];
+
+            Mail::to(explode(",", SettingsHelper::getInstance()->getValueForKey('EMAIL_NOTIFY')))->send(new NomenclatureRequestMailer($data));
 
             $this->requestsRepository->add(new RequestsCreateData(
                 name: $request->input('name'),
@@ -73,23 +87,23 @@ class RequestsController extends Controller
                 phone: $request->input('phone'),
                 message: $request->input('message'),
                 nomenclature: $request->input('nomenclature'),
-                count: (int) $request->input('count'),
-                unit: (int) $request->input('unit', 0),
+                count: (int)$request->input('count'),
+                unit: (int)$request->input('unit', 0),
                 attach: $attach ?? null,
                 ip: $request->ip(),
-                customerId: (int) $customer->id ?? null,
+                customerId: $customer?->id ?? null,
             ));
-        } catch (Throwable $exception) {
-            report($exception);
+        } catch (Exception $e) {
+            report($e);
 
             return redirect()
                 ->back()
-                ->withErrors(['error' => 'Не удалось создать претензию. Попробуйте позже.'])
+                ->with('error', 'Не удалось создать запрос номенклатуры. Попробуйте позже.')
                 ->withInput();
         }
 
         return redirect()
-            ->route('frontend.nomenclature_request.index')
-            ->with('success', 'Претензия успешно создана.');
+            ->back()
+            ->with('success', 'Запрос номенклатуры успешно создана.');
     }
 }
