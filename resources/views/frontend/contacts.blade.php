@@ -61,7 +61,7 @@
                         <span>Адрес</span>
                     </div>
                     <div class="contacts__info-text">
-                        {!! SettingsHelper::getInstance()->getValueForKey('YANDEX_MAP') !!}
+                        <a href="https://yandex.ru/maps/-/ccukboqbxa" target="_blank" rel="noopener noreferrer">Москва, проезд Южнопортовый 2-й, д.20А</a>
                     </div>
                 </div>
                 <div class="contacts__info-row">
