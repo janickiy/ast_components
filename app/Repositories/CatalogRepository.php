@@ -57,9 +57,9 @@ class CatalogRepository extends BaseRepository
 
     /**
      * @param int $parent_id
-     * @return Collection
+     * @return Collection|null
      */
-    public function getCatalogsByParentId(int $parent_id): Collection
+    public function getCatalogsByParentId(int $parent_id): ?Collection
     {
         return Catalog::query()
             ->where('parent_id', $parent_id)
@@ -134,5 +134,17 @@ class CatalogRepository extends BaseRepository
         }
 
         return $ids;
+    }
+
+    /**
+     * @param int $parent_id
+     * @return Collection|null
+     */
+    public function getFilterCatalogs(int $parent_id = 0): ?Collection
+    {
+        return Catalog::query()
+            ->where('parent_id', $parent_id)
+            ->orderBy('name')
+            ->get();
     }
 }

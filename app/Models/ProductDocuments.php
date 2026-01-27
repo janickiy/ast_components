@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use App\Traits\StaticTableName;
 use App\Helpers\StringHelper;
+use App\Http\Traits\StaticTableName;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 class ProductDocuments extends Model
 {

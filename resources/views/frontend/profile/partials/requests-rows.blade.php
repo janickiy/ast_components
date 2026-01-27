@@ -1,4 +1,4 @@
-@foreach($requests ?? [] as $request)
+@forelse($requests ?? [] as $request)
     <tr>
         <td>{{ $request->id }}</td>
         <td class="text-right">{{ $request->created_at->format('d.m.Y') }}</td>
@@ -13,4 +13,8 @@
             </div>
         </td>
     </tr>
-@endforeach
+@empty
+    <tr>
+        <td colspan="5" class="text-center">Запросов пока нет</td>
+    </tr>
+@endforelse

@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use App\Traits\StaticTableName;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Http\Traits\StaticTableName;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\URL;
 
 class Catalog extends Model
 {
@@ -71,17 +71,7 @@ class Catalog extends Model
      */
     public function getProductCount(): int
     {
-        $key = 'product-count-' . $this->id;
-
-        if (Cache::has($key)) {
-            return Cache::get($key);
-        } else {
-            $value = Products::where('catalog_id', $this->id)->count();
-
-            Cache::put($key, $value);
-
-            return $value;
-        }
+        return Products::where('catalog_id', $this->id)->count();
     }
 
     /**
@@ -94,9 +84,8 @@ class Catalog extends Model
         if (Cache::has($key)) {
             return Cache::get($key);
         } else {
-            $allChildren = [$this->id];
-
-            self::getAllChildren(self::query()->orderBy('name')->get(), $allChildren, $this->id);
+            $allChildren = self::getAllChildren($this->id);
+            $allChildren[] = $this->id;
 
             $value = Products::query()->whereIn('catalog_id', $allChildren)->count();
             Cache::put($key, $value);
@@ -188,21 +177,21 @@ class Catalog extends Model
     }
 
     /**
-     * @param object $categories
-     * @param array $allChildren
-     * @param int $parent_id
-     * @return void
+     * @param int $id
+     * @return array
      */
-    public static function getAllChildren(object $categories, array &$allChildren, int $parent_id = 0): void
+    public static function getAllChildren(int $id): array
     {
-        $cats = $categories->filter(function ($item) use ($parent_id) {
-            return $item->parent_id == $parent_id;
-        });
+        $children = self::where('parent_id', $id)->with('children')->get();
+        $ids = [];
+        foreach ($children as $child) {
+            $ids[] = $child->id;
 
-        foreach ($cats as $cat) {
-            array_push($allChildren, $cat->id);
-            self::getAllChildren($categories, $allChildren, $cat->id);
+            if ($child->children->count()) {
+                $ids = array_merge($ids, self::getAllChildren($child->id));
+            }
         }
+        return $ids;
     }
 
     /**

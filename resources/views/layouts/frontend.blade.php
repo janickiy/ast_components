@@ -14,13 +14,13 @@
     <link rel="shortcut icon" href="{{ url('/favicon/favicon.ico') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{  url('/favicon/apple-touch-icon.png') }}">
     <link rel="manifest" href="{{ url('/favicon/site.webmanifest') }}">
-    <meta name="apple-mobile-web-app-title" content="АСТ Групп">
+    <meta name="apple-mobile-web-app-title" content="АСТ Компонентс">
     <meta property="og:site_name" content="astc.ru">
     <meta property="og:title" content="@yield('title')">
     <meta property="og:description" content="@yield('description')">
     <meta property="og:type" content="website">
     <meta property="og:image" content="{{ url('/images/logo.jpg') }}">
-    <meta property="og:image:alt" content="@yield('title') АСТ Групп">
+    <meta property="og:image:alt" content="@yield('title') АСТ Компонентс">
     <meta property="og:url" content="@yield('seo_url_canonical')">
     <meta property="og:locale" content="ru_RU">
     <link rel="preload" href="{{ url('/fonts/PT-Root-UI-Regular.woff2') }}" as="font" type="font/woff2" crossorigin>
@@ -42,7 +42,7 @@
         };
     </script>
 
-    {!! Html::style('/css/styles.css?v=1') !!}
+    {!! Html::style('/css/styles.css?v=2') !!}
     {!! Html::style('/css/auth.css?v=2') !!}
 
     @yield('css')
@@ -121,7 +121,7 @@
             <div class="header__logo-wrap">
 
                 <a href="{{ url('/') }}" class="header__logo-link">
-                    <span class="sr-only">Перейти на главную страницу АСТ Групп</span>
+                    <span class="sr-only">Перейти на главную страницу АСТ Компонентс</span>
                 </a>
             </div>
             <div class="header__catalog js-header-catalog">
@@ -337,13 +337,13 @@
 <footer class="footer container-lg">
     <div class="footer__wrap">
         <div class="section-title">
-            <h2>АСТ Групп&nbsp; &#8212; &nbsp;надёжные поставки, долгосрочное партнёрство</h2>
+            <h2>АСТ Компонентс&nbsp; &#8212; &nbsp;надёжные поставки, долгосрочное партнёрство</h2>
         </div>
         <div class="footer__top">
             <div class="footer__logo-wrap">
 
                 <a href="{{ url('/') }}" class="footer__logo-link">
-                    <span class="sr-only">Перейти на главную страницу АСТ Групп</span>
+                    <span class="sr-only">Перейти на главную страницу АСТ Компонентс</span>
                 </a>
             </div>
             <div class="footer__main-links">
@@ -433,7 +433,7 @@
             </div>
         </div>
         <div class="footer__bottom">
-            <span class="footer__copyright">©{{ env('APP_NAME', 'АСТ Групп') }}, 2008-{{ date('Y') }}</span>
+            <span class="footer__copyright">©{{ env('APP_NAME', 'АСТ Компонентс') }}, 2008-{{ date('Y') }}</span>
             <a href="{{ route('frontend.page', ['slug' => 'privacy-policy']) }}" class="footer__privacy-link">Политика
                 конфиденциальности</a>
             <div class="footer__up-btn">
@@ -649,12 +649,6 @@
                             <span>Восстановить</span>
                         </button>
                     </div>
-                    <span class="success-message">
-                        <svg aria-hidden="true">
-                            <use xlink:href="{{ url('/images/sprite.svg#check-circle') }}"></use>
-                        </svg>
-                        <span>Код с новым паролем отправлено на указанный email</span>
-                    </span>
                     <div class="result"></div>
                 </form>
             </div>

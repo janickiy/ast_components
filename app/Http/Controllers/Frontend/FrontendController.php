@@ -7,14 +7,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Catalog;
 use App\Models\Invites;
 use App\Models\Manufacturers;
-use App\Models\News;
 use App\Models\Pages;
 use App\Models\Products;
 use App\Models\Seo;
-use App\Repositories\NewsRepository;
 use App\Repositories\ProductsRepository;
 use App\Repositories\CatalogRepository;
 use App\Services\CartService;
+use App\Http\Filters\ProductFilter;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -22,13 +21,10 @@ use Illuminate\Http\Request;
 
 class FrontendController extends Controller
 {
-    /**
-     * @param ProductsRepository $productRepository
-     */
+
     public function __construct(
         private ProductsRepository $productRepository,
         private CatalogRepository $catalogRepository,
-        private NewsRepository $newsRepository,
     )
     {
     }
@@ -100,7 +96,7 @@ class FrontendController extends Controller
      */
     public function invite(): View
     {
-        $seo = Seo::getSeo('frontend.invite', 'Пригласить АСТ Групп к участию в тендере');
+        $seo = Seo::getSeo('frontend.invite', 'Пригласить АСТ Компонентс к участию в тендере');
         $title = $seo['title'];
         $meta_description = $seo['meta_description'];
         $meta_keywords = $seo['meta_keywords'];
@@ -121,71 +117,6 @@ class FrontendController extends Controller
         )->with('title', $title);
     }
 
-    /**
-     * Список новостей
-     *
-     * @return View
-     */
-    public function news(): View
-    {
-        $seo = Seo::getSeo('frontend.news', 'Новости');
-        $title = $seo['title'];
-        $meta_description = $seo['meta_description'];
-        $meta_keywords = $seo['meta_keywords'];
-        $meta_title = $seo['meta_title'];
-        $seo_url_canonical = $seo['seo_url_canonical'];
-        $h1 = $seo['h1'];
-
-        $news = News::orderBy('created_at')->published()->paginate(9);
-
-        $newsBanner = $this->newsRepository->newsBanner();
-
-        return view('frontend.news', compact(
-                'meta_description',
-                'meta_keywords',
-                'meta_title',
-                'news',
-                'newsBanner',
-                'h1',
-                'seo_url_canonical'
-            )
-        )->with('title', $title);
-    }
-
-    /**
-     * Страница новости
-     *
-     * @param string $slug
-     * @return View
-     */
-    public function newsItem(string $slug): View
-    {
-        $news = News::where('slug', $slug)->published()->first();
-
-        if (!$news) abort(404);
-
-        $title = $news->title;
-        $meta_description = $news->meta_description ?? '';
-        $meta_keywords = $seo->meta_keywords ?? '';
-        $meta_title = $news->meta_title ?? '';
-        $seo_url_canonical = $news->seo_url_canonical ?? '';
-        $h1 = $news->seo_h1 ?? $title;
-
-        $breadcrumbs[] = ['url' => route('frontend.news'), 'title' => 'Новости'];
-        $lastNews = $this->newsRepository->lastNews(3);
-
-        return view('frontend.news_item', compact(
-                'meta_description',
-                'meta_keywords',
-                'meta_title',
-                'news',
-                'lastNews',
-                'breadcrumbs',
-                'h1',
-                'seo_url_canonical'
-            )
-        )->with('title', $title);
-    }
 
     /**
      * @return View
@@ -282,11 +213,14 @@ class FrontendController extends Controller
      * Каталог
      *
      * @param Request $request
+     * @param ProductFilter $filter
      * @param string|null $slug
      * @return View
      */
-    public function catalog(Request $request, ?string $slug = null): View
+    public function catalog(Request $request, ProductFilter $filter, ?string $slug = null): View
     {
+       // dd(request()->has('manufacturers') || request()->has('catalog_id'));
+
         $seo = Seo::getSeo('frontend.catalog', 'Каталог');
         $title = $seo['title'];
         $meta_description = $seo['meta_description'];
@@ -303,7 +237,11 @@ class FrontendController extends Controller
 
             if (!$catalog) abort(404);
 
-            $products = $catalog->products()->orderBy('in_stock', 'desc')->orderBy('price')->paginate(10);
+            $catalogIds = Catalog::getAllChildren($catalog->id);
+            $catalogIds[] = $catalog->id;
+            $filterCatalogs = $this->catalogRepository->getFilterCatalogs($catalog->id);
+
+            $products = $this->productRepository->getProducts($request, $filter,10, $catalogIds);
             $breadcrumbs[] = ['url' => route('frontend.catalog'), 'title' => 'Каталог'];
 
             $title = $catalog->name;
@@ -313,20 +251,14 @@ class FrontendController extends Controller
             $seo_url_canonical = $catalog->seo_url_canonical;
             $h1 = $catalog->seo_h1 ?? $title;
         } else {
-            $search = $request->get('q');
-
-            $q = Products::query()
-                ->orderBy('in_stock', 'desc')
-                ->orderBy('price');
-
-            if ($search) {
-                $q->where('title', 'LIKE', "%{$search}%");
-                $q->orWhere('article', 'LIKE', "%{$search}%");
-                $q->orWhere('n_number', 'LIKE', "%{$search}%");
-            }
-
-            $products = $q->paginate(10);
+            $catalog = null;
+            $catalogIds = null;
+            $products = $this->productRepository->getProducts($request, $filter, 10);
+            $filterCatalogs = $this->catalogRepository->getFilterCatalogs();
         }
+
+        $inStockCount = Products::getProductInStockCount($catalogIds);
+        $underOrder = Products::getProductUnderOrderCount($catalogIds);
 
         $productIds = $this->productRepository->viewedProducts();
         $cartItems = app(CartService::class)->items();
@@ -339,6 +271,11 @@ class FrontendController extends Controller
                 'manufacturers',
                 'productIds',
                 'breadcrumbs',
+                'catalogIds',
+                'catalog',
+                'inStockCount',
+                'underOrder',
+                'filterCatalogs',
                 'h1',
                 'seo_url_canonical',
                 'cartItems'

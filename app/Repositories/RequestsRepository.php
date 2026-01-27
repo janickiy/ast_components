@@ -5,8 +5,6 @@ namespace App\Repositories;
 use App\DTO\RequestsCreateData;
 use App\Enums\RequestStatus;
 use App\Models\Requests;
-use Illuminate\Pagination\LengthAwarePaginator;
-
 
 class RequestsRepository extends BaseRepository
 {
@@ -56,38 +54,6 @@ class RequestsRepository extends BaseRepository
             return $model;
         }
         return null;
-    }
-
-    /**
-     * @param int $customerId
-     * @param int $perPage
-     * @param array $filters
-     * @return LengthAwarePaginator
-     */
-    public function paginateByCustomer(
-        int   $customerId,
-        int   $perPage = 10,
-        array $filters = []
-    ): LengthAwarePaginator
-    {
-        $q = $this->model->newQuery()
-            ->where('customer_id', $customerId)
-            ->orderByDesc('created_at'); // или created_at
-
-        // Примеры фильтров (по желанию)
-        if (!empty($filters['status'])) {
-            $q->where('status', $filters['status']);
-        }
-
-        if (!empty($filters['from'])) {
-            $q->whereDate('created_at', '>=', $filters['from']);
-        }
-
-        if (!empty($filters['to'])) {
-            $q->whereDate('created_at', '<=', $filters['to']);
-        }
-
-        return $q->paginate($perPage);
     }
 
     /**

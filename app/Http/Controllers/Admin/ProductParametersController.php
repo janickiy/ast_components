@@ -17,7 +17,9 @@ class ProductParametersController extends Controller
      * @param ProductParametersRepository $productParametersRepository
      * @param ProductsRepository $productsRepository
      */
-    public function __construct(private ProductParametersRepository $productParametersRepository, private ProductsRepository $productsRepository)
+    public function __construct(
+        private ProductParametersRepository $productParametersRepository,
+        private ProductsRepository $productsRepository)
     {
         parent::__construct();
     }
@@ -48,7 +50,7 @@ class ProductParametersController extends Controller
         if (!$row) abort(404);
 
         $breadcrumbs[] = ['url' => route('admin.products.index'), 'title' => 'Продукция'];
-        $breadcrumbs[] = ['url' => route('admin.product_parameters.index', ['product_id' => $product_id]), 'title' => $row->product->title];
+        $breadcrumbs[] = ['url' => route('admin.product_parameters.index', ['product_id' => $product_id]), 'title' => $row->title];
 
         return view('cp.product_parameters.create_edit', compact('product_id', 'breadcrumbs'))->with('title', 'Добавление параметра');
     }

@@ -129,7 +129,7 @@
         function showResult1(inVal,unitVal,M,P) {
             const inValValue = inVal.value;
 
-            if (inValValue !== '') {
+            if (inValValue !== '' && !isNaN(inValValue)) {
                 const unitValValue = unitVal.value;
                 let num = 0;
 
@@ -149,7 +149,7 @@
         function showResult2(inVal2,unitVal2,V,U) {
             const inValValue = inVal2.value;
 
-            if (inValValue !== '') {
+            if (inValValue !== '' && !isNaN(inValValue)) {
                 const unitValValue = unitVal2.value;
                 let num = 0;
 

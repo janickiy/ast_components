@@ -22,12 +22,7 @@
             </div>
         </div>
         @if ($requests->hasMorePages())
-            <button
-                    type="button"
-                    class="account__more-btn btn btn--secondary"
-                    id="loadMoreRequests"
-                    data-next-page="2"
-            >
+            <button type="button" class="account__more-btn btn btn--secondary">
                 <span>Показать еще</span>
             </button>
         @endif

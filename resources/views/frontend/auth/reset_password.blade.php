@@ -9,37 +9,56 @@
 
 @section('content')
 
-    <div class="error-hero container-lg">
-        <div class="error-hero__wrap">
-            <div class="error-hero__title">
-                <h1>{{ $title }}</h1>
+    <div class="request container-xs">
+        <div class="modal__content">
+            <div class="modal__title">
+                <h2>{{ $title }}</h2>
             </div>
-            <p class="error-hero__desc">
-                @if(isset($msg)){{ $msg }}@endif
-                @if(isset($error))<span style="color: #9D1E15">{{ $error }}</span>@endif
-            </p>
 
-            <div class="error-hero__btn-wrap">
-                <a href="{{ route('frontend.contacts.index') }}" class="btn btn--secondary">
-                    <svg aria-hidden="true">
-                        <use xlink:href="{{ url('/images/sprite.svg#phone') }}"></use>
-                    </svg>
-                    <span>Контакты</span>
-                </a>
-                <a href="{{ route('frontend.catalog') }}" class="btn btn--tertiary btn--lg">
-                    <svg aria-hidden="true">
-                        <use xlink:href="{{ url('/images/sprite.svg#catalog') }}"></use>
-                    </svg>
-                    <span>Каталог</span>
-                </a>
-                <a href="{{ url('/') }}" class="btn btn--secondary">
-                    <span>На главную</span>
-                    <svg aria-hidden="true">
-                        <use xlink:href="{{ url('/images/sprite.svg#arrow-right') }}"></use>
-                    </svg>
-                </a>
+            {!! Form::open(['url' => route('frontend.password.set_new'), 'method' => 'post', 'class' => 'modal__form']) !!}
+
+            {!! Form::hidden('token', $token) !!}
+
+            {!! Form::hidden('email', $email) !!}
+
+            <div class="form-password">
+                {!! Form::label('password', 'Пароль*') !!}
+                {!! Form::password('password', ['id' => "reset-password", 'placeholder' => '*******', 'required' => 'required']) !!}
+                <div class="form-display-btn">
+                    <input type="checkbox" id="sign-up-display-password">
+                    <label for="sign-up-display-password">Показать пароль</label>
+                </div>
+                @if ($errors->has('password'))
+                    <p class="text-danger">{{ $errors->first('password') }}</p>
+                @endif
             </div>
+            <div class="form-password">
+                {!! Form::label('password-again', 'Повтор пароля*') !!}
+                {!! Form::password('password-again', ['id' => "reset-password-again", 'placeholder' => '*******', 'required' => 'required']) !!}
+                <div class="form-display-btn">
+                    <input type="checkbox" id="sign-up-display-password-again">
+                    <label for="sign-up-display-password-again">Показать пароль</label>
+                </div>
+                @if ($errors->has('password-again'))
+                    <p class="text-danger">{{ $errors->first('password-again') }}</p>
+                @endif
+            </div>
+            <div class="request__btn">
+                <button type="submit" class="btn btn--primary">
+                    <span>Изменить</span>
+                </button>
+                @if (session('error'))
+                    <span class="message-error">
+                        <span>{{ session('error') }}</span>
+                        </span>
+                @endif
+            </div>
+
+            {!! Form::close() !!}
+
         </div>
+
+
     </div>
 
 @endsection

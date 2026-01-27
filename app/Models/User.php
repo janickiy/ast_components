@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use App\Traits\StaticTableName;
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Http\Traits\StaticTableName;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Rappasoft\LaravelAuthenticationLog\Traits\AuthenticationLoggable;
+
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 class User extends Authenticatable
 {

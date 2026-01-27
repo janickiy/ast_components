@@ -12,6 +12,7 @@
         "intervention/image": "^3.11",
         "janickiy/html": "^1.0",
         "janickiy/laravel-menu": "^2.0",
+        "kblais/query-filter": "^3.3",
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.2",
         "laravel/tinker": "^2.10",

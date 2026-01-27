@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 abstract class BaseRepository implements RepositoryInterface
@@ -72,5 +73,37 @@ abstract class BaseRepository implements RepositoryInterface
             return true;
         }
         return false;
+    }
+
+    /**
+     * @param int $customerId
+     * @param int $perPage
+     * @param array $filters
+     * @return LengthAwarePaginator
+     */
+    public function paginateByCustomer(
+        int   $customerId,
+        int   $perPage = 10,
+        array $filters = []
+    ): LengthAwarePaginator
+    {
+        $q = $this->model->newQuery()
+            ->where('customer_id', $customerId)
+            ->orderByDesc('created_at'); // или created_at
+
+        // Примеры фильтров (по желанию)
+        if (!empty($filters['status'])) {
+            $q->where('status', $filters['status']);
+        }
+
+        if (!empty($filters['from'])) {
+            $q->whereDate('created_at', '>=', $filters['from']);
+        }
+
+        if (!empty($filters['to'])) {
+            $q->whereDate('created_at', '<=', $filters['to']);
+        }
+
+        return $q->paginate($perPage);
     }
 }

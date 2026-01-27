@@ -10927,3 +10927,7 @@ span.product-desc__btn-type {
 .message-error {
     color: #dc3545;
 }
+
+.message-success {
+    color: #439955;
+}

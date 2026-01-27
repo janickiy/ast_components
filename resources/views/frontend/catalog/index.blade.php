@@ -33,9 +33,8 @@
     <div class="page-header container-lg">
         <div class="page-header__wrap">
             @include('layouts._breadcrumbs')
-
             <h1>{{ $h1 }}</h1>
-            <p class="page-header__text"></p>
+            <p class="page-header__text">Найдено {{ number_format($products['total'], 0, '', ' ') }} позиций</p>
         </div>
     </div>
 
@@ -50,88 +49,8 @@
                 <h2>Фильтры</h2>
             </div>
 
-            <div class="catalog__filters-accordions accordions">
-                <div class="accordion__item">
-                    <button class="catalog__accordion-btn accordion__btn js-accordion-btn" aria-expanded="true">
-                        <span class="accordion__title">Товарная группа</span>
-                        <svg aria-hidden="true" class="orange">
-                            <use xlink:href="{{ url('/images/sprite.svg#chevron-down') }}"></use>
-                        </svg>
-                    </button>
-                    <div class="accordion__content">
-                        <div class="catalog__filters-list">
-                            <div class="catalog__filters-checkbox form-checkbox">
-                                <input type="checkbox" id="product-group-1" checked>
-                                <label for="product-group-1">
-                                    <span>Микроконтроллеры</span>
-                                    <sup class="catalog__item-count">100</sup>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            @include('frontend.catalog.partials.filter')
 
-                <div class="accordion__item">
-                    <button class="catalog__accordion-btn accordion__btn js-accordion-btn" aria-expanded="true">
-                        <span class="accordion__title">Наличие</span>
-                        <svg aria-hidden="true" class="orange">
-                            <use xlink:href="{{ url('/images/sprite.svg#chevron-down') }}"></use>
-                        </svg>
-                    </button>
-                    <div class="accordion__content">
-                        <div class="catalog__filters-list">
-                            <div class="catalog__filters-checkbox form-checkbox">
-                                <input type="checkbox" id="availability-group-1" checked>
-                                <label for="availability-group-1">
-                                    <span>В наличии</span>
-                                    <sup class="catalog__item-count">100</sup>
-                                </label>
-                            </div>
-                            <div class="catalog__filters-checkbox form-checkbox">
-                                <input type="checkbox" id="availability-group-2">
-                                <label for="availability-group-2">
-                                    <span>Под заказ</span>
-                                    <sup class="catalog__item-count">100</sup>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="accordion__item">
-                    <button class="catalog__accordion-btn accordion__btn js-accordion-btn" aria-expanded="true">
-                        <span class="accordion__title">Бренд</span>
-                        <svg aria-hidden="true" class="orange">
-                            <use xlink:href="{{ url('/images/sprite.svg#chevron-down') }}"></use>
-                        </svg>
-                    </button>
-                    <div class="accordion__content">
-                        <div class="catalog__filters-list">
-                            @foreach(($manufacturers ?? []) as $manufacturer)
-                                @php
-                                    $cbId = 'brand-' . $manufacturer->id;
-                                @endphp
-
-                                <div class="catalog__filters-checkbox form-checkbox">
-                                    <input type="checkbox"
-                                           name="manufacturer_id"
-                                           value="{{ $manufacturer->id }}"
-                                           id="{{ $cbId }}">
-                                    <label for="{{ $cbId }}">
-                                        <span>{{ $manufacturer->title }}</span>
-                                        <sup class="catalog__item-count">100</sup>
-                                    </label>
-                                </div>
-                            @endforeach
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <button type="button" class="catalog__apply-btn btn btn--tertiary js-catalog-apply-btn">
-                <span>Применить</span>
-            </button>
         </div>
 
         <div class="catalog__content">
@@ -143,40 +62,18 @@
                         </svg>
                         <span>Фильтры</span>
                     </button>
-                    <div class="catalog__chips">
-                        <button type="button" class="catalog__chip btn btn--sm">
-                            <span>В наличии</span>
-                            <svg aria-hidden="true">
-                                <use xlink:href="{{ url('/images/sprite.svg#close') }}"></use>
-                            </svg>
-                        </button>
-
-                        <button type="button" class="catalog__chip btn btn--sm">
-                            <span>Freescale</span>
-                            <svg aria-hidden="true">
-                                <use xlink:href="{{ url('/images/sprite.svg#close') }}"></use>
-                            </svg>
-                        </button>
-
-                        <button type="button" class="catalog__chip btn btn--sm">
-                            <span>NXP Semiconductors</span>
-                            <svg aria-hidden="true">
-                                <use xlink:href="{{ url('/images/sprite.svg#close') }}"></use>
-                            </svg>
-                        </button>
-                    </div>
                 </div>
-                <button type="button" class="catalog__clear-btn btn btn--sm">
+                <a href="{{ route('frontend.catalog', isset($catalog) ? ['slug' => $catalog->slug] : []) }}" class="catalog__clear-btn btn btn--sm">
                     <svg aria-hidden="true">
                         <use xlink:href="{{ url('/images/sprite.svg#clear') }}"></use>
                     </svg>
                     <span>Сбросить все</span>
-                </button>
+                </a>
             </div>
 
-           @if(count($products) > 0)
+           @if(count($products['items']) > 0)
                 <ul class="catalog__list">
-                    @foreach($products ?? [] as $item)
+                    @foreach($products['items'] ?? [] as $item)
                         @php
                             $arr = $item?->parameters?->toArray() ?? [];
                             $chunkSize = max(1, (int)ceil(count($arr) / 2));
@@ -243,7 +140,7 @@
                                             </button>
                                             <input type="number"
                                                    id="{{ $qtyId }}"
-                                                   min="0"
+                                                   min="1"
                                                    value="{{ $inCart ? $cartQty : 1 }}"
                                                    data-catalog-qty>
 
@@ -290,6 +187,12 @@
                                                 Цену уточняйте у&nbsp;менеджера
                                             @endif
                                         </p>
+
+                                        <p class="product-card__price-text">
+                                            @if($item->under_order === 1)
+                                               Под заказ
+                                            @endif
+                                        </p>
                                     @endif
 
                                 </div>
@@ -298,7 +201,7 @@
                     @endforeach
                 </ul>
 
-                {{ $products->links('layouts.frontend_pagination') }}
+                {{ $products['items']->links('layouts.frontend_pagination') }}
             @else
                 <p style="text-align: center;">Каталог пуст</p>
            @endif

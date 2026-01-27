@@ -309,47 +309,61 @@
         });
 
         initClaimForm();
-        initAccountLoadMore();
     }
 
-    /**
-     * Инициализация кнопки "Показать еще" в личном кабинете
-     */
-    function initAccountLoadMore() {
-        const loadMoreButtons = document.querySelectorAll('.js-account-load-more');
+    // Инициализация показа претензий
+    function initComplaints() {
+        let page = Number(new URLSearchParams(window.location.search).get('page') || 1);
 
-        loadMoreButtons.forEach(button => {
-            const listKey = button.dataset.list;
-            const step = Number(button.dataset.step) || 10;
+        const tab = document.querySelector('[data-tab="account-claims"]');
+        const tbody = tab?.querySelector('tbody');
+        const btn = tab?.querySelector('.account__more-btn');
 
-            if (!listKey) {
-                button.style.display = 'none';
-                return;
-            }
+        function buildAjaxUrl(params) {
+            // ВАЖНО: URL строится от текущего origin => будет https на https-странице
+            const url = new URL('/profile/complaints', window.location.origin); // <-- подставь свой путь
+            params.forEach((value, key) => url.searchParams.set(key, value));
+            return url.toString();
+        }
 
-            const items = Array.from(document.querySelectorAll(`.js-account-item[data-list="${listKey}"]`));
+        btn?.addEventListener('click', async () => {
+            if (!tbody) return;
 
-            if (items.length === 0) {
-                button.style.display = 'none';
-                return;
-            }
+            btn.disabled = true;
 
-            let visibleCount = Math.min(step, items.length);
+            const params = getParams();
+            const nextPage = page + 1;
+            params.set('page', String(nextPage));
 
-            const updateVisibility = () => {
-                items.forEach((item, index) => {
-                    item.style.display = index < visibleCount ? '' : 'none';
+            try {
+                const res = await fetch(buildAjaxUrl(params), {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                    },
+                    credentials: 'same-origin',
                 });
 
-                button.style.display = visibleCount >= items.length ? 'none' : '';
-            };
+                if (!res.ok) {
+                    console.error('Request AJAX failed:', res.status, await res.text());
+                    btn.disabled = false;
+                    return;
+                }
 
-            updateVisibility();
+                const data = await res.json();
 
-            button.addEventListener('click', () => {
-                visibleCount = Math.min(visibleCount + step, items.length);
-                updateVisibility();
-            });
+                tbody.insertAdjacentHTML('beforeend', data.html);
+
+                page = nextPage;
+                //updateUrl(params);
+
+                if (!data.hasMore) btn.style.display = 'none';
+            } catch (e) {
+                console.error('Request AJAX error:', e);
+            } finally {
+                btn.disabled = false;
+            }
         });
     }
 
@@ -563,11 +577,12 @@
         document.addEventListener('DOMContentLoaded', init);
         document.addEventListener('DOMContentLoaded', initRequest);
         document.addEventListener('DOMContentLoaded', initOrder);
-        document.addEventListener('DOMContentLoaded', initSubCatalog);
+        document.addEventListener('DOMContentLoaded', initComplaints);
     } else {
         init();
         initRequest();
         initOrder();
+        initComplaints();
     }
 })();
 

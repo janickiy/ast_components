@@ -9,8 +9,9 @@ use App\Http\Controllers\Frontend\{
     ProfileController,
     ResetPasswordController,
     RequestsController,
+    NewsController,
     InvitesController,
-    FeedbackController
+    FeedbackController,
 };
 use Illuminate\Support\Facades\Route;
 
@@ -46,9 +47,11 @@ Route::group(['prefix' => 'nomenclature-request'], function () {
 });
 
 //Новости
-Route::get('/news', [FrontendController::class, 'news'])->name('frontend.news');
-//Описание новости
-Route::get('/news/{slug}', [FrontendController::class, 'newsItem'])->name('frontend.news_item');
+Route::group(['prefix' => 'news'], function () {
+    Route::get('', [NewsController::class, 'index'])->name('frontend.news');
+    Route::get('{slug}', [NewsController::class, 'item'])->name('frontend.news_item');
+});
+
 //каталог
 Route::get('/catalog/{slug?}', [FrontendController::class, 'catalog'])->name('frontend.catalog');
 //Контакты
@@ -90,6 +93,8 @@ Route::group(['prefix' => 'profile'], function () {
     Route::get('orders', [ProfileController::class, 'orders'])->name('frontend.profile.orders');
     // Получаем список запросов
     Route::get('requests', [ProfileController::class, 'requests'])->name('frontend.profile.requests');
+    // Получаем список претензий
+    Route::get('complaints', [ProfileController::class, 'complaints'])->name('frontend.profile.complaints');
     // Редактирование общей информации
     Route::post('update', [ProfileController::class, 'updateGeneralInfo'])->name('frontend.profile.update.general');
     // Редактирование информации о компании
@@ -109,4 +114,9 @@ Route::group(['prefix' => 'auth'], function () {
 
 Route::get('/sub-catalogs/{parent_id}', [FrontendController::class, 'subCatalogs'])->name('frontend.catalog.sub_catalogs')->where('parent_id}', '[0-9]+');
 
-Route::get('password-reset/{token}/{email}', ResetPasswordController::class)->name('frontend.password.reset');
+Route::group(['prefix' => 'password-reset'], function () {
+    Route::get('', [ResetPasswordController::class, 'index'])->name('frontend.password.index');
+    Route::get('/{token}/{email}', [ResetPasswordController::class, 'formReset'])->name('frontend.password.reset');
+    Route::post('', [ResetPasswordController::class, 'reset'])->name('frontend.password.set_new');
+});
+

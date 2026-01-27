@@ -3,17 +3,14 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\DTO\RequestsCreateData;
-use App\Helpers\SettingsHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Frontend\NomenclatureRequest\AddRequest;
-use App\Mail\NomenclatureRequestMailer;
 use App\Models\Customers;
 use App\Models\Seo;
 use App\Repositories\RequestsRepository;
 use App\Services\RequestsService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 use Exception;
 
@@ -66,19 +63,7 @@ class RequestsController extends Controller
                 $attach = $this->requestsService->storeFile($request);
             }
 
-            $data = [
-                'company' => $request->input('company'),
-                'name' => $request->input('name'),
-                'email' => $request->input('email'),
-                'phone' => $request->input('phone'),
-                'attach' => $attach ?? null,
-                'message' => $request->input('message'),
-                'nomenclature' => $request->input('nomenclature'),
-                'count' => $request->input('count'),
-                'unit' => $request->input('unit'),
-            ];
-
-            Mail::to(explode(",", SettingsHelper::getInstance()->getValueForKey('EMAIL_NOTIFY')))->send(new NomenclatureRequestMailer($data));
+            $this->requestsService->notify($request);
 
             $this->requestsRepository->add(new RequestsCreateData(
                 name: $request->input('name'),

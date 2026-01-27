@@ -2,10 +2,12 @@
 
 namespace App\Services;
 
-
+use App\Helpers\SettingsHelper;
+use App\Mail\NomenclatureRequestMailer;
 use App\Models\Requests;
 use Illuminate\Http\Request;
 use Exception;
+use Illuminate\Support\Facades\Mail;
 
 class RequestsService
 {
@@ -25,4 +27,26 @@ class RequestsService
 
         return $filename;
     }
+
+    /**
+     * @param Request $request
+     * @return void
+     */
+    public function notify(Request $request): void
+    {
+        $data = [
+            'company' => $request->input('company'),
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'phone' => $request->input('phone'),
+            'attach' => $attach ?? null,
+            'message' => $request->input('message'),
+            'nomenclature' => $request->input('nomenclature'),
+            'count' => $request->input('count'),
+            'unit' => $request->input('unit'),
+        ];
+
+        Mail::to(explode(",", SettingsHelper::getInstance()->getValueForKey('EMAIL_NOTIFY')))->send(new NomenclatureRequestMailer($data));
+    }
+
 }

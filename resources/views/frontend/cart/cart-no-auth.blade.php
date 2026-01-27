@@ -89,7 +89,7 @@
                                                    id="cart-count-product-{{ $id }}"
                                                    class="js-cart-qty-input"
                                                    data-cart-qty
-                                                   min="0"
+                                                   min="1"
                                                    value="{{ $qty }}"
                                                    @if($pendingUntil) disabled @endif
                                             >

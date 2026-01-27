@@ -49,6 +49,8 @@
                     <div class="contacts__info-text grid">
                         <a href="mailto:{{ SettingsHelper::getInstance()->getValueForKey('EMAIL') }}">{{ SettingsHelper::getInstance()->getValueForKey('EMAIL') }}</a>
                         <span>По общим вопросам</span>
+                        <a href="mailto:{{ SettingsHelper::getInstance()->getValueForKey('SALE_EMAIL') }}">{{ SettingsHelper::getInstance()->getValueForKey('SALE_EMAIL') }}</a>
+                        <span>По вопросам заказов</span>
                     </div>
                 </div>
                 <div class="contacts__info-row">
@@ -59,7 +61,7 @@
                         <span>Адрес</span>
                     </div>
                     <div class="contacts__info-text">
-                        <a href="https://yandex.ru/maps/-/ccukboqbxa" target="_blank" rel="noopener noreferrer">214077, г. Москва, ул. Свободы 29</a>
+                        {!! SettingsHelper::getInstance()->getValueForKey('YANDEX_MAP') !!}
                     </div>
                 </div>
                 <div class="contacts__info-row">

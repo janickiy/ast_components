@@ -58,8 +58,6 @@ class ProductsController extends Controller
     public function store(StoreRequest $request): RedirectResponse
     {
         try {
-            $request->n_number = (int)$request->n_number;
-
             if ($request->hasFile('image')) {
                 $filename = $this->productService->storeImage($request);
                 $fileNameToStore = 'origin_' . $filename;

@@ -27,7 +27,7 @@ class StoreRequest extends FormRequest
             'article'     => 'required|unique:products',
             'n_number'    => 'required|integer',
             'slug'        => 'required|unique:products',
-            'image'       => 'image|mimes:jpeg,jpg,png,gif|max:2048|nullable',
+            'image'       => 'nullable|image|mimes:jpeg,jpg,png,gif|max:2048',
             'catalog_id'  => 'integer|required|exists:catalogs,id',
             'manufacturer_id' => 'integer|required|exists:manufacturers,id',
             'in_stock'    => 'nullable|integer',

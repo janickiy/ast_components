@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use App\Traits\StaticTableName;
+use App\Http\Traits\StaticTableName;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 class Manufacturers extends Model
 {
@@ -56,6 +57,21 @@ class Manufacturers extends Model
     public function getStatusAttribute()
     {
         return $this->attributes['published'];
+    }
+
+    /**
+     * @param array|null $catalogIds
+     * @return int
+     */
+    public function getProductCount(?array $catalogIds = null): int
+    {
+        $q = Products::where('manufacturer_id', $this->id);
+
+        if ($catalogIds) {
+            $q->whereIn('catalog_id', $catalogIds);
+        }
+
+        return $q->count();
     }
 
     /**

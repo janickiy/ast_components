@@ -39,25 +39,22 @@
                                 @if ($errors->has('title'))
                                     <p class="text-danger">{{ $errors->first('title') }}</p>
                                 @endif
-
                             </div>
 
                             <div class="form-group">
                                 {!! Form::label('catalog_id',  "Категория*") !!}
-                                {!! Form::select('catalog_id', $options, old('catalog_id', $row->catalog_id ?? null), ['class' => 'custom-select form-control-border']) !!}
+                                {!! Form::select('catalog_id', $options, old('catalog_id', $row->catalog_id ?? null), ['placeholder' => "Выберите", 'class' => 'custom-select form-control-border']) !!}
                                 @if ($errors->has('catalog_id'))
                                     <p class="text-danger">{{ $errors->first('catalog_id') }}</p>
                                 @endif
-
                             </div>
 
                             <div class="form-group">
                                 {!! Form::label('manufacturer_id',  "Производитель*") !!}
-                                {!! Form::select('manufacturer_id', $manufacturerOptions, old('manufacturer_id', $row->manufacturer_id ?? null), ['class' => 'custom-select form-control-border']) !!}
+                                {!! Form::select('manufacturer_id', $manufacturerOptions, old('manufacturer_id', $row->manufacturer_id ?? null), ['placeholder' => "Выберите", 'class' => 'custom-select form-control-border']) !!}
                                 @if ($errors->has('manufacturer_id'))
                                     <p class="text-danger">{{ $errors->first('manufacturer_id') }}</p>
                                 @endif
-
                             </div>
 
                             <div class="form-group">
@@ -66,7 +63,6 @@
                                 @if ($errors->has('description'))
                                     <p class="text-danger">{{ $errors->first('description') }}</p>
                                 @endif
-
                             </div>
 
                             <div class="form-group">
@@ -75,7 +71,6 @@
                                 @if ($errors->has('article'))
                                     <p class="text-danger">{{ $errors->first('article') }}</p>
                                 @endif
-
                             </div>
 
                             <div class="form-group">
@@ -84,7 +79,6 @@
                                 @if ($errors->has('n_number'))
                                     <p class="text-danger">{{ $errors->first('n_number') }}</p>
                                 @endif
-
                             </div>
 
                             <div class="form-group">
@@ -93,7 +87,6 @@
                                 @if ($errors->has('price'))
                                     <p class="text-danger">{{ $errors->first('price') }}</p>
                                 @endif
-
                             </div>
 
                             <div class="form-group">
@@ -101,16 +94,18 @@
                                 <div class="input-group">
                                     <div class="custom-file">
                                         {!! Form::file('image',  [ 'class' => 'custom-file-input']) !!}
-
-                                        {!! Form::label('image', 'Выберите файл (jpg,png,gif)*', ['class' => 'custom-file-label']) !!}
+                                        {!! Form::label('image', 'Выберите файл (jpeg,jpg,png)', ['class' => 'custom-file-label']) !!}
                                     </div>
                                     <div class="input-group-append">
                                         <span class="input-group-text">Обзор...</span>
                                     </div>
                                 </div>
+                                <div class="note">
+                                    Максимальный размер: <strong>{{ $maxUploadFileSize }}</strong>
+                                </div>
 
                                 <br>
-                                @if (isset($row) && !empty($row->thumbnail))
+                                @if (isset($row))
                                     <img src='{{ url($row->getThumbnailUrl()) }}' width="150">
                                 @endif
 
@@ -126,7 +121,6 @@
                                 @if ($errors->has('image_title'))
                                     <p class="text-danger">{{ $errors->first('image_title') }}</p>
                                 @endif
-
                             </div>
 
                             <div class="form-group">
@@ -135,7 +129,6 @@
                                 @if ($errors->has('image_alt'))
                                     <p class="text-danger">{{ $errors->first('image_alt') }}</p>
                                 @endif
-
                             </div>
 
                             <div class="form-group">
@@ -144,7 +137,6 @@
                                 @if ($errors->has('slug'))
                                     <p class="text-danger">{{ $errors->first('slug') }}</p>
                                 @endif
-
                             </div>
 
                             <div class="form-group">
@@ -153,7 +145,6 @@
                                 @if ($errors->has('meta_title'))
                                     <p class="text-danger">{{ $errors->first('meta_title') }}</p>
                                 @endif
-
                             </div>
 
                             <div class="form-group">
@@ -162,7 +153,6 @@
                                 @if ($errors->has('meta_description'))
                                     <p class="text-danger">{{ $errors->first('meta_description') }}</p>
                                 @endif
-
                             </div>
 
                             <div class="form-group">
@@ -171,7 +161,6 @@
                                 @if ($errors->has('meta_keywords'))
                                     <p class="text-danger">{{ $errors->first('meta_keywords') }}</p>
                                 @endif
-
                             </div>
 
                             <div class="form-group">
@@ -180,7 +169,6 @@
                                 @if ($errors->has('seo_h1'))
                                     <p class="text-danger">{{ $errors->first('seo_h1') }}</p>
                                 @endif
-
                             </div>
 
                             <div class="form-group">
@@ -189,7 +177,6 @@
                                 @if ($errors->has('seo_url_canonical'))
                                     <p class="text-danger">{{ $errors->first('seo_url_canonical') }}</p>
                                 @endif
-
                             </div>
 
                             <div class="form-check">
@@ -198,7 +185,6 @@
                                 @if ($errors->has('seo_sitemap'))
                                     <p class="text-danger">{{ $errors->first('seo_sitemap') }}</p>
                                 @endif
-
                             </div>
 
                             <div class="form-check">
@@ -207,7 +193,6 @@
                                 @if ($errors->has('in_stock'))
                                     <p class="text-danger">{{ $errors->first('in_stock') }}</p>
                                 @endif
-
                             </div>
 
                             <div class="form-check">
@@ -216,7 +201,6 @@
                                 @if ($errors->has('under_order'))
                                     <p class="text-danger">{{ $errors->first('under_order') }}</p>
                                 @endif
-
                             </div>
 
                         </div>

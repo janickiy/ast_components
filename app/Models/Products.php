@@ -2,15 +2,17 @@
 
 namespace App\Models;
 
-use App\Traits\StaticTableName;
-use Illuminate\Support\Facades\Storage;
+use App\Http\Traits\StaticTableName;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
+use Kblais\QueryFilter\Filterable;
 
 class Products extends Model
 {
-    use StaticTableName;
+    use StaticTableName,Filterable;
 
     protected $table = 'products';
 
@@ -80,7 +82,7 @@ class Products extends Model
      */
     public function manufacturer(): BelongsTo
     {
-        return $this->belongsTo(Manufacturers::class , 'manufacturer_id', 'id');
+        return $this->belongsTo(Manufacturers::class, 'manufacturer_id', 'id');
     }
 
     /**
@@ -105,6 +107,28 @@ class Products extends Model
         } else {
             return asset('/images/no_image.jpg');
         }
+    }
+
+    public static function getProductInStockCount(?array $catalogIds = null): int
+    {
+        $q = Products::query()->where('in_stock', 1);
+
+        if ($catalogIds) {
+            $q->whereIn('catalog_id', $catalogIds);
+        }
+
+        return $q->count();
+    }
+
+    public static function getProductUnderOrderCount(?array $catalogIds = null): int
+    {
+        $q = Products::query()->where('under_order', 1);
+
+        if ($catalogIds) {
+            $q->whereIn('catalog_id', $catalogIds);
+        }
+
+        return $q->count();
     }
 
     /**
@@ -149,8 +173,6 @@ class Products extends Model
         if (Storage::disk('public')->exists($this->table . '/' . $this->thumbnail) === true) Storage::disk('public')->delete($this->table . '/' . $this->thumbnail);
         if (Storage::disk('public')->exists($this->table . '/' . $this->origin) === true) Storage::disk('public')->delete($this->table . '/' . $this->origin);
 
-        $this->photos()->delete();
-
         foreach ($this->documents as $document) {
             if (Storage::disk('public')->exists($this->table . '/' . $document->path) === true) Storage::disk('public')->delete($this->table . '/' . $document->path);
         }
@@ -168,5 +190,14 @@ class Products extends Model
         return self::orderBy('title')->get()->pluck('title', 'id')->toArray();
     }
 
+    /**
+     * @param $query
+     * @param $parents
+     * @return mixed
+     */
+    public function scopeCatalogProducts($query, $parents)
+    {
+        return $query->whereIn('catalog_id', $parents);
+    }
 
 }

@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use App\Traits\StaticTableName;
-use Carbon\Carbon;
 use App\Enums\OrderStatus;
+use App\Http\Traits\StaticTableName;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -41,7 +41,7 @@ class Orders extends Model
      */
     public function sum(): float
     {
-        return OrderProduct::selectRaw('SUM(price * count) as sum')->where('order_id', $this->id)->first()->sum;
+        return OrderProduct::selectRaw('SUM(price * count) as sum')->where('order_id', $this->id)->first()?->sum ?? 0.00;
     }
 
     /**

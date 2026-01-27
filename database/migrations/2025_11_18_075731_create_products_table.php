@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('title', 255);
             $table->text('description');
             $table->string('article', 50);
-            $table->integer('n_number')->index('n_number');
+            $table->bigInteger('n_number')->index('n_number');
             $table->string('thumbnail')->nullable();
             $table->string('origin')->nullable();
             $table->unsignedBigInteger('catalog_id');

@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Traits\StaticTableName;
 use App\Enums\ComplaintStatus;
+use App\Http\Traits\StaticTableName;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;

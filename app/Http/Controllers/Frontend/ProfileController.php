@@ -9,22 +9,26 @@ use App\Http\Requests\Frontend\Profile\UpdateProfileRequest;
 use App\Models\Complaints;
 use App\Models\Invites;
 use App\Models\Seo;
-use App\Repositories\CompanyRepository;
-use App\Repositories\CustomerRepository;
-use App\Repositories\OrdersRepository;
-use App\Repositories\RequestsRepository;
+use App\Repositories\{
+    CompanyRepository,
+    CustomerRepository,
+    OrdersRepository,
+    RequestsRepository,
+    ComplaintsRepository,
+};
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-
 
 class ProfileController extends Controller
 {
     public function __construct(
         private CustomerRepository $customerRepository,
         private OrdersRepository $ordersRepository,
-        private RequestsRepository $requestsRepository)
+        private RequestsRepository $requestsRepository,
+        private ComplaintsRepository $complaintsRepository,
+    )
     {
         $this->middleware('auth:customer');
     }
@@ -49,8 +53,8 @@ class ProfileController extends Controller
         $customerId = (int) Auth::guard('customer')->id();
         $orders =  $this->ordersRepository->paginateByCustomer($customerId);
         $requests =  $this->requestsRepository->paginateByCustomer($customerId);
+        $complaints = $this->complaintsRepository->paginateByCustomer($customerId);
 
-        $complaints = $this->customerRepository->getComplaintsForCustomer($customerId);
         $complaintProducts = $this->customerRepository->getComplaintOrderProducts($customerId);
         $complaintTypes = Complaints::$type_name;
 
@@ -149,6 +153,25 @@ class ProfileController extends Controller
             ])->render(),
             'hasMore' => $requests->hasMorePages(),
             'nextPage' => $requests->currentPage() + 1,
+        ]);
+    }
+
+    /**
+     * Получаем список претензий
+     *
+     * @return JsonResponse
+     */
+    public function complaints(): JsonResponse
+    {
+        $customerId = (int) Auth::guard('customer')->id();
+        $complaints = $this->complaintsRepository->paginateByCustomer($customerId);
+
+        return response()->json([
+            'html' => view('frontend.profile.partials.complaints-rows', [
+                'complaints' => $complaints->items(),
+            ])->render(),
+            'hasMore' => $complaints->hasMorePages(),
+            'nextPage' => $complaints->currentPage() + 1,
         ]);
     }
 

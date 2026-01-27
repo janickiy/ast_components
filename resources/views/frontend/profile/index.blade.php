@@ -20,7 +20,6 @@
         <div class="page-header__wrap">
             @include('layouts._breadcrumbs')
             <h1>Личный кабинет</h1>
-
         </div>
     </div>
 
@@ -80,7 +79,7 @@
                 $place = isset($location['country']) && isset($location['city']) ? ' ' . $location['country'] . ', ' . $location['city']:'';
             @endphp
 
-            <p style="padding-bottom: 16px">Последний вход: {{ date('d.m.Y H:i:s', strtotime($lastLoginAt)) }}&nbsp;&nbsp;&nbsp;IP: {{ $lastIp }}{{ $place }} </p>
+            <p style="padding-bottom: 16px">Последний вход: {{ date('d.m.Y H:i:s', strtotime($lastLoginAt)) }}&nbsp;&nbsp;&nbsp;IP: {{ $lastIp }}{{ $place }}</p>
 
             @include('frontend.profile.tabs.account-profile')
 
@@ -88,76 +87,8 @@
 
             @include('frontend.profile.tabs.requests')
 
-            <div data-tab="account-claims" class="claims">
-                <section class="account__container">
-                    <div class="account__section-header">
-                        <div class="account__section-title">
-                            <h2>Претензии</h2>
-                        </div>
-                        <button type="button" class="btn btn--tertiary btn--sm" data-modal-trigger="create-claim">
-                            <svg aria-hidden="true">
-                                <use xlink:href="{{ url('/images/sprite.svg#plus') }}"></use>
-                            </svg>
-                            <span>Создать</span>
-                        </button>
-                    </div>
-                    <div class="account__table">
-                        <div class="account__table-wrap">
-                            <table>
-                                <thead>
-                                <tr>
-                                    <th>Тип претензии</th>
-                                    <th>По счету</th>
-                                    <th>Позиция</th>
-                                    <th>Количество<br>в счете</th>
-                                    <th>Количество<br>с браком</th>
-                                    <th>Статус претензии</th>
-                                    <th>Результат<br>рассмотрения</th>
-                                    <th>Бланк</th>
-                                    <th>Фото</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @forelse($complaints ?? [] as $complaint)
-                                    <tr class="account__item js-account-item" data-list="claims">
-                                        <td>{{ $complaintTypes[$complaint->type] ?? '—' }}</td>
-                                        <td>№{{ $complaint->order_id }} от {{ $complaint->order?->created_at?->format('d.m.Y') }}</td>
-                                        <td>
-                                            <div class="account__table-product tooltip js-account-tooltip">
-                                                <div class="tooltip__body js-account-tooltip-tbody" role="tooltip">
-                                                    <span>{{ $complaint->product?->title ?? '—' }}</span>
-                                                </div>
-                                                <span class="account__table-title js-account-tooltip-title">{{ $complaint->product?->title ?? '—' }}</span>
-                                            </div>
-                                        </td>
-                                        <td class="text-medium text-nowrap text-right">{{ number_format((int) $complaint->order_count, 0, '', ' ') }}</td>
-                                        <td class="account__table-defect-count">{{ number_format((int) $complaint->return_count, 0, '', ' ') }}</td>
-                                        <td>
-                                            <div class="account__table-status {{ $complaint->getStatus()?->cssClass() ?? 'in-progress' }}">
-                                                <svg aria-hidden="true">
-                                                    <use xlink:href="{{ url('/images/sprite.svg#' . $complaint->getStatus()?->statusIcon() ?? 'cogwheel') }}"></use>
-                                                </svg>
-                                                <span>{{ $complaint->getStatus()?->label() ?? 'В обработке' }}</span>
-                                            </div>
-                                        </td>
-                                        <td class="account__table-result"></td>
-                                        <td class="text-center">—</td>
-                                        <td class="text-center">—</td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="9" class="text-center">Претензий пока нет</td>
-                                    </tr>
-                                @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <button type="button" class="account__more-btn btn btn--secondary js-account-load-more" data-list="claims" data-step="10">
-                        <span>Показать еще</span>
-                    </button>
-                </section>
-            </div>
+            @include('frontend.profile.tabs.complaints')
+
         </div>
     </div>
 
@@ -325,14 +256,10 @@
                     <div class="modal__title">
                         <h2>Создать претензию</h2>
                     </div>
-
                     {!! Form::open(['url' => route('frontend.profile.complaints.store'), 'files' => true, 'method' => 'post', 'class' => 'modal__form is-success']) !!}
-
                     <div class="form-input__line">
                         <div class="form-select">
-
                             {!! Form::label('create-claim-type', 'Тип претензии') !!}
-
                             <select name="type" id="create-claim-type" class="js-select" required>
                                 @foreach($complaintTypes ?? [] as $typeId => $typeName)
                                     <option value="{{ $typeId }}">{{ $typeName }}</option>
@@ -340,9 +267,7 @@
                             </select>
                         </div>
                         <div class="form-select">
-
                             {!! Form::label('create-claim-invoice-numb', 'Номер счета') !!}
-
                             <select name="order_id" id="create-claim-invoice-numb" class="js-select"
                                     @if(($orders ?? collect())->isNotEmpty()) required @else disabled @endif>
                                 @forelse($orders ?? [] as $order)
@@ -373,17 +298,12 @@
                     </div>
                     <div class="form-input__line">
                         <div class="form-input">
-
                             {!! Form::label('create-claim-count-invoice', 'Количество в счете') !!}
-
                             <input type="number" id="create-claim-count-invoice" readonly>
                         </div>
                         <div class="form-input">
-
                             {!! Form::label('create-claim-count-defect', 'Количество с браком') !!}
-
                             {!! Form::number('return_count', old('return_count'), ['placeholder' => "1", 'min' => "1", 'id' => "create-claim-count-defect", 'class' => 'form-control', 'required']) !!}
-
                         </div>
                     </div>
                     <div class="form-input__btns-line">
@@ -394,9 +314,7 @@
                                 </svg>
                                 <span>Загрузить претензию на официальном бланке</span>
                             </label>
-
                             {!! Form::file('claim_form',  ['class' => 'sr-only', 'id' => 'create-claim-form']) !!}
-
                         </div>
                         <div class="form-input-file js-input-file">
                             <label for="create-claim-image" class="btn btn--secondary">
@@ -405,9 +323,7 @@
                                 </svg>
                                 <span>Загрузить фото</span>
                             </label>
-
                             {!! Form::file('claim_photo',  ['class' => 'sr-only', 'id' => 'create-claim-image']) !!}
-
                         </div>
                     </div>
                     <div class="modal__btns">
@@ -430,6 +346,6 @@
 
 @section('js')
 
-    {!! Html::script('/scripts/profile.js?v=4') !!}
+    {!! Html::script('/scripts/profile.js?v=3') !!}
 
 @endsection

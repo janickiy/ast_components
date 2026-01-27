@@ -20,8 +20,8 @@ enum RequestStatus: int
     public function cssClass(): string
     {
         return match ($this) {
-            self::Created    => 'create',
-            self::InProgress => 'in-progress',
+            self::Created    => 'in-progress',
+            self::InProgress => 'issued',
             self::Done       => 'done',
         };
     }

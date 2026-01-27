@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Traits\StaticTableName;
 use App\Helpers\StringHelper;
+use App\Http\Traits\StaticTableName;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;

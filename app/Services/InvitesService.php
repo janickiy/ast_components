@@ -2,9 +2,12 @@
 
 namespace App\Services;
 
+use App\Helpers\SettingsHelper;
+use App\Mail\InviteMailer;
 use App\Models\Invites;
 use Illuminate\Http\Request;
 use Exception;
+use Illuminate\Support\Facades\Mail;
 
 class InvitesService
 {
@@ -23,5 +26,24 @@ class InvitesService
         }
 
         return $filename;
+    }
+
+    /**
+     * @param Request $request
+     * @return void
+     */
+    public function notify(Request $request): void
+    {
+        $data = [
+            'company' => $request->company,
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'phone' => $request->input('phone'),
+            'platform' => $request->input('platform'),
+            'numb' => $request->input('numb'),
+            'message' => $request->input('message'),
+        ];
+
+        Mail::to(explode(",", SettingsHelper::getInstance()->getValueForKey('EMAIL_NOTIFY')))->send(new InviteMailer($data));
     }
 }

@@ -11,7 +11,6 @@ use App\Models\Customers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Http\Response;
 
@@ -30,7 +29,7 @@ class AuthController extends Controller
      */
     public function login(LoginRequest $request): JsonResponse
     {
-        $cartSnapshot = $request->session()->get('cart'); // <—
+        $cartSnapshot = $request->session()->get('cart');
 
         $credentials = [
             'email' => $request->email,
@@ -65,7 +64,7 @@ class AuthController extends Controller
      */
     public function register(RegisterRequest $request): JsonResponse
     {
-        $cartSnapshot = session('cart'); // <—
+        $cartSnapshot = session('cart');
 
         $customer = Customers::create([
             'name' => $request->name,

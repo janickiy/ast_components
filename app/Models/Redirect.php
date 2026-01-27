@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Traits\StaticTableName;
+use App\Http\Traits\StaticTableName;
 use Illuminate\Database\Eloquent\Model;
 
 class Redirect extends Model

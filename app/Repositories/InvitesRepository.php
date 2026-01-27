@@ -7,7 +7,6 @@ use App\Models\Invites;
 
 class InvitesRepository extends BaseRepository
 {
-
     public function __construct(Invites $model)
     {
         parent::__construct($model);

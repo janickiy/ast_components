@@ -2,26 +2,28 @@
 
 namespace App\Http\Controllers\Frontend;
 
+
 use App\DTO\FeedbackCreateData;
-use App\Helpers\SettingsHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Frontend\Contacts\FeedbackRequest;
-use App\Mail\FeedbackMailer;
-use App\Models\Customers;
 use App\Models\Seo;
 use App\Repositories\FeedbackRepository;
+use App\Services\FeedbackService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 use Exception;
 
 class FeedbackController extends Controller
 {
-    public function __construct(private FeedbackRepository $feedbackRepository)
+    public function __construct(
+        private FeedbackRepository $feedbackRepository,
+        private FeedbackService $feedbackService)
     {
     }
 
+    /**
+     * @return View
+     */
     public function index(): View
     {
         $seo = Seo::getSeo('frontend.contacts', 'Контакты');
@@ -42,20 +44,14 @@ class FeedbackController extends Controller
         )->with('title', $title);
     }
 
+    /**
+     * @param FeedbackRequest $request
+     * @return RedirectResponse
+     */
     public function send(FeedbackRequest $request): RedirectResponse
     {
-        /** @var Customers $customer */
-        $customer = Auth::guard('customer')->user();
-
         try {
-            $data = [
-                'name' => $request->input('name'),
-                'email' => $request->input('email'),
-                'phone' => $request->input('phone'),
-                'message' => $request->input('message'),
-            ];
-
-            Mail::to(explode(",", SettingsHelper::getInstance()->getValueForKey('EMAIL_NOTIFY')))->send(new FeedbackMailer($data));
+            $this->feedbackService->notify($request);
 
             $this->feedbackRepository->add(new FeedbackCreateData(
                 name: $request->input('name'),

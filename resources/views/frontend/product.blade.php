@@ -16,9 +16,7 @@
 
     <div class="page-header container-lg">
         <div class="page-header__wrap">
-
             @include('layouts._breadcrumbs')
-
         </div>
     </div>
 
@@ -27,7 +25,6 @@
         $inCart = !empty($cartItems[$product->id]);
         $cartQty = (int)($cartItems[$product->id]['qty'] ?? 1);
     @endphp
-
 
     <div class="product-hero container-lg" data-product-page data-product-id="{{ $product->id }}">
         <div class="product-hero__wrap">
@@ -47,7 +44,8 @@
                                          title="{{ $product->image_title }}">
                                 </picture>
                             </div>
-                            <p class="product-hero__img-text">Изображения служат только для ознакомления, см.&nbsp;техническую документацию</p>
+                            <p class="product-hero__img-text">Изображения служат только для ознакомления, см.&nbsp;техническую
+                                документацию</p>
                         </div>
                     </div>
                     <div class="product-hero__right">
@@ -70,7 +68,7 @@
                                     <a href="#product-characteristics" class="btn btn--secondary js-anchor-link">
                                         <span>Все характеристики</span>
                                         <svg aria-hidden="true">
-                                            <use xlink:href="images/sprite.svg#chevron-down"></use>
+                                            <use xlink:href="{{ url('/images/sprite.svg#chevron-down') }}"></use>
                                         </svg>
                                     </a>
                                 </div>
@@ -79,7 +77,9 @@
                                         <dt class="product-hero__list-title">Номенклатурный номер:</dt>
                                         <dd class="product-hero__list-text">
                                             <span>{{ $product->n_number }}</span>
-                                            <button type="button" class="product-hero__copy-btn btn btn--icon btn--sm">
+                                            <button type="button" id="copy-n-number"
+                                                    onclick="copyNum({{ $product->n_number }})"
+                                                    class="product-hero__copy-btn btn btn--icon btn--sm">
                                                 <span class="sr-only">Копировать</span>
                                                 <svg aria-hidden="true">
                                                     <use xlink:href="{{ url('/images/sprite.svg#file-copy') }}"></use>
@@ -92,7 +92,8 @@
                                         <dt class="product-hero__list-title">Артикул:</dt>
                                         <dd class="product-hero__list-text">
                                             <span>{{ $product->article }}</span>
-                                            <button type="button" class="product-hero__copy-btn btn btn--icon btn--sm">
+                                            <button type="button" onclick="copyNum({{ $product->article }})"
+                                                    class="product-hero__copy-btn btn btn--icon btn--sm">
                                                 <span class="sr-only">Копировать</span>
                                                 <svg aria-hidden="true">
                                                     <use xlink:href="{{ url('/images/sprite.svg#file-copy') }}"></use>
@@ -159,7 +160,8 @@
                                     @endif
                                 </p>
 
-                                <a href="{{ route('frontend.conditions') }}" class="product-hero__info-link btn btn--link">
+                                <a href="{{ route('frontend.conditions') }}"
+                                   class="product-hero__info-link btn btn--link">
                                     <span>Доставка и оплата</span>
                                     <svg aria-hidden="true">
                                         <use xlink:href="{{ url('/images/sprite.svg#chevron-right') }}"></use>
@@ -239,5 +241,20 @@
 @endsection
 
 @section('js')
+
+    <script>
+        function copyNum(value) {
+            async function copyToClipboard(value) {
+                try {
+                    await navigator.clipboard.writeText(value);
+                    console.log('Текст скопирован!');
+                } catch (err) {
+                    console.error('Ошибка копирования: ', err);
+                }
+            }
+
+            copyToClipboard(value);
+        }
+    </script>
 
 @endsection
