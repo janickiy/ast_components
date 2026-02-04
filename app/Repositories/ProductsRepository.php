@@ -160,6 +160,11 @@ class ProductsRepository extends BaseRepository
             $baseQuery->whereIn('manufacturer_id', $request->get('manufacturer_id'));
         }
 
+
+        if ($request->has('price_from') && $request->has('price_to')) {
+            $baseQuery->priceRange($request->get('price_from'), $request->get('price_to'));
+        }
+
         $items = (clone $baseQuery)->orderBy('in_stock', 'desc')->orderBy('price')->paginate($limit)->withQueryString();
         $total = (clone $baseQuery)->count();
 

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+
+use App\Http\Traits\File;
 use App\Helpers\StringHelper;
 use App\Http\Traits\StaticTableName;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +13,7 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductDocuments extends Model
 {
-    use StaticTableName;
+    use StaticTableName, File;
 
     protected $table = 'product_documents';
 
@@ -48,7 +50,7 @@ class ProductDocuments extends Model
      */
     public function scopeRemove(): void
     {
-        if (Storage::disk('public')->exists($this->table . '/' . $this->file) === true) Storage::disk('public')->delete($this->table . '/' . $this->file);
+        self::deleteFile($this->file, $this->table);
 
         $this->delete();
     }

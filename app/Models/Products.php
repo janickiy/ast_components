@@ -2,17 +2,17 @@
 
 namespace App\Models;
 
+use App\Http\Traits\File;
 use App\Http\Traits\StaticTableName;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Cache;
 use Kblais\QueryFilter\Filterable;
 
 class Products extends Model
 {
-    use StaticTableName,Filterable;
+    use StaticTableName, Filterable, File;
 
     protected $table = 'products';
 
@@ -170,11 +170,11 @@ class Products extends Model
      */
     public function scopeRemove(): void
     {
-        if (Storage::disk('public')->exists($this->table . '/' . $this->thumbnail) === true) Storage::disk('public')->delete($this->table . '/' . $this->thumbnail);
-        if (Storage::disk('public')->exists($this->table . '/' . $this->origin) === true) Storage::disk('public')->delete($this->table . '/' . $this->origin);
+        self::deleteFile($this->thumbnail, $this->table);
+        self::deleteFile($this->origi, $this->table);
 
         foreach ($this->documents as $document) {
-            if (Storage::disk('public')->exists($this->table . '/' . $document->path) === true) Storage::disk('public')->delete($this->table . '/' . $document->path);
+            self::deleteFile($document->path, $this->table);
         }
 
         $this->documents()->delete();
@@ -198,6 +198,17 @@ class Products extends Model
     public function scopeCatalogProducts($query, $parents)
     {
         return $query->whereIn('catalog_id', $parents);
+    }
+
+    /**
+     * @param $query
+     * @param int $from
+     * @param int $to
+     * @return mixed
+     */
+    public function scopePriceRange($query, int $from, int $to)
+    {
+        return $query->whereBetween('price', [$from, $to]);
     }
 
 }

@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-
+use App\Http\Traits\File;
 use App\Models\Products;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
@@ -12,6 +12,8 @@ use Exception;
 
 class ProductsService
 {
+    use File;
+
     /**
      * @param Request $request
      * @return string
@@ -44,15 +46,8 @@ class ProductsService
      */
     public function updateImage(Request $request, Products $product): string
     {
-        $image = $request->pic;
-
-        if ($image != null) {
-            if (Storage::disk('public')->exists(Products::getTableName() . '/' . $product->thumbnail) === true) Storage::disk('public')->delete(Products::getTableName() . '/' . $product->thumbnail);
-            if (Storage::disk('public')->exists(Products::getTableName() . '/' . $product->origin) === true) Storage::disk('public')->delete(Products::getTableName() . '/' . $product->origin);
-        }
-
-        if (Storage::disk('public')->exists(Products::getTableName() . '/' . $product->thumbnail) === true) Storage::disk('public')->delete(Products::getTableName() . '/' . $product->thumbnail);
-        if (Storage::disk('public')->exists(Products::getTableName() . '/' . $product->origin) === true) Storage::disk('public')->delete(Products::getTableName() . '/' . $product->origin);;
+        self::deleteFile($product->thumbnail,Products::getTableName());
+        self::deleteFile($product->origin,Products::getTableName());
 
         $extension = $request->file('image')->getClientOriginalExtension();
         $filename = time() . '.' . $extension;

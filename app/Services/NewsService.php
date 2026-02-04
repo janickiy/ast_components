@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Traits\File;
 use App\Models\News;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -11,6 +12,8 @@ use Exception;
 
 class NewsService
 {
+    use File;
+
     /**
      * @param Request $request
      * @return string
@@ -42,13 +45,7 @@ class NewsService
      */
     public function updateImage(News $news, Request $request): string
     {
-        $image = $request->pic;
-
-        if ($image != null) {
-            if (Storage::disk('public')->exists(News::getTableName() . '/' . $news->image) === true) Storage::disk('public')->delete(News::getTableName() . '/' . $news->image);
-        }
-
-        if (Storage::disk('public')->exists(News::getTableName() . '/' . $news->image) === true) Storage::disk('public')->delete(News::getTableName() . '/' . $news->image);
+        self::deleteFile($news->image, News::getTableName());
 
         $extension = $request->file('image')->getClientOriginalExtension();
         $originName = time() . '.' . $extension;

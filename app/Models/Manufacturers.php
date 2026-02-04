@@ -2,15 +2,15 @@
 
 namespace App\Models;
 
+use App\Http\Traits\File;
 use App\Http\Traits\StaticTableName;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class Manufacturers extends Model
 {
-    use StaticTableName;
+    use StaticTableName, File;
 
     protected $table = 'manufacturers';
 
@@ -99,7 +99,7 @@ class Manufacturers extends Model
      */
     public function scopeRemove(): void
     {
-        if (Storage::disk('public')->exists($this->table . '/' . $this->image) === true) Storage::disk('public')->delete($this->table . '/' . $this->image);
+        self::deleteFile($this->image,$this->table);
 
         $this->delete();
     }

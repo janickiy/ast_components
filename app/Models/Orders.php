@@ -26,6 +26,11 @@ class Orders extends Model
         'customer_id',
         'delivery_date',
         'invoice',
+        'customer',
+        'email',
+        'phone',
+        'delivery_info',
+        'comment',
     ];
 
     /**

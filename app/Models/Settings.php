@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Http\Traits\File;
 use App\Http\Traits\StaticTableName;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
 class Settings extends Model
 {
-    use StaticTableName;
+    use StaticTableName, File;
 
     protected $table = 'settings';
 
@@ -39,7 +40,8 @@ class Settings extends Model
     /**
      * @return string
      */
-    public function getTypeAttribute() {
+    public function getTypeAttribute()
+    {
         return $this->attributes['type'] = strtoupper($this->attributes['type']);
     }
 
@@ -78,7 +80,7 @@ class Settings extends Model
      */
     public function scopeRemove(): void
     {
-        if (Storage::disk('public')->exists($this->table . '/' . $this->filePath()) === true) Storage::disk('public')->delete($this->table . '/' . $this->filePath());
+        self::deleteFile($this->filePath(), $this->table);
 
         $this->delete();
     }
