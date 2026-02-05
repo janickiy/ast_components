@@ -25,15 +25,16 @@ class ProductsService
         $filename = time() . '.' . $extension;
         $fileNameToStore = 'origin_' . $filename;
         $thumbnailFileNameToStore = 'thumbnail_' . $filename;
+        $originName = $request->file('image')->getClientOriginalName();
 
         if ($request->file('image')->move('uploads/' . Products::getTableName(), $fileNameToStore) === false) {
-            throw new Exception('Не удалось сохранить фото!');
+            throw new Exception(sprintf('Не удалось сохранить %s!', $originName));
         }
 
         $manager = new ImageManager(new Driver());
-        $image = $manager->read(Storage::disk('public')->path(Products::getTableName() . '/' . $fileNameToStore));
+        $image = $manager->read(Storage::disk('public')->path(sprintf('%s/%s', Products::getTableName(), $fileNameToStore)));
         $image->scale(width: 300);
-        $image->save(Storage::disk('public')->path(Products::getTableName() . '/' . $thumbnailFileNameToStore));
+        $image->save(Storage::disk('public')->path(sprintf('%s/%s', Products::getTableName(), $thumbnailFileNameToStore)));
 
         return $filename;
     }
@@ -46,25 +47,23 @@ class ProductsService
      */
     public function updateImage(Request $request, Products $product): string
     {
-        self::deleteFile($product->thumbnail,Products::getTableName());
-        self::deleteFile($product->origin,Products::getTableName());
+        self::deleteFile($product->thumbnail, Products::getTableName());
+        self::deleteFile($product->origin, Products::getTableName());
 
         $extension = $request->file('image')->getClientOriginalExtension();
         $filename = time() . '.' . $extension;
         $fileNameToStore = 'origin_' . $filename;
         $thumbnailFileNameToStore = 'thumbnail_' . $filename;
+        $originName = $request->file('image')->getClientOriginalName();
 
         if ($request->file('image')->move('uploads/' . Products::getTableName(), $fileNameToStore) === false) {
-            throw new Exception('Не удалось сохранить фото!');
+            throw new Exception(sprintf('Не удалось сохранить %s!', $originName));
         }
 
         $manager = new ImageManager(new Driver());
-        $image = $manager->read(Storage::disk('public')->path(Products::getTableName() . '/' . $fileNameToStore));
+        $image = $manager->read(Storage::disk('public')->path(sprintf('%s/%s', Products::getTableName(), $fileNameToStore)));
         $image->scale(width: 300);
-        $image->save(Storage::disk('public')->path(Products::getTableName() . '/' . $thumbnailFileNameToStore));
-        $product->thumbnail = $thumbnailFileNameToStore;
-        $product->origin = $fileNameToStore;
-        $product->save();
+        $image->save(Storage::disk('public')->path(sprintf('%s/%s', Products::getTableName(), $thumbnailFileNameToStore)));
 
         return $filename;
     }

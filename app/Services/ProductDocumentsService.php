@@ -23,7 +23,7 @@ class ProductDocumentsService
         $filename = time() . '.' . $extension;
 
         if ($request->file('file')->move('uploads/' . ProductDocuments::getTableName(), $filename) === false) {
-            throw new Exception('Не удалось сохранить файл!');
+            throw new Exception(sprintf('Не удалось сохранить %s!', $request->file('file')->getClientOriginalName()));
         }
 
         return $filename;
@@ -43,7 +43,7 @@ class ProductDocumentsService
         $filename = time() . '.' . $extension;
 
         if ($request->file('file')->move('uploads/' . ProductDocuments::getTableName(), $filename) === false) {
-            throw new Exception('Не удалось сохранить файл!');
+            throw new Exception(sprintf('Не удалось сохранить %s!', $request->file('file')->getClientOriginalName()));
         }
 
         return $filename;

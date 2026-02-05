@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Traits\File;
 use App\Models\Settings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -10,6 +11,8 @@ use Exception;
 
 class SettingsService
 {
+    use File;
+
     /**
      * @param Request $request
      * @return string
@@ -19,9 +22,10 @@ class SettingsService
     {
         $extension = $request->file('value')->getClientOriginalExtension();
         $filename = time() . '.' . $extension;
+        $originName = $request->file('value')->getClientOriginalName();
 
         if ($request->file('value')->move('uploads/' . Settings::getTableName(), $filename) === false) {
-            throw new Exception('Не удалось сохранить файл!');
+            throw new Exception(sprintf('Не удалось сохранить %s!', $originName));
         }
 
         return $filename;
@@ -35,15 +39,14 @@ class SettingsService
      */
     public function updateFile(Settings $settings, Request $request): string
     {
-        if (Storage::disk('public')->exists(Settings::getTableName() . '/' . $settings->filePath()) === true) {
-            Storage::disk('public')->delete(Settings::getTableName() . '/' . $settings->filePath());
-        }
+        self::deleteFile($settings->filePath(), Settings::getTableName());
 
         $extension = $request->file('value')->getClientOriginalExtension();
         $filename = time() . '.' . $extension;
+        $originName = $request->file('value')->getClientOriginalName();
 
         if ($request->file('value')->move('uploads/' . Settings::getTableName(), $filename) === false) {
-            throw new Exception('Не удалось сохранить файл!');
+            throw new Exception(sprintf('Не удалось сохранить %s!', $originName));
         }
 
         return $filename;

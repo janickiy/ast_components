@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Traits\File;
 use App\Models\Manufacturers;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
@@ -11,6 +12,8 @@ use Exception;
 
 class ManufacturerService
 {
+    use File;
+
     /**
      * @param Request $request
      * @return string
@@ -22,13 +25,13 @@ class ManufacturerService
         $originName = $filename . '.' . $extension;
 
         if ($request->file('image')->move('uploads/' . Manufacturers::getTableName(), $originName) === false) {
-            throw new Exception('Не удалось сохранить файл!');
+            throw new Exception(sprintf('Не удалось сохранить %s!', $request->file('image')->getClientOriginalName()));
         }
 
         $manager = new ImageManager(new Driver());
-        $image = $manager->read(Storage::disk('public')->path(Manufacturers::getTableName() . '/' . $originName));
+        $image = $manager->read(Storage::disk('public')->path(sprintf('%s/%s', Manufacturers::getTableName(), $originName)));
         $image->scale(width: 300);
-        $image->save(Storage::disk('public')->path(Manufacturers::getTableName() . '/' . $originName));
+        $image->save(Storage::disk('public')->path(sprintf('%s/%s', Manufacturers::getTableName(), $originName)));
 
         return $originName;
     }
@@ -41,20 +44,20 @@ class ManufacturerService
      */
     public function updateImage(Manufacturers $manufacturer, Request $request): string
     {
-        if (Storage::disk('public')->exists(Manufacturers::getTableName() . '/' . $manufacturer->image) === true) Storage::disk('public')->delete(Manufacturers::getTableName() . '/' . $manufacturer->image);
+        self::deleteFile( $manufacturer->image, Manufacturers::getTableName());
 
         $extension = $request->file('image')->getClientOriginalExtension();
         $filename = time();
         $originName = $filename . '.' . $extension;
 
         if ($request->file('image')->move('uploads/' . Manufacturers::getTableName(), $originName) === false) {
-            throw new Exception('Не удалось сохранить файл!');
+            throw new Exception(sprintf('Не удалось сохранить %s!', $request->file('image')->getClientOriginalName()));
         }
 
         $manager = new ImageManager(new Driver());
-        $image = $manager->read(Storage::disk('public')->path(Manufacturers::getTableName() . '/' . $originName));
+        $image = $manager->read(Storage::disk('public')->path(sprintf('%s/%s', Manufacturers::getTableName(), $originName)));
         $image->scale(width: 300);
-        $image->save(Storage::disk('public')->path(Manufacturers::getTableName() . '/' . $originName));
+        $image->save(Storage::disk('public')->path(sprintf('%s/%s', Manufacturers::getTableName(), $originName)));
 
         return $originName;
     }
@@ -65,6 +68,6 @@ class ManufacturerService
      */
     public function deleteImage(Manufacturers $manufacturer): void
     {
-        if (Storage::disk('public')->exists(Manufacturers::getTableName() . '/' . $manufacturer->image) === true) Storage::disk('public')->delete(Manufacturers::getTableName() . '/' . $manufacturer->image);
+        self::deleteFile( $manufacturer->image, Manufacturers::getTableName());
     }
 }

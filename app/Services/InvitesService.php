@@ -20,9 +20,10 @@ class InvitesService
     {
         $extension = $request->file('attach')->getClientOriginalExtension();
         $filename = time() . '.' . $extension;
+        $originName = $request->file('attach')->getClientOriginalName();
 
         if ($request->file('attach')->move('uploads/' . Invites::getTableName(), $filename) === false) {
-            throw new Exception('Не удалось сохранить файл!');
+            throw new Exception(sprintf('Не удалось сохранить %s!', $originName));
         }
 
         return $filename;

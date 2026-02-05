@@ -17,9 +17,10 @@ class ComplaintService
     {
         $extension = $request->file('file')->getClientOriginalExtension();
         $filename = time() . '.' . $extension;
+        $originName = $request->file('file')->getClientOriginalName();
 
         if ($request->file('blank')->move('uploads/' . Complaints::getTableName(), $filename) === false) {
-            throw new Exception('Не удалось сохранить файл!');
+            throw new Exception(sprintf('Не удалось сохранить %s!', $originName));
         }
 
         return $filename;

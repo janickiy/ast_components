@@ -26,13 +26,13 @@ class NewsService
         $originName = $filename . '.' . $extension;
 
         if ($request->file('image')->move('uploads/' . News::getTableName(), $originName) === false) {
-            throw new Exception('Не удалось сохранить файл!');
+            throw new Exception(sprintf('Не удалось сохранить %s!', $request->file('image')->getClientOriginalName()));
         }
 
         $manager = new ImageManager(new Driver());
-        $image = $manager->read(Storage::disk('public')->path(News::getTableName() . '/' . $originName));
+        $image = $manager->read(Storage::disk('public')->path( sprintf('%s/%s', News::getTableName(), $originName)));
         $image->scale(width: 1200);
-        $image->save(Storage::disk('public')->path(News::getTableName() . '/' . $originName));
+        $image->save(Storage::disk('public')->path( sprintf('%s/%s', News::getTableName(), $originName)));
 
         return $originName;
     }
@@ -51,13 +51,13 @@ class NewsService
         $originName = time() . '.' . $extension;
 
         if ($request->file('image')->move('uploads/' . News::getTableName(), $originName) === false) {
-            throw new Exception('Не удалось сохранить файл!');
+            throw new Exception(sprintf('Не удалось сохранить %s!', $request->file('image')->getClientOriginalName()));
         }
 
         $manager = new ImageManager(new Driver());
-        $image = $manager->read(Storage::disk('public')->path(News::getTableName() . '/' . $originName));
+        $image = $manager->read(Storage::disk('public')->path( sprintf('%s/%s', News::getTableName(), $originName)));
         $image->scale(width: 1200);
-        $image->save(Storage::disk('public')->path(News::getTableName() . '/' . $originName));
+        $image->save(Storage::disk('public')->path( sprintf('%s/%s', News::getTableName(), $originName)));
 
         return $originName;
     }
