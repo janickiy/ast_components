@@ -46,7 +46,7 @@ class SeoController extends Controller
     public function update(Request $request): RedirectResponse
     {
         try {
-            $this->seoRepository->update($request->id, $request->all());
+            $this->seoRepository->updateWithMapping($request->id, $request->all());
         } catch (Exception $e) {
             report($e);
 

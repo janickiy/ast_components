@@ -182,18 +182,6 @@ class ProductsRepository extends BaseRepository
                     return (int)$value;
                 }
 
-                if (in_array($key, [
-                        'meta_title',
-                        'meta_description',
-                        'meta_keywords',
-                        'seo_h1',
-                        'seo_url_canonical',
-                        'image_title',
-                        'image_alt',
-                    ]) && empty($value)) {
-                    return null;
-                }
-
                 return $value;
             })
             ->toArray();

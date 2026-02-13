@@ -14,23 +14,11 @@ class SeoRepository extends BaseRepository
     /**
      * @param int $id
      * @param array $data
-     * @return Seo|null
+     * @return bool
      */
-    public function update(int $id, array $data): ?Seo
+    public function updateWithMapping(int $id, array $data): bool
     {
-        $model = $this->model->find($id);
-
-        if ($model) {
-            $model->h1 = $data['h1'];
-            $model->title = $data['title'];
-            $model->keyword = $data['keyword'];
-            $model->description = $data['description'];
-            $model->url_canonical = $data['url_canonical'];
-            $model->save();
-
-            return $model;
-        }
-        return null;
+        return $this->update($id, $this->mapping($data));
     }
 
     private function mapping(array $data): array
@@ -48,16 +36,6 @@ class SeoRepository extends BaseRepository
             ->mapWithKeys(function ($value, $key) {
                 if ($key === 'seo_sitemap' && !is_null($value)) {
                     return (int)$value;
-                }
-
-                if (in_array($key, [
-                        'meta_title',
-                        'meta_description',
-                        'meta_keywords',
-                        'seo_h1',
-                        'seo_url_canonical',
-                    ]) && empty($value)) {
-                    return null;
                 }
 
                 return $value;

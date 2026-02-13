@@ -17,7 +17,9 @@ class SettingsController extends Controller
      * @param SettingsService $settingsService
      * @param SettingsRepository $settingsRepository
      */
-    public function __construct(private SettingsService $settingsService, private SettingsRepository $settingsRepository)
+    public function __construct(
+        private SettingsService $settingsService,
+        private SettingsRepository $settingsRepository)
     {
         parent::__construct();
     }
@@ -109,7 +111,7 @@ class SettingsController extends Controller
             }
         }
 
-        $this->settingsRepository->update($settings->id, array_merge(array_merge($request->all()), [
+        $this->settingsRepository->updateWithMapping($settings->id, array_merge(array_merge($request->all()), [
             'value' => $res ?? $request->input('value'),
             'published' => $published,
         ]));

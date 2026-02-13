@@ -14,23 +14,11 @@ class SettingsRepository extends BaseRepository
     /**
      * @param int $id
      * @param array $data
-     * @return Settings|null
+     * @return bool
      */
-    public function update(int $id, array $data): ?Settings
+    public function updateWithMapping(int $id, array $data): bool
     {
-        $model = $this->model->find($id);
-
-        if ($model) {
-            $model->key_cd = $data['key_cd'] ?? null;
-            $model->name = $data['name'] ;
-            $model->display_value = $data['display_value'] ?? null;
-            $model->value = $data['value'] ?? null;
-            $model->published = (int) $data['published'];
-            $model->save();
-
-            return $model;
-        }
-        return null;
+       return $this->update($id, $this->mapping($data));
     }
 
     /**
@@ -44,5 +32,23 @@ class SettingsRepository extends BaseRepository
         if ($settings) {
             $settings->remove();
         }
+    }
+
+    private function mapping(array $data): array
+    {
+        return collect($data)
+            ->merge([
+                'key_cd' => $data['key_cd'] ?? null,
+                'display_value' => $data['display_value'] ?? null,
+                'value' => $data['value'] ?? null,
+            ])
+            ->only($this->model->getFillable())
+            ->mapWithKeys(function ($value, $key) {
+                if ($key === 'published' && !is_null($value)) {
+                    return (int)$value;
+                }
+                return $value;
+            })
+            ->toArray();
     }
 }
