@@ -14,20 +14,26 @@ class OrderProductRepository extends BaseRepository
     /**
      * @param int $id
      * @param array $data
-     * @return OrderProduct|null
+     * @return bool
      */
-    public function update(int $id, array $data): ?OrderProduct
+    public function updateWithMapping(int $id, array $data): bool
     {
-        $model = $this->model->find($id);
+        return $this->update($id, $this->mapping($data));
+    }
 
-        if ($model) {
-            $model->product_info = $data['product_info'];
-            $model->count = (int) $data['count'];
-            $model->price = (float) $data['price'];
-            $model->save();
-
-            return $model;
-        }
-        return null;
+    private function mapping(array $data): array
+    {
+        return collect($data)
+            ->only($this->model->getFillable())
+            ->mapWithKeys(function ($value, $key) {
+                if ($key === 'count' && !is_null($value)) {
+                    return (int)$value;
+                }
+                if ($key === 'price' && !is_null($value)) {
+                    return (float)$value;
+                }
+                return $value;
+            })
+            ->toArray();
     }
 }

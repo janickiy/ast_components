@@ -16,33 +16,21 @@ class CompanyRepository extends BaseRepository
      * @param array $data
      * @return Company|null
      */
-    public function update(int $id, array $data): ?Company
+    public function updateWithMapping(int $id, array $data): bool
     {
-        /** @var \App\Models\Company $company */
-        $company = $this->model->find($id);
+        $model = $this->model->find($id);
 
-        if (!$company) {
-            return null;
-        }
+        if (!$model) return false;
 
-        $company->name = $data['name'] ?? $company->name;
-        $company->inn = $data['inn'] ?? $company->inn;
-        $company->contact_person = $data['contact_person'] ?? $company->contact_person;
-        $company->phone = $data['phone'] ?? $company->phone;
-        $company->email = $data['email'] ?? $company->email;
-        $company->customer_id = $data['customer_id'] ?? $company->customer_id;
-
-        $company->save();
-
-        return $company;
+        return $this->update($id, $this->mapping($data, $model));
     }
 
     /**
      * @param int $customerId
      * @param array $data
-     * @return Company|null
+     * @return bool
      */
-    public function updateByCustomer(int $customerId, array $data): ?Company
+    public function updateByCustomer(int $customerId, array $data): bool
     {
         /** @var Company|null $company */
         $company = $this->model
@@ -50,11 +38,30 @@ class CompanyRepository extends BaseRepository
             ->first();
 
         if (!$company) {
-            return null;
+            return false;
         }
 
-        $company = $this->update($company->id, $data);
+        return $this->update($company->id, $data);
+    }
 
-        return $company;
+    private function mapping(array $data, Company $company): array
+    {
+        return collect($data)
+            ->merge([
+                'name' => $data['name'] ?? $company->name,
+                'inn' => $data['inn'] ?? $company->inn,
+                'contact_person' => $data['contact_person'] ?? $company->contact_person,
+                'phone' => $data['phone'] ?? $company->phone,
+                'email' => $data['email'] ?? $company->email,
+                'customer_id' => $data['customer_id'] ?? $company->customer_id,
+            ])
+            ->only($this->model->getFillable())
+            ->mapWithKeys(function ($value, $key) {
+                if ($key === 'customer_id' && !is_null($value)) {
+                    return (int)$value;
+                }
+                return $value;
+            })
+            ->toArray();
     }
 }

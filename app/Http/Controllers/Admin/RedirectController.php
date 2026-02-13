@@ -76,7 +76,7 @@ class RedirectController extends Controller
     public function update(EditRequest $request): RedirectResponse
     {
         try {
-            $this->redirectRepository->update($request->id, $request->all());
+            $this->redirectRepository->updateWithMapping($request->id, $request->all());
         } catch (Exception $e) {
             report($e);
 

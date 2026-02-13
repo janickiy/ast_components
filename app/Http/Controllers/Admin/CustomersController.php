@@ -47,7 +47,7 @@ class CustomersController extends Controller
      */
     public function update(Request $request): RedirectResponse
     {
-        $this->customerRepository->update($request->id, $request->all());
+        $this->customerRepository->updateWithMapping($request->id, $request->all());
 
         return redirect()->route('cp.customers.index')->with('success', 'Данные успешно обновлены!');
     }

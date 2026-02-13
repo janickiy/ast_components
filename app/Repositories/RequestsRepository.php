@@ -41,19 +41,11 @@ class RequestsRepository extends BaseRepository
     /**
      * @param int $id
      * @param array $data
-     * @return Requests|null
+     * @return bool
      */
-    public function update(int $id, array $data): ?Requests
+    public function updateWithMapping(int $id, array $data): bool
     {
-        $model = $this->model->find($id);
-
-        if ($model) {
-            $model->status = (int) $data['status'];
-            $model->save();
-
-            return $model;
-        }
-        return null;
+        return $this->update($id, $this->mapping($data));
     }
 
     /**
@@ -67,5 +59,19 @@ class RequestsRepository extends BaseRepository
         if ($model) {
             $model->remove();
         }
+    }
+
+    private function mapping(array $data): array
+    {
+        return collect($data)
+
+            ->only($this->model->getFillable())
+            ->mapWithKeys(function ($value, $key) {
+                if ($key === 'status' && !is_null($value)) {
+                    return (int)$value;
+                }
+                return $value;
+            })
+            ->toArray();
     }
 }

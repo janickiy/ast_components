@@ -46,7 +46,7 @@ class ComplaintsController extends Controller
      */
     public function update(EditRequest $request): RedirectResponse
     {
-        $this->complaintsRepository->update($request->id, $request->all());
+        $this->complaintsRepository->updateWithMapping($request->id, $request->all());
 
         return redirect()->route('admin.complaints.index')->with('success', 'Данные успешно обновлены');
     }

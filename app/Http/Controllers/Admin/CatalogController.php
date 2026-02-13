@@ -21,6 +21,7 @@ class CatalogController extends Controller
      */
     public function index(): View
     {
+
         $catalogsList = $this->categoryRepository->getCatalogsList();
 
         return view('cp.catalog.index', compact('catalogsList'))->with('title', 'Каталог');
@@ -99,7 +100,7 @@ class CatalogController extends Controller
                 $seo_sitemap = 1;
             }
 
-            $this->categoryRepository->update($request->id, array_merge($request->all(), ['seo_sitemap' => $seo_sitemap]));
+            $this->categoryRepository->updateWithMapping($request->id, array_merge($request->all(), ['seo_sitemap' => $seo_sitemap]));
         } catch (Exception $e) {
             report($e);
 

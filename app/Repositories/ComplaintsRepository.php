@@ -22,12 +22,12 @@ class ComplaintsRepository extends BaseRepository
 
     /**
      * @param ComplaintCreateData $data
-     * @return Complaints
+     * @return mixed
      * @throws \Throwable
      */
     public function add(ComplaintCreateData $data): Complaints
     {
-        return $this->database->transaction(function () use ($data): Complaints {
+        return $this->database->transaction(function () use ($data): \Illuminate\Database\Eloquent\Model {
             $orderProduct = OrderProduct::query()
                 ->where('order_id', $data->orderId)
                 ->where('product_id', $data->productId)
@@ -37,7 +37,7 @@ class ComplaintsRepository extends BaseRepository
                 throw new Exception('Не удалось найти позицию заказа для претензии.');
             }
 
-            return Complaints::query()->create([
+            return $this->create([
                 'type' => $data->type,
                 'status' => ComplaintStatus::Created->value,
                 'order_count' => (int) $orderProduct->count,
@@ -53,20 +53,11 @@ class ComplaintsRepository extends BaseRepository
     /**
      * @param int $id
      * @param array $data
-     * @return Complaints|null
+     * @return bool
      */
-    public function update(int $id, array $data): ?Complaints
+    public function updateWithMapping(int $id, array $data): bool
     {
-        $model = $this->model->find($id);
-
-        if ($model) {
-            $model->result = $data['result'] ?? null;
-            $model->status = (int) $data['status'];
-            $model->save();
-
-            return $model;
-        }
-        return null;
+        return $this->update($id,$this->mapping($data));
     }
 
     /**
@@ -80,5 +71,21 @@ class ComplaintsRepository extends BaseRepository
         if ($model) {
             $model->remove();
         }
+    }
+
+    private function mapping(array $data): array
+    {
+        return collect($data)
+            ->merge([
+                'result' => $data['result'] ?? null,
+            ])
+            ->only($this->model->getFillable())
+            ->mapWithKeys(function ($value, $key) {
+                if ($key === 'status' && !is_null($value)) {
+                    return (int)$value;
+                }
+                return $value;
+            })
+            ->toArray();
     }
 }

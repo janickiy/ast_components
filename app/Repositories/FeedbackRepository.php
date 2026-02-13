@@ -31,18 +31,23 @@ class FeedbackRepository extends BaseRepository
     /**
      * @param int $id
      * @param array $data
-     * @return Feedback|null
+     * @return bool
      */
-    public function update(int $id, array $data): ?Feedback
+    public function updateWithMapping(int $id, array $data): bool
     {
-        $model = $this->model->find($id);
+        return $this->update($id, $this->mapping($data));
+    }
 
-        if ($model) {
-            $model->status = $data['status'];
-            $model->save();
-        }
-
-        return null;
-
+    private function mapping(array $data): array
+    {
+        return collect($data)
+            ->only($this->model->getFillable())
+            ->mapWithKeys(function ($value, $key) {
+                if ($key === 'status' && !is_null($value)) {
+                    return (int)$value;
+                }
+                return $value;
+            })
+            ->toArray();
     }
 }

@@ -14,24 +14,11 @@ class ProductDocumentsRepository extends BaseRepository
     /**
      * @param int $id
      * @param array $data
-     * @return mixed
+     * @return bool
      */
-    public function update(int $id, array $data): ?ProductDocuments
+    public function updateWithMapping(int $id, array $data): bool
     {
-        $model = $this->model->find($id);
-
-        if ($model) {
-            if ($data['file']) {
-                $model->file = $data['file'];
-            }
-
-            $model->name = $data['name'];
-            $model->product_id = (int) $data['product_id'];
-            $model->save();
-
-            return $model;
-        }
-        return null;
+        return $this->update($id, $this->mapping($data));
     }
 
     /**
@@ -45,5 +32,22 @@ class ProductDocumentsRepository extends BaseRepository
         if ($manufacturer) {
             $manufacturer->remove();
         }
+    }
+
+    private function mapping(array $data): array
+    {
+        return collect($data)
+            ->when(!isset($data['file']), function ($collection) {
+                return $collection->forget('file');
+            })
+            ->only($this->model->getFillable())
+            ->mapWithKeys(function ($value, $key) {
+                if ($key === 'product_id' && !is_null($value)) {
+                    return (int)$value;
+                }
+
+                return $value;
+            })
+            ->toArray();
     }
 }

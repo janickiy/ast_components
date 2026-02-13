@@ -19,7 +19,7 @@ class OrdersController extends Controller
      */
     public function __construct(
         private OrdersRepository $ordersRepository,
-        private OrdersService $ordersService)
+        private OrdersService    $ordersService)
     {
         parent::__construct();
     }
@@ -61,7 +61,7 @@ class OrdersController extends Controller
                 $filename = $this->ordersService->updateFile($row, $request);
             }
 
-            $this->ordersRepository->update($request->id, array_merge(array_merge($request->all()), [
+            $this->ordersRepository->updateWithMapping($request->id, array_merge(array_merge($request->all()), [
                 'invoice' => $filename ?? null,
             ]));
         } catch (Exception $e) {

@@ -104,7 +104,7 @@ class ProductParametersController extends Controller
         if (!$row) abort(404);
 
         try {
-            $this->productParametersRepository->update($request->id, $request->all());
+            $this->productParametersRepository->updateWithMapping($request->id, $request->all());
         } catch (Exception $e) {
             report($e);
 

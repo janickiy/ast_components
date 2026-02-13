@@ -115,7 +115,7 @@ class ProductDocumentsController extends Controller
                 $filename = $this->productDocumentsService->updateFile($row->id, $request);
             }
 
-            $this->productDocumentsRepository->update($request->id, array_merge(array_merge($request->all()), [
+            $this->productDocumentsRepository->updateWithMapping($request->id, array_merge(array_merge($request->all()), [
                 'file' => $filename ?? null,
             ]));
         } catch (Exception $e) {

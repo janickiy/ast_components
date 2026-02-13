@@ -18,7 +18,9 @@ class ManufacturersController extends Controller
      * @param ManufacturerRepository $manufacturerRepository
      * @param ManufacturerService $manufacturerService
      */
-    public function __construct(private ManufacturerRepository $manufacturerRepository, private ManufacturerService $manufacturerService)
+    public function __construct(
+        private ManufacturerRepository $manufacturerRepository,
+        private ManufacturerService    $manufacturerService)
     {
         parent::__construct();
     }
@@ -127,7 +129,7 @@ class ManufacturersController extends Controller
                 $seo_sitemap = 1;
             }
 
-            $this->manufacturerRepository->update($request->id, array_merge($request->all(), [
+            $this->manufacturerRepository->updateWithMapping($request->id, array_merge($request->all(), [
                 'seo_sitemap' => $seo_sitemap,
                 'image' => $originName ?? null,
                 'published' => $published,

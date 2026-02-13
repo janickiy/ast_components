@@ -43,7 +43,7 @@ class FeedbackController extends Controller
      */
     public function update(EditRequest $request): RedirectResponse
     {
-        $this->feedbackRepository->update($request->id, $request->all());
+        $this->feedbackRepository->updateWithMapping($request->id, $request->all());
 
         return redirect()->route('admin.feedback.index')->with('success', 'Данные обновлены');
     }

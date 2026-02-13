@@ -95,7 +95,7 @@ class NewsController extends Controller
                 $filename = $this->newsService->updateImage($news, $request);
             }
 
-            $this->newsRepository->update($request->id, array_merge(array_merge($request->all()), [
+            $this->newsRepository->updateWithMapping($request->id, array_merge(array_merge($request->all()), [
                 'image' => $filename ?? null,
             ]));
         } catch (Exception $e) {

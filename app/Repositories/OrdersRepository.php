@@ -4,7 +4,6 @@ namespace App\Repositories;
 
 use App\Models\Orders;
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
 
 class OrdersRepository extends BaseRepository
 {
@@ -16,28 +15,26 @@ class OrdersRepository extends BaseRepository
     /**
      * @param int $id
      * @param array $data
-     * @return Collection|null
+     * @return bool
      */
-    public function update(int $id, array $data): ?Orders
+    public function updateWithMapping(int $id, array $data): bool
     {
-        $model = $this->model->find($id);
+        return $this->update($id, $this->mapping($data));
+    }
 
-        if ($model) {
-            $model->status = $data['status'];
-            $model->delivery_date = $data['delivery_date'];
-
-            if ($data['invoice']) {
-                $model->invoice = $data['invoice'];
-            }
-
-            if ($data['delivery_date']) {
-                $model->delivery_date = Carbon::createFromFormat('d/m/Y', $data['delivery_date'])->format('Y-m-d');
-            }
-
-            $model->save();
-
-            return $model;
-        }
-        return null;
+    private function mapping(array $data): array
+    {
+        return collect($data)
+            ->when(!isset($data['invoice']), function ($collection) {
+                return $collection->forget('image');
+            })
+            ->only($this->model->getFillable())
+            ->mapWithKeys(function ($value, $key) {
+                if ($key === 'delivery_date' && !is_null($value)) {
+                    return Carbon::createFromFormat('d/m/Y', $value)->format('Y-m-d');
+                }
+                return $value;
+            })
+            ->toArray();
     }
 }

@@ -14,20 +14,24 @@ class ProductParametersRepository extends BaseRepository
     /**
      * @param int $id
      * @param array $data
-     * @return ProductParameters|null
+     * @return bool
      */
-    public function update(int $id, array $data): ?ProductParameters
+    public function updateWithMapping(int $id, array $data):bool
     {
-        $model = $this->model->find($id);
+       return $this->update($id, $this->mapping($data));
+    }
 
-        if ($model) {
-            $model->name = $data['name'];
-            $model->value = $data['value'];
-            $model->product_id = (int) $data['product_id'];
-            $model->save();
+    private function mapping(array $data): array
+    {
+        return collect($data)
+            ->only($this->model->getFillable())
+            ->mapWithKeys(function ($value, $key) {
+                if ($key === 'product_id' && !is_null($value)) {
+                    return (int)$value;
+                }
 
-            return $model;
-        }
-        return null;
+                return $value;
+            })
+            ->toArray();
     }
 }

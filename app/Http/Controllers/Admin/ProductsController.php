@@ -134,7 +134,7 @@ class ProductsController extends Controller
                 $seo_sitemap = 1;
             }
 
-            $this->productRepository->update($request->id, array_merge($request->all(), [
+            $this->productRepository->updateWithMapping($request->id, array_merge($request->all(), [
                 'in_stock' => $in_stock,
                 'under_order' => $under_order,
                 'seo_sitemap' => $seo_sitemap,

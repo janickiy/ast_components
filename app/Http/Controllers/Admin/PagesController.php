@@ -119,7 +119,7 @@ class PagesController extends Controller
             $seo_sitemap = 1;
         }
 
-        $this->pageRepository->update($request->id, array_merge($request->all(), [
+        $this->pageRepository->updateWithMapping($request->id, array_merge($request->all(), [
             'main' => $main,
             'seo_sitemap' => $seo_sitemap,
             'published' => $published,

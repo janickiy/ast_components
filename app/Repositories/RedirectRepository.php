@@ -14,21 +14,25 @@ class RedirectRepository extends BaseRepository
     /**
      * @param int $id
      * @param array $data
-     * @return Redirect|null
+     * @return bool
      */
-    public function update(int $id, array $data): ?Redirect
+    public function updateWithMapping(int $id, array $data): bool
     {
-        $model = $this->model->find($id);
+       return $this->update($id, $this->mapping($data));
+    }
 
-        if ($model) {
-            $model->from = $data['from'];
-            $model->to = $data['to'];
-            $model->status = (int) $data['status'];
-            $model->save();
+    private function mapping(array $data): array
+    {
+        return collect($data)
 
-            return $model;
-        }
-        return null;
+            ->only($this->model->getFillable())
+            ->mapWithKeys(function ($value, $key) {
+                if ($key === 'status' && !is_null($value)) {
+                    return (int)$value;
+                }
+                return $value;
+            })
+            ->toArray();
     }
 
 }

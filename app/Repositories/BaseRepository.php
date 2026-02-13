@@ -18,9 +18,9 @@ abstract class BaseRepository implements RepositoryInterface
 
     /**
      * @param array $data
-     * @return mixed
+     * @return Model
      */
-    public function create(array $data): mixed
+    public function create(array $data): Model
     {
         return $this->model->create($data);
     }
@@ -28,20 +28,17 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * @param int $id
      * @param array $data
-     * @return Model|null
+     * @return bool
      */
-    public function update(int $id, array $data): ?Model
+    public function update(int $id, array $data): bool
     {
         $model = $this->model->find($id);
 
         if ($model) {
-            foreach ($data as $key => $value) {
-                $model->$key = $value;
-            }
-
-            $model->save();
+            return $model->fill($data)->save();
         }
-        return null;
+
+        return false;
     }
 
     /**

@@ -14,37 +14,11 @@ class ManufacturerRepository extends BaseRepository
     /**
      * @param int $id
      * @param array $data
-     * @return Manufacturers|null
+     * @return bool
      */
-    public function update(int $id, array $data): ?Manufacturers
+    public function updateWithMapping(int $id, array $data): bool
     {
-        $model = $this->model->find($id);
-
-        if ($model) {
-            $model->title = $data['title'];
-            $model->country = $data['country'];
-            $model->description = $data['description'];
-            $model->meta_title = $data['meta_title'];
-            $model->meta_description = $data['meta_description'];
-            $model->meta_keywords = $data['meta_keywords'];
-            $model->slug = $data['slug'];
-            $model->seo_h1 = $data['seo_h1'];
-            $model->seo_url_canonical = $data['seo_url_canonical'];
-            $model->published = (int) $data['published'];
-
-            if ($data['image']) {
-                $model->image = $data['image'];
-            }
-
-            $model->image_title = $data['image_title'];
-            $model->image_alt = $data['image_alt'];
-            $model->seo_sitemap = $data['seo_sitemap'];
-            $model->save();
-
-            return $model;
-
-        }
-        return null;
+        return $this->update($id, $this->mapping($data));
     }
 
     /**
@@ -66,5 +40,42 @@ class ManufacturerRepository extends BaseRepository
         if ($manufacturer) {
             $manufacturer->remove();
         }
+    }
+
+    private function mapping(array $data): array
+    {
+        return collect($data)
+            ->merge([
+                'meta_title' => $data['meta_title'] ?? null,
+                'meta_description' => $data['meta_description'] ?? null,
+                'meta_keywords' => $data['meta_keywords'] ?? null,
+                'seo_h1' => $data['seo_h1'] ?? null,
+                'seo_url_canonical' => $data['seo_url_canonical'] ?? null,
+                'seo_sitemap' => $data['seo_sitemap'] ?? 1,
+            ])
+            ->when(!isset($data['image']), function ($collection) {
+                return $collection->forget('image');
+            })
+            ->only($this->model->getFillable())
+            ->mapWithKeys(function ($value, $key) {
+                if (in_array($key, [
+                        'published',
+                        'seo_sitemap',
+                    ]) && !is_null($value)) {
+                    return (int)$value;
+                }
+
+                if (in_array($key, [
+                        'meta_title',
+                        'meta_description',
+                        'meta_keywords',
+                        'seo_h1',
+                        'seo_url_canonical',
+                    ]) && empty($value)) {
+                    return null;
+                }
+                return $value;
+            })
+            ->toArray();
     }
 }

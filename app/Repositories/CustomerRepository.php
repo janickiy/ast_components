@@ -18,21 +18,11 @@ class CustomerRepository extends BaseRepository
     /**
      * @param int $id
      * @param array $data
-     * @return Customers|null
+     * @return bool
      */
-    public function update(int $id, array $data): ?Customers
+    public function updateWithMapping(int $id, array $data): bool
     {
-        $model = $this->model->find($id);
-
-        if ($model) {
-            $model->name = $data['name'];
-            $model->email = $data['email'];
-            $model->phone = $data['phone'];
-            $model->save();
-
-            return $model;
-        }
-        return null;
+        return $this->update($id, $this->mapping($data));
     }
 
     /**
@@ -78,5 +68,15 @@ class CustomerRepository extends BaseRepository
             ->with(['product', 'order'])
             ->whereIn('order_id', $orderIds)
             ->get();
+    }
+
+    private function mapping(array $data): array
+    {
+        return collect($data)
+            ->merge([
+                'phone' => $data['phone'] ?? null,
+            ])
+            ->only($this->model->getFillable())
+            ->toArray();
     }
 }
