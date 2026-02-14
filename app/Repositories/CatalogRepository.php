@@ -144,7 +144,7 @@ class CatalogRepository extends BaseRepository
                 'seo_sitemap' => $data['seo_sitemap'] ?? 1,
             ])
             ->only($this->model->getFillable())
-            ->mapWithKeys(function ($value, $key) {
+            ->map(function ($value, $key) {
                 if (in_array($key, [
                         'parent_id',
                         'seo_sitemap',
@@ -154,6 +154,6 @@ class CatalogRepository extends BaseRepository
 
                 return $value;
             })
-            ->toArray();
+            ->all();
     }
 }

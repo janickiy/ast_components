@@ -66,7 +66,7 @@ class ManufacturersController extends Controller
                 $seo_sitemap = 1;
             }
 
-            $this->manufacturerRepository->create(array_merge(array_merge($request->all()), [
+            $this->manufacturerRepository->create(array_merge($request->all(), [
                 'image' => $originName ?? null,
                 'published' => $published,
                 'seo_sitemap' => $seo_sitemap,

@@ -70,7 +70,7 @@ class ProductsController extends Controller
                 $seo_sitemap = 1;
             }
 
-            $this->productRepository->create(array_merge(array_merge($request->all()), [
+            $this->productRepository->create(array_merge($request->all(), [
                 'thumbnail' => $thumbnailFileNameToStore ?? null,
                 'origin' => $fileNameToStore ?? null,
                 'seo_sitemap' => $seo_sitemap,

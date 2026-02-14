@@ -63,7 +63,7 @@ class PagesController extends Controller
                 $main = 1;
             }
 
-            $this->pageRepository->create(array_merge(array_merge($request->all()), [
+            $this->pageRepository->create(array_merge($request->all(), [
                 'published' => $published,
                 'seo_sitemap' => $seo_sitemap,
                 'main' => $main,
@@ -101,29 +101,38 @@ class PagesController extends Controller
      */
     public function update(EditRequest $request): RedirectResponse
     {
-        $published = 0;
+        try {
+            $published = 0;
 
-        if ($request->input('published')) {
-            $published = 1;
+            if ($request->input('published')) {
+                $published = 1;
+            }
+
+            $main = 0;
+
+            if ($request->input('main')) {
+                $main = 1;
+            }
+
+            $seo_sitemap = 0;
+
+            if ($request->input('seo_sitemap')) {
+                $seo_sitemap = 1;
+            }
+
+            $this->pageRepository->updateWithMapping($request->id, array_merge($request->all(), [
+                'main' => $main,
+                'seo_sitemap' => $seo_sitemap,
+                'published' => $published,
+            ]));
+        } catch (Exception $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage())
+                ->withInput();
         }
-
-        $main = 0;
-
-        if ($request->input('main')) {
-            $main = 1;
-        }
-
-        $seo_sitemap = 0;
-
-        if ($request->input('seo_sitemap')) {
-            $seo_sitemap = 1;
-        }
-
-        $this->pageRepository->updateWithMapping($request->id, array_merge($request->all(), [
-            'main' => $main,
-            'seo_sitemap' => $seo_sitemap,
-            'published' => $published,
-        ]));
 
         return redirect()->route('admin.pages.index')->with('success', 'Данные успешно обновлены');
     }

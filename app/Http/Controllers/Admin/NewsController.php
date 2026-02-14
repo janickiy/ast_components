@@ -52,7 +52,7 @@ class NewsController extends Controller
                 $filename = $this->newsService->storeImage($request);
             }
 
-            $this->newsRepository->create(array_merge(array_merge($request->all()), [
+            $this->newsRepository->create(array_merge($request->all(), [
                 'image' => $filename ?? null,
             ]));
         } catch (Exception $e) {
@@ -95,7 +95,7 @@ class NewsController extends Controller
                 $filename = $this->newsService->updateImage($news, $request);
             }
 
-            $this->newsRepository->updateWithMapping($request->id, array_merge(array_merge($request->all()), [
+            $this->newsRepository->updateWithMapping($request->id, array_merge($request->all(), [
                 'image' => $filename ?? null,
             ]));
         } catch (Exception $e) {

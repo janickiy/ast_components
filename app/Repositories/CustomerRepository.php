@@ -70,6 +70,10 @@ class CustomerRepository extends BaseRepository
             ->get();
     }
 
+    /**
+     * @param array $data
+     * @return array
+     */
     private function mapping(array $data): array
     {
         return collect($data)
@@ -77,6 +81,6 @@ class CustomerRepository extends BaseRepository
                 'phone' => $data['phone'] ?? null,
             ])
             ->only($this->model->getFillable())
-            ->toArray();
+            ->all();
     }
 }

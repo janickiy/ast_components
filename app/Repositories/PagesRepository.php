@@ -54,7 +54,7 @@ class PagesRepository extends BaseRepository
                 return $collection->forget('image');
             })
             ->only($this->model->getFillable())
-            ->mapWithKeys(function ($value, $key) {
+            ->map(function ($value, $key) {
                 if (in_array($key, [
                         'published',
                         'main',
@@ -64,6 +64,6 @@ class PagesRepository extends BaseRepository
                 }
                 return $value;
             })
-            ->toArray();
+            ->all();
     }
 }

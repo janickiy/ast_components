@@ -154,6 +154,10 @@ class ProductsRepository extends BaseRepository
         ];
     }
 
+    /**
+     * @param array $data
+     * @return array
+     */
     private function mapping(array $data): array
     {
         return collect($data)
@@ -171,7 +175,7 @@ class ProductsRepository extends BaseRepository
                 return $collection->forget('image');
             })
             ->only($this->model->getFillable())
-            ->mapWithKeys(function ($value, $key) {
+            ->map(function ($value, $key) {
                 if (in_array($key, [
                     'in_stock',
                     'under_order',
@@ -184,6 +188,6 @@ class ProductsRepository extends BaseRepository
 
                 return $value;
             })
-            ->toArray();
+            ->all();
     }
 }

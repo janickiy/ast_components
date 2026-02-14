@@ -66,7 +66,7 @@ class RedirectController extends Controller
 
         if (!$row) abort(404);
 
-        return view('cp.redirect.edit', compact('row'))->with('title', 'Редактирование редиректы');
+        return view('cp.redirect.create_edit', compact('row'))->with('title', 'Редактирование редиректы');
     }
 
     /**

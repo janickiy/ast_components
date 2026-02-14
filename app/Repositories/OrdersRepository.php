@@ -26,15 +26,15 @@ class OrdersRepository extends BaseRepository
     {
         return collect($data)
             ->when(!isset($data['invoice']), function ($collection) {
-                return $collection->forget('image');
+                return $collection->forget('invoice');
             })
             ->only($this->model->getFillable())
-            ->mapWithKeys(function ($value, $key) {
+            ->map(function ($value, $key) {
                 if ($key === 'delivery_date' && !is_null($value)) {
                     return Carbon::createFromFormat('d/m/Y', $value)->format('Y-m-d');
                 }
                 return $value;
             })
-            ->toArray();
+            ->all();
     }
 }

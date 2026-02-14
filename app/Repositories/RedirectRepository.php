@@ -24,15 +24,14 @@ class RedirectRepository extends BaseRepository
     private function mapping(array $data): array
     {
         return collect($data)
-
             ->only($this->model->getFillable())
-            ->mapWithKeys(function ($value, $key) {
+            ->map(function ($value, $key) {
                 if ($key === 'status' && !is_null($value)) {
                     return (int)$value;
                 }
                 return $value;
             })
-            ->toArray();
+            ->all();
     }
 
 }

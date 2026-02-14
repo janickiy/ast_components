@@ -18,7 +18,7 @@ class SettingsController extends Controller
      * @param SettingsRepository $settingsRepository
      */
     public function __construct(
-        private SettingsService $settingsService,
+        private SettingsService    $settingsService,
         private SettingsRepository $settingsRepository)
     {
         parent::__construct();
@@ -58,7 +58,7 @@ class SettingsController extends Controller
                 $published = 1;
             }
 
-            $this->settingsRepository->create(array_merge(array_merge($request->all()), [
+            $this->settingsRepository->create( array_merge($request->all(), [
                 'value' => $res ?? $request->input('value'),
                 'published' => $published,
             ]));
@@ -95,26 +95,34 @@ class SettingsController extends Controller
      */
     public function update(EditRequest $request): RedirectResponse
     {
-        $settings = $this->settingsRepository->find($request->id);
+        try {
+            $settings = $this->settingsRepository->find($request->id);
 
-        $published = 0;
+            $published = 0;
 
-        if ($request->input('published')) {
-            $published = 1;
-        }
-
-        if ($request->hasFile('value')) {
-            $res = $this->settingsService->updateFile($settings, $request);
-
-            if ($res === false) {
-                return redirect()->route('admin.settings.index')->with('error', 'Не удалось сохранить файл!');
+            if ($request->input('published')) {
+                $published = 1;
             }
-        }
 
-        $this->settingsRepository->updateWithMapping($settings->id, array_merge(array_merge($request->all()), [
-            'value' => $res ?? $request->input('value'),
-            'published' => $published,
-        ]));
+            if ($request->hasFile('value')) {
+                $res = $this->settingsService->updateFile($settings, $request);
+
+                if ($res === false) {
+                    return redirect()->route('admin.settings.index')->with('error', 'Не удалось сохранить файл!');
+                }
+            }
+            $this->settingsRepository->updateWithMapping($request->id, array_merge($request->all(), [
+                'value' => $res ?? $request->input('value'),
+                'published' => $published,
+            ]));
+        } catch (Exception $e) {
+            report($e);
+
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage())
+                ->withInput();
+        }
 
         return redirect()->route('admin.settings.index')->with('success', 'Данные обновлены');
     }

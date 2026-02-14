@@ -33,13 +33,13 @@ class SeoRepository extends BaseRepository
                 'seo_sitemap' => $data['seo_sitemap'] ?? 1,
             ])
             ->only($this->model->getFillable())
-            ->mapWithKeys(function ($value, $key) {
+            ->map(function ($value, $key) {
                 if ($key === 'seo_sitemap' && !is_null($value)) {
                     return (int)$value;
                 }
 
                 return $value;
             })
-            ->toArray();
+            ->all();
     }
 }

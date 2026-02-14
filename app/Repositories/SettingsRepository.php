@@ -43,12 +43,12 @@ class SettingsRepository extends BaseRepository
                 'value' => $data['value'] ?? null,
             ])
             ->only($this->model->getFillable())
-            ->mapWithKeys(function ($value, $key) {
+            ->map(function ($value, $key) {
                 if ($key === 'published' && !is_null($value)) {
                     return (int)$value;
                 }
                 return $value;
             })
-            ->toArray();
+            ->all();
     }
 }

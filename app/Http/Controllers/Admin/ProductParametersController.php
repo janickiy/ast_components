@@ -19,7 +19,7 @@ class ProductParametersController extends Controller
      */
     public function __construct(
         private ProductParametersRepository $productParametersRepository,
-        private ProductsRepository $productsRepository)
+        private ProductsRepository          $productsRepository)
     {
         parent::__construct();
     }

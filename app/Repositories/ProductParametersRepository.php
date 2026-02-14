@@ -21,17 +21,21 @@ class ProductParametersRepository extends BaseRepository
        return $this->update($id, $this->mapping($data));
     }
 
+    /**
+     * @param array $data
+     * @return array
+     */
     private function mapping(array $data): array
     {
         return collect($data)
             ->only($this->model->getFillable())
-            ->mapWithKeys(function ($value, $key) {
+            ->map(function ($value, $key) {
                 if ($key === 'product_id' && !is_null($value)) {
                     return (int)$value;
                 }
 
                 return $value;
             })
-            ->toArray();
+            ->all();
     }
 }

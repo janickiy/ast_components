@@ -14,7 +14,7 @@ class CompanyRepository extends BaseRepository
     /**
      * @param int $id
      * @param array $data
-     * @return Company|null
+     * @return bool
      */
     public function updateWithMapping(int $id, array $data): bool
     {
@@ -56,12 +56,12 @@ class CompanyRepository extends BaseRepository
                 'customer_id' => $data['customer_id'] ?? $company->customer_id,
             ])
             ->only($this->model->getFillable())
-            ->mapWithKeys(function ($value, $key) {
+            ->map(function ($value, $key) {
                 if ($key === 'customer_id' && !is_null($value)) {
                     return (int)$value;
                 }
                 return $value;
             })
-            ->toArray();
+            ->all();
     }
 }

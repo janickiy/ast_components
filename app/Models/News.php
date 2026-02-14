@@ -32,6 +32,7 @@ class News extends Model
         'meta_title',
         'meta_description',
         'meta_keywords',
+        'seo_sitemap',
         'slug',
         'seo_h1',
         'seo_url_canonical'

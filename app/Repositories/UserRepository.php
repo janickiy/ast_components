@@ -3,8 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-
 
 class UserRepository extends BaseRepository
 {
@@ -16,26 +14,20 @@ class UserRepository extends BaseRepository
     /**
      * @param int $id
      * @param array $data
-     * @return User|null
+     * @return bool
      */
-    public function update(int $id, array $data): ?User
+    public function update(int $id, array $data): bool
     {
-        $model = $this->model->find($id);
+        return $this->update($id, $this->mapping($data));
+    }
 
-        if ($model) {
-            $model->login = $data['login'] ?? $model->login;
-            $model->name = $data['name'] ?? $model->name;
-
-            if (!empty($model->role)) $model->role = $data['role'];
-
-            if (isset($data['password'])) {
-                $model->password = Hash::make($data['password']);
-            }
-
-            $model->save();
-
-            return $model;
-        }
-        return null;
+    private function mapping(array $data): array
+    {
+        return collect($data)
+            ->merge([
+                'name' => $data['name'] ?? null,
+            ])
+            ->only($this->model->getFillable())
+            ->all();
     }
 }

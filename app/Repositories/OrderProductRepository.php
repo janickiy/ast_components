@@ -25,7 +25,7 @@ class OrderProductRepository extends BaseRepository
     {
         return collect($data)
             ->only($this->model->getFillable())
-            ->mapWithKeys(function ($value, $key) {
+            ->map(function ($value, $key) {
                 if ($key === 'count' && !is_null($value)) {
                     return (int)$value;
                 }
@@ -34,6 +34,6 @@ class OrderProductRepository extends BaseRepository
                 }
                 return $value;
             })
-            ->toArray();
+            ->all();
     }
 }

@@ -32,6 +32,7 @@ class Manufacturers extends Model
         'seo_url_canonical',
         'seo_sitemap',
         'published',
+        'seo_sitemap',
     ];
 
     /**

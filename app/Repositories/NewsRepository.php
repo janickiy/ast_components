@@ -19,6 +19,7 @@ class NewsRepository extends BaseRepository
      */
     public function updateWithMapping(int $id, array $data): bool
     {
+      //  dd($this->mapping($data));
         return $this->update($id, $this->mapping($data));
     }
 
@@ -65,19 +66,19 @@ class NewsRepository extends BaseRepository
                 'seo_h1' => $data['seo_h1'] ?? null,
                 'seo_url_canonical' => $data['seo_url_canonical'] ?? null,
                 'seo_sitemap' => $data['seo_sitemap'] ?? 1,
+                'image_title' => $data['image_title'] ?? null,
+                'image_alt' => $data['image_alt'] ?? null,
             ])
             ->when(!isset($data['image']), function ($collection) {
                 return $collection->forget('image');
             })
             ->only($this->model->getFillable())
-            ->mapWithKeys(function ($value, $key) {
-                if (in_array($key, [
-                        'published',
-                        'seo_sitemap',
-                    ]) && !is_null($value)) {
+            ->map(function ($value, $key) {
+                if (in_array($key, ['published', 'promotion', 'seo_sitemap']) && !is_null($value)) {
                     return (int)$value;
                 }
+                return $value;
             })
-            ->toArray();
+            ->all();
     }
 }

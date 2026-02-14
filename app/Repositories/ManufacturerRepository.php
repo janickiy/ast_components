@@ -57,14 +57,16 @@ class ManufacturerRepository extends BaseRepository
                 return $collection->forget('image');
             })
             ->only($this->model->getFillable())
-            ->mapWithKeys(function ($value, $key) {
+            ->map(function ($value, $key) {
                 if (in_array($key, [
                         'published',
                         'seo_sitemap',
                     ]) && !is_null($value)) {
                     return (int)$value;
                 }
+
+                return $value;
             })
-            ->toArray();
+            ->all();
     }
 }

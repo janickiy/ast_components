@@ -73,6 +73,10 @@ class ComplaintsRepository extends BaseRepository
         }
     }
 
+    /**
+     * @param array $data
+     * @return array
+     */
     private function mapping(array $data): array
     {
         return collect($data)
@@ -80,12 +84,12 @@ class ComplaintsRepository extends BaseRepository
                 'result' => $data['result'] ?? null,
             ])
             ->only($this->model->getFillable())
-            ->mapWithKeys(function ($value, $key) {
+            ->map(function ($value, $key) {
                 if ($key === 'status' && !is_null($value)) {
                     return (int)$value;
                 }
                 return $value;
             })
-            ->toArray();
+            ->all();
     }
 }
