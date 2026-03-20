@@ -5,110 +5,57 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin;
 
 use App\DTO\ArrayData;
-use App\Http\Requests\Admin\Catalog\EditRequest;
-use App\Http\Requests\Admin\Catalog\StoreRequest;
-use App\Repositories\CatalogRepository;
-use Exception;
+use App\Http\Requests\Admin\Complaints\DeleteRequest;
+use App\Http\Requests\Admin\Complaints\EditRequest;
+use App\Models\Complaints;
+use App\Repositories\ComplaintsRepository;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
-class CatalogController extends Controller
+class ComplaintsController extends Controller
 {
     public function __construct(
-        private readonly CatalogRepository $catalogRepository,
+        private readonly ComplaintsRepository $complaintsRepository,
     ) {
         parent::__construct();
     }
 
     public function index(): View
     {
-        $catalogsList = $this->catalogRepository->getCatalogsList();
-
-        return view('cp.catalog.index', compact('catalogsList'))
-            ->with('title', 'Каталог');
-    }
-
-    public function create(int $parent_id = 0): View
-    {
-        $options = $this->catalogRepository->getOptions();
-        $row = $this->catalogRepository->find($parent_id);
-
-        abort_if($row === null, 404);
-
-        $title = $parent_id > 0
-            ? 'Добавление подкатегории в категорию ' . $row->name
-            : 'Добавление категории';
-
-        return view('cp.catalog.create_edit', compact('options', 'parent_id'))
-            ->with('title', $title);
-    }
-
-    public function store(StoreRequest $request): RedirectResponse
-    {
-        try {
-            $this->catalogRepository->create($this->makeDto($request->validated(), $request->boolean('seo_sitemap')));
-        } catch (Exception $exception) {
-            report($exception);
-
-            return back()
-                ->withInput()
-                ->with('error', $exception->getMessage());
-        }
-
-        return redirect()
-            ->route('admin.catalog.index')
-            ->with('success', 'Информация успешно добавлена');
+        return view('cp.complaints.index')
+            ->with('title', 'Претензии');
     }
 
     public function edit(int $id): View
     {
-        $row = $this->catalogRepository->find($id);
+        $row = $this->complaintsRepository->find($id);
 
         abort_if($row === null, 404);
 
-        $options = $this->catalogRepository->getOptions();
-        unset($options[$id]);
+        $options = Complaints::getOption();
 
-        $parent_id = $row->parent_id;
-
-        return view('cp.catalog.create_edit', compact('row', 'parent_id', 'options'))
-            ->with('title', 'Редактирование категории');
+        return view('cp.complaints.edit', compact('row', 'options'))
+            ->with('title', 'Редактирование претензии: #' . $row->id . ' ' . $row?->customer?->name);
     }
 
     public function update(EditRequest $request): RedirectResponse
     {
-        try {
-            $this->catalogRepository->updateWithMapping(
-                $request->id,
-                $this->makeDto($request->validated(), $request->boolean('seo_sitemap')),
-            );
-        } catch (Exception $exception) {
-            report($exception);
-
-            return back()
-                ->withInput()
-                ->with('error', $exception->getMessage());
-        }
+        $this->complaintsRepository->updateWithMapping(
+            $request->id,
+            ArrayData::from($request->validated()),
+        );
 
         return redirect()
-            ->route('admin.catalog.index')
-            ->with('success', 'Данные обновлены');
+            ->route('admin.complaints.index')
+            ->with('success', 'Данные успешно обновлены');
     }
 
-    public function destroy(int $parent_id): RedirectResponse
+    public function destroy(DeleteRequest $request): RedirectResponse
     {
-        $this->catalogRepository->remove($parent_id);
+        $this->complaintsRepository->remove($request->id);
 
         return redirect()
-            ->route('admin.catalog.index')
-            ->with('success', 'Данные успешно удалены!');
-    }
-
-    private function makeDto(array $validated, bool $seoSitemap): ArrayData
-    {
-        return ArrayData::from([
-            ...$validated,
-            'seo_sitemap' => $seoSitemap,
-        ]);
+            ->route('admin.complaints.index')
+            ->with('success', 'Данные успешно удалены');
     }
 }

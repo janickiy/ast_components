@@ -1,143 +1,143 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\DTO\ArrayData;
-
+use App\Helpers\StringHelper;
 use App\Http\Requests\Admin\ProductDocuments\EditRequest;
 use App\Http\Requests\Admin\ProductDocuments\StoreRequest;
 use App\Http\Requests\Admin\ProductParameters\DeleteRequest;
 use App\Repositories\ProductDocumentsRepository;
 use App\Repositories\ProductsRepository;
 use App\Services\ProductDocumentsService;
-use App\Helpers\StringHelper;
+use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use Exception;
-
 
 class ProductDocumentsController extends Controller
 {
-    /**
-     * @param ProductDocumentsRepository $productDocumentsRepository
-     * @param ProductsRepository $productsRepository
-     * @param ProductDocumentsService $productDocumentsService
-     */
     public function __construct(
-        private ProductDocumentsRepository $productDocumentsRepository,
-        private ProductsRepository $productsRepository,
-        private ProductDocumentsService $productDocumentsService)
-    {
+        private readonly ProductDocumentsRepository $productDocumentsRepository,
+        private readonly ProductsRepository $productsRepository,
+        private readonly ProductDocumentsService $productDocumentsService,
+    ) {
         parent::__construct();
     }
 
-    /**
-     * @param int $product_id
-     * @return View
-     */
     public function index(int $product_id): View
     {
-        $row = $this->productsRepository->find($product_id);
+        $product = $this->productsRepository->find($product_id);
 
-        if (!$row) abort(404);
+        abort_if($product === null, 404);
 
-        $breadcrumbs[] = ['url' => route('admin.products.index'), 'title' => 'Продукция'];
+        $breadcrumbs = [
+            ['url' => route('admin.products.index'), 'title' => 'Продукция'],
+        ];
 
-        return view('cp.product_documents.index', compact('product_id', 'breadcrumbs'))->with('title', 'Список документации: ' . $row->title);
+        return view('cp.product_documents.index', compact('product_id', 'breadcrumbs'))
+            ->with('title', 'Список документации: ' . $product->title);
     }
 
-    /**
-     * @param int $product_id
-     * @return View
-     */
     public function create(int $product_id): View
     {
-        $row = $this->productsRepository->find($product_id);
+        $product = $this->productsRepository->find($product_id);
 
-        if (!$row) abort(404);
+        abort_if($product === null, 404);
 
-        $breadcrumbs[] = ['url' => route('admin.products.index'), 'title' => 'Продукция'];
-        $breadcrumbs[] = ['url' => route('admin.product_documents.index', ['product_id' => $product_id]), 'title' => $row->title];
+        $breadcrumbs = [
+            ['url' => route('admin.products.index'), 'title' => 'Продукция'],
+            ['url' => route('admin.product_documents.index', ['product_id' => $product_id]), 'title' => $product->title],
+        ];
 
         $maxUploadFileSize = StringHelper::maxUploadFileSize();
 
-        return view('cp.product_documents.create_edit', compact('product_id', 'maxUploadFileSize', 'breadcrumbs'))->with('title', 'Добавление документации');
+        return view('cp.product_documents.create_edit', compact('product_id', 'maxUploadFileSize', 'breadcrumbs'))
+            ->with('title', 'Добавление документации');
     }
 
-    /**
-     * @param StoreRequest $request
-     * @return RedirectResponse
-     */
     public function store(StoreRequest $request): RedirectResponse
     {
         try {
             $filename = $this->productDocumentsService->storeFile($request);
-            $this->productDocumentsRepository->create(ArrayData::from(array_merge($request->validated(), ['file' => $filename])));
-        } catch (Exception $e) {
-            report($e);
 
-            return redirect()
-                ->back()
-                ->with('error', $e->getMessage())
-                ->withInput();
+            $this->productDocumentsRepository->create(
+                ArrayData::from([
+                    ...$request->validated(),
+                    'file' => $filename,
+                ]),
+            );
+        } catch (Exception $exception) {
+            report($exception);
+
+            return back()
+                ->withInput()
+                ->with('error', $exception->getMessage());
         }
 
-        return redirect()->route('admin.product_documents.index', ['product_id' => $request->product_id])->with('success', 'Информация успешно добавлена');
+        return redirect()
+            ->route('admin.product_documents.index', ['product_id' => $request->product_id])
+            ->with('success', 'Информация успешно добавлена');
     }
 
-    /**
-     * @param int $id
-     * @return View
-     */
     public function edit(int $id): View
     {
         $row = $this->productDocumentsRepository->find($id);
 
-        if (!$row) abort(404);
+        abort_if($row === null, 404);
 
         $product_id = $row->product_id;
         $maxUploadFileSize = StringHelper::maxUploadFileSize();
 
-        $breadcrumbs[] = ['url' => route('admin.products.index'), 'title' => 'Продукция'];
-        $breadcrumbs[] = ['url' => route('admin.product_documents.index', ['product_id' => $row->product_id]), 'title' => $row->product->title];
+        $breadcrumbs = [
+            ['url' => route('admin.products.index'), 'title' => 'Продукция'],
+            ['url' => route('admin.product_documents.index', ['product_id' => $row->product_id]), 'title' => $row->product->title],
+        ];
 
-        return view('cp.product_documents.create_edit', compact('row', 'product_id', 'maxUploadFileSize', 'breadcrumbs'))->with('title', 'Редактирование списка документации');
+        return view('cp.product_documents.create_edit', compact('row', 'product_id', 'maxUploadFileSize', 'breadcrumbs'))
+            ->with('title', 'Редактирование списка документации');
     }
 
-    /**
-     * @param EditRequest $request
-     * @return RedirectResponse
-     */
     public function update(EditRequest $request): RedirectResponse
     {
         try {
             $row = $this->productDocumentsRepository->find($request->id);
 
+            abort_if($row === null, 404);
+
+            $file = $row->file;
+
             if ($request->hasFile('file')) {
-                $filename = $this->productDocumentsService->updateFile($row->id, $request);
+                $file = $this->productDocumentsService->updateFile($row->id, $request);
             }
 
-            $this->productDocumentsRepository->updateWithMapping($request->id, ArrayData::from(array_merge($request->validated(), [
-                'file' => $filename ?? null,
-            ])));
-        } catch (Exception $e) {
-            report($e);
+            $this->productDocumentsRepository->updateWithMapping(
+                $request->id,
+                ArrayData::from([
+                    ...$request->validated(),
+                    'file' => $file,
+                ]),
+            );
+        } catch (Exception $exception) {
+            report($exception);
 
-            return redirect()
-                ->back()
-                ->with('error', $e->getMessage())
-                ->withInput();
+            return back()
+                ->withInput()
+                ->with('error', $exception->getMessage());
         }
 
-        return redirect()->route('admin.product_documents.index', ['product_id' => $row->product_id])->with('success', 'Данные обновлены');
+        return redirect()
+            ->route('admin.product_documents.index', ['product_id' => $row->product_id])
+            ->with('success', 'Данные обновлены');
     }
 
-    /**
-     * @param DeleteRequest $request
-     * @return void
-     */
     public function destroy(DeleteRequest $request): void
     {
+        $row = $this->productDocumentsRepository->find($request->id);
+
+        abort_if($row === null, 404);
+
         $this->productDocumentsRepository->remove($request->id);
     }
 }

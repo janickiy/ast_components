@@ -1,162 +1,131 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\DTO\ArrayData;
-
-use App\Repositories\CatalogRepository;
-use App\Repositories\ProductsRepository;
-use App\Repositories\ManufacturerRepository;
-use App\Services\ProductsService;
 use App\Helpers\StringHelper;
+use App\Http\Requests\Admin\Products\DeleteRequest;
 use App\Http\Requests\Admin\Products\EditRequest;
 use App\Http\Requests\Admin\Products\StoreRequest;
-use App\Http\Requests\Admin\Products\DeleteRequest;
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
+use App\Repositories\CatalogRepository;
+use App\Repositories\ManufacturerRepository;
+use App\Repositories\ProductsRepository;
+use App\Services\ProductsService;
 use Exception;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class ProductsController extends Controller
 {
-    /**
-     * @param ProductsRepository $productRepository
-     * @param ProductsService $productService
-     * @param CatalogRepository $categoryRepository
-     * @param ManufacturerRepository $manufacturerRepository
-     */
     public function __construct(
-        private ProductsRepository     $productRepository,
-        private ProductsService        $productService,
-        private CatalogRepository      $categoryRepository,
-        private ManufacturerRepository $manufacturerRepository)
-    {
+        private readonly ProductsRepository $productRepository,
+        private readonly ProductsService $productService,
+        private readonly CatalogRepository $categoryRepository,
+        private readonly ManufacturerRepository $manufacturerRepository,
+    ) {
         parent::__construct();
     }
 
-    /**
-     * @return View
-     */
     public function index(): View
     {
-        return view('cp.products.index')->with('title', 'Продукция');
+        return view('cp.products.index', [
+            'title' => 'Продукция',
+        ]);
     }
 
-    /**
-     * @return View
-     */
     public function create(): View
     {
-        $options = $this->categoryRepository->getOptions();
-        $manufacturerOptions = $this->manufacturerRepository->getOptions();
-        $maxUploadFileSize = StringHelper::maxUploadFileSize();
-
-        return view('cp.products.create_edit', compact('options', 'manufacturerOptions', 'maxUploadFileSize'))->with('title', 'Добавление продукции');
+        return view('cp.products.create_edit', [
+            'options' => $this->categoryRepository->getOptions(),
+            'manufacturerOptions' => $this->manufacturerRepository->getOptions(),
+            'maxUploadFileSize' => StringHelper::maxUploadFileSize(),
+            'title' => 'Добавление продукции',
+        ]);
     }
 
-    /**
-     * @param StoreRequest $request
-     * @return RedirectResponse
-     */
     public function store(StoreRequest $request): RedirectResponse
     {
         try {
+            $origin = null;
+            $thumbnail = null;
+
             if ($request->hasFile('image')) {
                 $filename = $this->productService->storeImage($request);
-                $fileNameToStore = 'origin_' . $filename;
-                $thumbnailFileNameToStore = 'thumbnail_' . $filename;
+                $origin = 'origin_' . $filename;
+                $thumbnail = 'thumbnail_' . $filename;
             }
 
-            $seo_sitemap = 0;
+            $this->productRepository->create(
+                ArrayData::from([
+                    ...$request->validated(),
+                    'thumbnail' => $thumbnail,
+                    'origin' => $origin,
+                    'seo_sitemap' => $request->boolean('seo_sitemap'),
+                ]),
+            );
+        } catch (Exception $exception) {
+            report($exception);
 
-            if ($request->input('seo_sitemap')) {
-                $seo_sitemap = 1;
-            }
-
-            $this->productRepository->create(ArrayData::from(array_merge($request->validated(), [
-                'thumbnail' => $thumbnailFileNameToStore ?? null,
-                'origin' => $fileNameToStore ?? null,
-                'seo_sitemap' => $seo_sitemap,
-            ])));
-        } catch (Exception $e) {
-            report($e);
-
-            return redirect()
-                ->back()
-                ->with('error', $e->getMessage())
-                ->withInput();
+            return back()
+                ->withInput()
+                ->with('error', $exception->getMessage());
         }
 
-        return redirect()->route('admin.products.index')->with('success', 'Информация успешно добавлена');
+        return redirect()
+            ->route('admin.products.index')
+            ->with('success', 'Информация успешно добавлена');
     }
 
-    /**
-     * @param int $id
-     * @return View
-     */
     public function edit(int $id): View
     {
         $row = $this->productRepository->find($id);
 
-        if (!$row) abort(404);
+        abort_if($row === null, 404);
 
-        $options = $this->categoryRepository->getOptions();
-        $manufacturerOptions = $this->manufacturerRepository->getOptions();
-        $maxUploadFileSize = StringHelper::maxUploadFileSize();
-
-        return view('cp.products.create_edit', compact('row', 'options', 'manufacturerOptions', 'maxUploadFileSize'))->with('title', 'Редактирование продукции');
+        return view('cp.products.create_edit', [
+            'row' => $row,
+            'options' => $this->categoryRepository->getOptions(),
+            'manufacturerOptions' => $this->manufacturerRepository->getOptions(),
+            'maxUploadFileSize' => StringHelper::maxUploadFileSize(),
+            'title' => 'Редактирование продукции',
+        ]);
     }
 
-    /**
-     * @param EditRequest $request
-     * @return RedirectResponse
-     */
     public function update(EditRequest $request): RedirectResponse
     {
         try {
+            $product = $this->productRepository->find($request->id);
+
+            abort_if($product === null, 404);
+
             if ($request->hasFile('image')) {
-                $product = $this->productRepository->find($request->id);
                 $this->productService->updateImage($request, $product);
             }
 
-            $in_stock = 0;
+            $this->productRepository->updateWithMapping(
+                $request->id,
+                ArrayData::from([
+                    ...$request->validated(),
+                    'in_stock' => $request->boolean('in_stock'),
+                    'under_order' => $request->boolean('under_order'),
+                    'seo_sitemap' => $request->boolean('seo_sitemap'),
+                ]),
+            );
+        } catch (Exception $exception) {
+            report($exception);
 
-            if ($request->input('in_stock')) {
-                $in_stock = 1;
-            }
-
-            $under_order = 0;
-
-            if ($request->input('under_order')) {
-                $under_order = 1;
-            }
-
-            $seo_sitemap = 0;
-
-            if ($request->input('seo_sitemap')) {
-                $seo_sitemap = 1;
-            }
-
-            $this->productRepository->updateWithMapping($request->id, ArrayData::from(array_merge($request->validated(), [
-                'in_stock' => $in_stock,
-                'under_order' => $under_order,
-                'seo_sitemap' => $seo_sitemap,
-            ])));
-        } catch (Exception $e) {
-            report($e);
-
-            return redirect()
-                ->back()
-                ->with('error', $e->getMessage())
-                ->withInput();
+            return back()
+                ->withInput()
+                ->with('error', $exception->getMessage());
         }
 
-        return redirect()->route('admin.products.index')->with('success', 'Данные обновлены');
+        return redirect()
+            ->route('admin.products.index')
+            ->with('success', 'Данные обновлены');
     }
 
-    /**
-     * @param DeleteRequest $request
-     * @return void
-     */
     public function destroy(DeleteRequest $request): void
     {
         $this->productRepository->remove($request->id);

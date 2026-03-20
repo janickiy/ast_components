@@ -1,148 +1,101 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\DTO\ArrayData;
-
+use App\Http\Requests\Admin\Pages\DeleteRequest;
 use App\Http\Requests\Admin\Pages\EditRequest;
 use App\Http\Requests\Admin\Pages\StoreRequest;
-use App\Http\Requests\Admin\Pages\DeleteRequest;
 use App\Repositories\PagesRepository;
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use Exception;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class PagesController extends Controller
 {
-    /**
-     * @param PagesRepository $pageRepository
-     */
-    public function __construct(private PagesRepository $pageRepository)
-    {
+    public function __construct(
+        private readonly PagesRepository $pageRepository,
+    ) {
         parent::__construct();
     }
 
-    /**
-     * @return View
-     */
     public function index(): View
     {
-        return view('cp.pages.index')->with('title', 'Страницы и разделы');
+        return view('cp.pages.index')
+            ->with('title', 'Страницы и разделы');
     }
 
-    /**
-     * @return View
-     */
     public function create(): View
     {
         $options = $this->pageRepository->getOption();
 
-        return view('cp.pages.create_edit', compact('options'))->with('title', 'Добавление раздела');
+        return view('cp.pages.create_edit', compact('options'))
+            ->with('title', 'Добавление раздела');
     }
 
-    /**
-     * @param StoreRequest $request
-     * @return RedirectResponse
-     */
     public function store(StoreRequest $request): RedirectResponse
     {
         try {
-            $published = 0;
+            $this->pageRepository->create(
+                ArrayData::from([
+                    ...$request->validated(),
+                    'published' => $request->boolean('published'),
+                    'seo_sitemap' => $request->boolean('seo_sitemap'),
+                    'main' => $request->boolean('main'),
+                ]),
+            );
+        } catch (Exception $exception) {
+            report($exception);
 
-            if ($request->input('published')) {
-                $published = 1;
-            }
-
-            $seo_sitemap = 0;
-
-            if ($request->input('seo_sitemap')) {
-                $seo_sitemap = 1;
-            }
-
-            $main = 0;
-
-            if ($request->input('main')) {
-                $main = 1;
-            }
-
-            $this->pageRepository->create(ArrayData::from(array_merge($request->validated(), [
-                'published' => $published,
-                'seo_sitemap' => $seo_sitemap,
-                'main' => $main,
-            ])));
-        } catch (Exception $e) {
-            report($e);
-
-            return redirect()
-                ->back()
-                ->with('error', $e->getMessage())
-                ->withInput();
+            return back()
+                ->withInput()
+                ->with('error', $exception->getMessage());
         }
 
-        return redirect()->route('admin.pages.index')->with('success', 'Данные успешно добавлены');
+        return redirect()
+            ->route('admin.pages.index')
+            ->with('success', 'Данные успешно добавлены');
     }
 
-    /**
-     * @param int $id
-     * @return View
-     */
     public function edit(int $id): View
     {
         $row = $this->pageRepository->find($id);
 
-        if (!$row) abort(404);
+        abort_if($row === null, 404);
 
         $options = $this->pageRepository->getOption();
 
-        return view('cp.pages.create_edit', compact('row', 'options'))->with('title', 'Редактирование раздела');
+        return view('cp.pages.create_edit', compact('row', 'options'))
+            ->with('title', 'Редактирование раздела');
     }
 
-    /**
-     * @param EditRequest $request
-     * @return RedirectResponse
-     */
     public function update(EditRequest $request): RedirectResponse
     {
         try {
-            $published = 0;
+            $this->pageRepository->updateWithMapping(
+                $request->id,
+                ArrayData::from([
+                    ...$request->validated(),
+                    'published' => $request->boolean('published'),
+                    'seo_sitemap' => $request->boolean('seo_sitemap'),
+                    'main' => $request->boolean('main'),
+                ]),
+            );
+        } catch (Exception $exception) {
+            report($exception);
 
-            if ($request->input('published')) {
-                $published = 1;
-            }
-
-            $main = 0;
-
-            if ($request->input('main')) {
-                $main = 1;
-            }
-
-            $seo_sitemap = 0;
-
-            if ($request->input('seo_sitemap')) {
-                $seo_sitemap = 1;
-            }
-
-            $this->pageRepository->updateWithMapping($request->id, ArrayData::from(array_merge($request->validated(), [
-                'main' => $main,
-                'seo_sitemap' => $seo_sitemap,
-                'published' => $published,
-            ])));
-        } catch (Exception $e) {
-            report($e);
-
-            return redirect()
-                ->back()
-                ->with('error', $e->getMessage())
-                ->withInput();
+            return back()
+                ->withInput()
+                ->with('error', $exception->getMessage());
         }
 
-        return redirect()->route('admin.pages.index')->with('success', 'Данные успешно обновлены');
+        return redirect()
+            ->route('admin.pages.index')
+            ->with('success', 'Данные успешно обновлены');
     }
 
-    /**
-     * @param DeleteRequest $request
-     * @return void
-     */
     public function destroy(DeleteRequest $request): void
     {
         $this->pageRepository->delete($request->id);

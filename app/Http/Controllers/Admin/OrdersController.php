@@ -1,81 +1,77 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\DTO\ArrayData;
-
 use App\Helpers\StringHelper;
 use App\Http\Requests\Admin\Orders\EditRequest;
 use App\Models\Orders;
-use App\Services\OrdersService;
 use App\Repositories\OrdersRepository;
+use App\Services\OrdersService;
+use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use Exception;
 
 class OrdersController extends Controller
 {
-    /**
-     * @param OrdersRepository $ordersRepository
-     * @param OrdersService $ordersService
-     */
     public function __construct(
-        private OrdersRepository $ordersRepository,
-        private OrdersService    $ordersService)
-    {
+        private readonly OrdersRepository $ordersRepository,
+        private readonly OrdersService $ordersService,
+    ) {
         parent::__construct();
     }
 
-    /**
-     * @return View
-     */
     public function index(): View
     {
-        return view('cp.orders.index')->with('title', 'Заказы');
+        return view('cp.orders.index')
+            ->with('title', 'Заказы');
     }
 
-    /**
-     * @param int $id
-     * @return View
-     */
     public function edit(int $id): View
     {
         $row = $this->ordersRepository->find($id);
 
-        if (!$row) abort(404);
+        abort_if($row === null, 404);
 
         $maxUploadFileSize = StringHelper::maxUploadFileSize();
         $options = Orders::getOption();
 
-        return view('cp.orders.edit', compact('row', 'maxUploadFileSize', 'options'))->with('title', 'Редактирование заказа: #' . $row->id);
+        return view('cp.orders.edit', compact('row', 'maxUploadFileSize', 'options'))
+            ->with('title', 'Редактирование заказа: #' . $row->id);
     }
 
-    /**
-     * @param EditRequest $request
-     * @return RedirectResponse
-     */
     public function update(EditRequest $request): RedirectResponse
     {
         try {
-            $row = $this->ordersRepository->find($request->id);
+            $order = $this->ordersRepository->find($request->id);
+
+            abort_if($order === null, 404);
+
+            $invoice = $order->invoice;
 
             if ($request->hasFile('invoice')) {
-                $filename = $this->ordersService->updateFile($row, $request);
+                $invoice = $this->ordersService->updateFile($order, $request);
             }
 
-            $this->ordersRepository->updateWithMapping($request->id, ArrayData::from(array_merge($request->validated(), [
-                'invoice' => $filename ?? null,
-            ])));
-        } catch (Exception $e) {
-            report($e);
+            $this->ordersRepository->updateWithMapping(
+                $request->id,
+                ArrayData::from([
+                    ...$request->validated(),
+                    'invoice' => $invoice,
+                ]),
+            );
+        } catch (Exception $exception) {
+            report($exception);
 
-            return redirect()
-                ->back()
-                ->with('error', $e->getMessage())
-                ->withInput();
+            return back()
+                ->withInput()
+                ->with('error', $exception->getMessage());
         }
 
-        return redirect()->route('admin.orders.index')->with('success', 'Данные обновлены');
+        return redirect()
+            ->route('admin.orders.index')
+            ->with('success', 'Данные обновлены');
     }
-
 }

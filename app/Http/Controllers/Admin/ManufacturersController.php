@@ -1,157 +1,123 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\DTO\ArrayData;
-
 use App\Helpers\StringHelper;
+use App\Http\Requests\Admin\Manufacturers\DeleteRequest;
 use App\Http\Requests\Admin\Manufacturers\EditRequest;
 use App\Http\Requests\Admin\Manufacturers\StoreRequest;
-use App\Http\Requests\Admin\Manufacturers\DeleteRequest;
 use App\Repositories\ManufacturerRepository;
 use App\Services\ManufacturerService;
+use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use Exception;
 
 class ManufacturersController extends Controller
 {
-    /**
-     * @param ManufacturerRepository $manufacturerRepository
-     * @param ManufacturerService $manufacturerService
-     */
     public function __construct(
-        private ManufacturerRepository $manufacturerRepository,
-        private ManufacturerService    $manufacturerService)
-    {
+        private readonly ManufacturerRepository $manufacturerRepository,
+        private readonly ManufacturerService $manufacturerService,
+    ) {
         parent::__construct();
     }
 
-    /**
-     * @return View
-     */
     public function index(): View
     {
-        return view('cp.manufacturers.index')->with('title', 'Производители');
+        return view('cp.manufacturers.index')
+            ->with('title', 'Производители');
     }
 
-    /**
-     * @return View
-     */
     public function create(): View
     {
         $maxUploadFileSize = StringHelper::maxUploadFileSize();
 
-        return view('cp.manufacturers.create_edit', compact('maxUploadFileSize'))->with('title', 'Добавление производителя');
+        return view('cp.manufacturers.create_edit', compact('maxUploadFileSize'))
+            ->with('title', 'Добавление производителя');
     }
 
-    /**
-     * @param StoreRequest $request
-     * @return RedirectResponse
-     */
     public function store(StoreRequest $request): RedirectResponse
     {
         try {
-            if ($request->hasFile('image')) {
-                $originName = $this->manufacturerService->storeImage($request);
-            }
+            $image = $request->hasFile('image')
+                ? $this->manufacturerService->storeImage($request)
+                : null;
 
-            $published = 0;
+            $this->manufacturerRepository->create(
+                ArrayData::from([
+                    ...$request->validated(),
+                    'image' => $image,
+                    'published' => $request->boolean('published'),
+                    'seo_sitemap' => $request->boolean('seo_sitemap'),
+                ]),
+            );
+        } catch (Exception $exception) {
+            report($exception);
 
-            if ($request->input('published')) {
-                $published = 1;
-            }
-
-            $seo_sitemap = 0;
-
-            if ($request->input('seo_sitemap')) {
-                $seo_sitemap = 1;
-            }
-
-            $this->manufacturerRepository->create(ArrayData::from(array_merge($request->validated(), [
-                'image' => $originName ?? null,
-                'published' => $published,
-                'seo_sitemap' => $seo_sitemap,
-            ])));
-        } catch (Exception $e) {
-            report($e);
-
-            return redirect()
-                ->back()
-                ->with('error', $e->getMessage())
-                ->withInput();
+            return back()
+                ->withInput()
+                ->with('error', $exception->getMessage());
         }
 
-        return redirect()->route('admin.manufacturers.index')->with('success', 'Данные успешно добавлены');
+        return redirect()
+            ->route('admin.manufacturers.index')
+            ->with('success', 'Данные успешно добавлены');
     }
 
-    /**
-     * @param int $id
-     * @return View
-     */
     public function edit(int $id): View
     {
         $row = $this->manufacturerRepository->find($id);
 
-        if (!$row) abort(404);
+        abort_if($row === null, 404);
 
         $maxUploadFileSize = StringHelper::maxUploadFileSize();
 
-        return view('cp.manufacturers.create_edit', compact('row', 'maxUploadFileSize'))->with('title', 'Редактирование производителя');
+        return view('cp.manufacturers.create_edit', compact('row', 'maxUploadFileSize'))
+            ->with('title', 'Редактирование производителя');
     }
 
-    /**
-     * @param EditRequest $request
-     * @return RedirectResponse
-     */
     public function update(EditRequest $request): RedirectResponse
     {
         try {
-            $row = $this->manufacturerRepository->find($request->input('id'));
+            $row = $this->manufacturerRepository->find($request->id);
 
-            $image = $request->pic;
+            abort_if($row === null, 404);
 
-            if ($image != null) {
+            $image = $row->image;
+
+            if ($request->filled('pic')) {
                 $this->manufacturerService->deleteImage($row);
+                $image = null;
             }
 
             if ($request->hasFile('image')) {
-                $originName = $this->manufacturerService->updateImage($row, $request);
+                $image = $this->manufacturerService->updateImage($row, $request);
             }
 
-            $published = 0;
+            $this->manufacturerRepository->updateWithMapping(
+                $request->id,
+                ArrayData::from([
+                    ...$request->validated(),
+                    'image' => $image,
+                    'published' => $request->boolean('published'),
+                    'seo_sitemap' => $request->boolean('seo_sitemap'),
+                ]),
+            );
+        } catch (Exception $exception) {
+            report($exception);
 
-            if ($request->input('published')) {
-                $published = 1;
-            }
-
-            $seo_sitemap = 0;
-
-            if ($request->input('seo_sitemap')) {
-                $seo_sitemap = 1;
-            }
-
-            $this->manufacturerRepository->updateWithMapping($request->id, ArrayData::from(array_merge($request->validated(), [
-                'seo_sitemap' => $seo_sitemap,
-                'image' => $originName ?? null,
-                'published' => $published,
-            ])));
-        } catch (Exception $e) {
-            report($e);
-
-            return redirect()
-                ->back()
-                ->with('error', $e->getMessage())
-                ->withInput();
+            return back()
+                ->withInput()
+                ->with('error', $exception->getMessage());
         }
 
-        return redirect()->route('admin.manufacturers.index')->with('success', 'Данные успешно обновлены');
+        return redirect()
+            ->route('admin.manufacturers.index')
+            ->with('success', 'Данные успешно обновлены');
     }
 
-    /**
-     * @param DeleteRequest $request
-     * @return void
-     */
     public function destroy(DeleteRequest $request): void
     {
         $this->manufacturerRepository->remove($request->id);
