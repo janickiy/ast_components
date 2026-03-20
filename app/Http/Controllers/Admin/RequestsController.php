@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DTO\ArrayData;
+
 use App\Http\Requests\Admin\Requests\DeleteRequest;
 use App\Http\Requests\Admin\Requests\EditRequest;
 use App\Models\Requests;
@@ -47,7 +49,7 @@ class RequestsController extends Controller
     public function update(EditRequest $request): RedirectResponse
     {
         try {
-            $this->repositoryRepository->update($request->id, $request->all());
+            $this->repositoryRepository->updateWithMapping($request->id, ArrayData::from($request->validated()));
         } catch (Exception $e) {
             report($e);
 

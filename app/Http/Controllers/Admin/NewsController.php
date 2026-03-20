@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DTO\ArrayData;
+
 use App\Http\Requests\Admin\News\StoreRequest;
 use App\Http\Requests\Admin\News\EditRequest;
 use App\Http\Requests\Admin\News\DeleteRequest;
@@ -52,9 +54,9 @@ class NewsController extends Controller
                 $filename = $this->newsService->storeImage($request);
             }
 
-            $this->newsRepository->create(array_merge($request->all(), [
+            $this->newsRepository->create(ArrayData::from(array_merge($request->validated(), [
                 'image' => $filename ?? null,
-            ]));
+            ])));
         } catch (Exception $e) {
             report($e);
 
@@ -95,9 +97,9 @@ class NewsController extends Controller
                 $filename = $this->newsService->updateImage($news, $request);
             }
 
-            $this->newsRepository->updateWithMapping($request->id, array_merge($request->all(), [
+            $this->newsRepository->updateWithMapping($request->id, ArrayData::from(array_merge($request->validated(), [
                 'image' => $filename ?? null,
-            ]));
+            ])));
         } catch (Exception $e) {
             report($e);
 

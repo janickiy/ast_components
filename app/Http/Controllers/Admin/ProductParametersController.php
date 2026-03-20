@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DTO\ArrayData;
+
 use App\Repositories\ProductParametersRepository;
 use App\Repositories\ProductsRepository;
 use App\Http\Requests\Admin\ProductParameters\EditRequest;
@@ -62,7 +64,7 @@ class ProductParametersController extends Controller
     public function store(StoreRequest $request): RedirectResponse
     {
         try {
-            $this->productParametersRepository->create(array_merge($request->all(), ['category_id' => $request->category_id ?? 0]));
+            $this->productParametersRepository->create(ArrayData::from(array_merge($request->validated(), ['category_id' => $request->category_id ?? 0])));
         } catch (Exception $e) {
             report($e);
 
@@ -104,7 +106,7 @@ class ProductParametersController extends Controller
         if (!$row) abort(404);
 
         try {
-            $this->productParametersRepository->updateWithMapping($request->id, $request->all());
+            $this->productParametersRepository->updateWithMapping($request->id, ArrayData::from($request->validated()));
         } catch (Exception $e) {
             report($e);
 

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DTO\ArrayData;
+
 use App\Helpers\StringHelper;
 use App\Http\Requests\Admin\Orders\EditRequest;
 use App\Models\Orders;
@@ -61,9 +63,9 @@ class OrdersController extends Controller
                 $filename = $this->ordersService->updateFile($row, $request);
             }
 
-            $this->ordersRepository->updateWithMapping($request->id, array_merge($request->all(), [
+            $this->ordersRepository->updateWithMapping($request->id, ArrayData::from(array_merge($request->validated(), [
                 'invoice' => $filename ?? null,
-            ]));
+            ])));
         } catch (Exception $e) {
             report($e);
 

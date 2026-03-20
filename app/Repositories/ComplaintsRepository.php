@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\DTO\ComplaintCreateData;
 use App\Enums\ComplaintStatus;
+use App\DTO\DataTransferObjectInterface;
 use App\Models\Complaints;
 use App\Models\OrderProduct;
 use Illuminate\Database\DatabaseManager;
@@ -55,7 +56,7 @@ class ComplaintsRepository extends BaseRepository
      * @param array $data
      * @return bool
      */
-    public function updateWithMapping(int $id, array $data): bool
+    public function updateWithMapping(int $id, array|DataTransferObjectInterface $data): bool
     {
         return $this->update($id,$this->mapping($data));
     }
@@ -77,8 +78,9 @@ class ComplaintsRepository extends BaseRepository
      * @param array $data
      * @return array
      */
-    private function mapping(array $data): array
+    private function mapping(array|DataTransferObjectInterface $data): array
     {
+        $data = $this->normalizeData($data);
         return collect($data)
             ->merge([
                 'result' => $data['result'] ?? null,

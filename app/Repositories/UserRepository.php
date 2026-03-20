@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\DTO\DataTransferObjectInterface;
 use App\Models\User;
 
 class UserRepository extends BaseRepository
@@ -16,17 +17,21 @@ class UserRepository extends BaseRepository
      * @param array $data
      * @return bool
      */
-    public function update(int $id, array $data): bool
+    public function update(int $id, array|DataTransferObjectInterface $data): bool
     {
-        return $this->update($id, $this->mapping($data));
+        return parent::update($id, $this->mapping($data));
     }
 
-    private function mapping(array $data): array
+    private function mapping(array|DataTransferObjectInterface $data): array
     {
+        $data = $this->normalizeData($data);
         return collect($data)
             ->merge([
                 'name' => $data['name'] ?? null,
+                'login' => $data['login'] ?? null,
+                'role' => $data['role'] ?? null,
             ])
+            ->when(empty($data['password'] ?? null), fn ($collection) => $collection->forget('password'))
             ->only($this->model->getFillable())
             ->all();
     }

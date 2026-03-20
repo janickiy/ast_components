@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DTO\ArrayData;
+
 use App\Http\Requests\Admin\Pages\EditRequest;
 use App\Http\Requests\Admin\Pages\StoreRequest;
 use App\Http\Requests\Admin\Pages\DeleteRequest;
@@ -63,11 +65,11 @@ class PagesController extends Controller
                 $main = 1;
             }
 
-            $this->pageRepository->create(array_merge($request->all(), [
+            $this->pageRepository->create(ArrayData::from(array_merge($request->validated(), [
                 'published' => $published,
                 'seo_sitemap' => $seo_sitemap,
                 'main' => $main,
-            ]));
+            ])));
         } catch (Exception $e) {
             report($e);
 
@@ -120,11 +122,11 @@ class PagesController extends Controller
                 $seo_sitemap = 1;
             }
 
-            $this->pageRepository->updateWithMapping($request->id, array_merge($request->all(), [
+            $this->pageRepository->updateWithMapping($request->id, ArrayData::from(array_merge($request->validated(), [
                 'main' => $main,
                 'seo_sitemap' => $seo_sitemap,
                 'published' => $published,
-            ]));
+            ])));
         } catch (Exception $e) {
             report($e);
 

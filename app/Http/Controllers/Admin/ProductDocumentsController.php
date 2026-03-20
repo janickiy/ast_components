@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DTO\ArrayData;
+
 use App\Http\Requests\Admin\ProductDocuments\EditRequest;
 use App\Http\Requests\Admin\ProductDocuments\StoreRequest;
 use App\Http\Requests\Admin\ProductParameters\DeleteRequest;
@@ -70,7 +72,7 @@ class ProductDocumentsController extends Controller
     {
         try {
             $filename = $this->productDocumentsService->storeFile($request);
-            $this->productDocumentsRepository->create(array_merge($request->all(), ['file' => $filename]));
+            $this->productDocumentsRepository->create(ArrayData::from(array_merge($request->validated(), ['file' => $filename])));
         } catch (Exception $e) {
             report($e);
 
@@ -115,9 +117,9 @@ class ProductDocumentsController extends Controller
                 $filename = $this->productDocumentsService->updateFile($row->id, $request);
             }
 
-            $this->productDocumentsRepository->updateWithMapping($request->id, array_merge($request->all(), [
+            $this->productDocumentsRepository->updateWithMapping($request->id, ArrayData::from(array_merge($request->validated(), [
                 'file' => $filename ?? null,
-            ]));
+            ])));
         } catch (Exception $e) {
             report($e);
 

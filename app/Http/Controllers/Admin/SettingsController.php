@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DTO\ArrayData;
+
 use App\Services\SettingsService;
 use App\Repositories\SettingsRepository;
 use App\Http\Requests\Admin\Settings\StoreRequest;
@@ -49,7 +51,7 @@ class SettingsController extends Controller
     {
         try {
             if ($request->hasFile('value')) {
-                $this->settingsService->storeFile($request);
+                $res = $this->settingsService->storeFile($request);
             }
 
             $published = 0;
@@ -58,10 +60,10 @@ class SettingsController extends Controller
                 $published = 1;
             }
 
-            $this->settingsRepository->create( array_merge($request->all(), [
+            $this->settingsRepository->create(ArrayData::from(array_merge($request->validated(), [
                 'value' => $res ?? $request->input('value'),
                 'published' => $published,
-            ]));
+            ])));
         } catch (Exception $e) {
             report($e);
 
@@ -111,10 +113,10 @@ class SettingsController extends Controller
                     return redirect()->route('admin.settings.index')->with('error', 'Не удалось сохранить файл!');
                 }
             }
-            $this->settingsRepository->updateWithMapping($request->id, array_merge($request->all(), [
+            $this->settingsRepository->updateWithMapping($request->id, ArrayData::from(array_merge($request->validated(), [
                 'value' => $res ?? $request->input('value'),
                 'published' => $published,
-            ]));
+            ])));
         } catch (Exception $e) {
             report($e);
 

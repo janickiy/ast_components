@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\DTO\DataTransferObjectInterface;
 use App\Models\Catalog;
 use App\Models\Manufacturers;
 use App\Models\Products;
@@ -20,9 +21,9 @@ class ProductsRepository extends BaseRepository
      * @param array $data
      * @return Products
      */
-    public function create(array $data): Products
+    public function create(array|DataTransferObjectInterface $data): Products
     {
-        return $this->model->create($data);
+        return $this->model->create($this->normalizeData($data));
     }
 
     /**
@@ -30,7 +31,7 @@ class ProductsRepository extends BaseRepository
      * @param array $data
      * @return bool
      */
-    public function updateWithMapping(int $id, array $data): bool
+    public function updateWithMapping(int $id, array|DataTransferObjectInterface $data): bool
     {
        return $this->update($id, $this->mapping($data));
     }
@@ -158,8 +159,9 @@ class ProductsRepository extends BaseRepository
      * @param array $data
      * @return array
      */
-    private function mapping(array $data): array
+    private function mapping(array|DataTransferObjectInterface $data): array
     {
+        $data = $this->normalizeData($data);
         return collect($data)
             ->merge([
                 'meta_title' => $data['meta_title'] ?? null,

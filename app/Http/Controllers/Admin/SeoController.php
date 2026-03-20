@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DTO\ArrayData;
+
 use App\Repositories\SeoRepository;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -46,7 +48,7 @@ class SeoController extends Controller
     public function update(Request $request): RedirectResponse
     {
         try {
-            $this->seoRepository->updateWithMapping($request->id, $request->all());
+            $this->seoRepository->updateWithMapping($request->id, ArrayData::from($request->all()));
         } catch (Exception $e) {
             report($e);
 

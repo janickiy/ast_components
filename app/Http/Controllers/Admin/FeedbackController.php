@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DTO\ArrayData;
+
 use App\Models\Feedback;
 use App\Repositories\FeedbackRepository;
 use App\Http\Requests\Admin\Feedback\EditRequest;
@@ -43,7 +45,7 @@ class FeedbackController extends Controller
      */
     public function update(EditRequest $request): RedirectResponse
     {
-        $this->feedbackRepository->updateWithMapping($request->id, $request->all());
+        $this->feedbackRepository->updateWithMapping($request->id, ArrayData::from($request->validated()));
 
         return redirect()->route('admin.feedback.index')->with('success', 'Данные обновлены');
     }

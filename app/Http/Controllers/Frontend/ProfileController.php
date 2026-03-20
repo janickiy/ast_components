@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use App\DTO\ArrayData;
+
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Frontend\Profile\UpdateCompanyRequest;
@@ -86,7 +88,7 @@ class ProfileController extends Controller
         $customer = Auth::guard('customer')->user();
         $customerId = (int) $customer->id;
 
-        $this->customerRepository->update($customerId, $request->validated());
+        $this->customerRepository->update($customerId, ArrayData::from($request->validated()));
 
         return response()->json([
             'message' => 'Изменения успешно сохранены',
@@ -110,7 +112,7 @@ class ProfileController extends Controller
     {
         $customerId = (int) Auth::guard('customer')->id();
 
-        $company = $companyRepository->updateByCustomer($customerId, $request->validated());
+        $company = $companyRepository->updateByCustomer($customerId, ArrayData::from($request->validated()));
 
         return response()->json([
             'success' => true,

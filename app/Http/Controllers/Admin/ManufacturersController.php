@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DTO\ArrayData;
+
 use App\Helpers\StringHelper;
 use App\Http\Requests\Admin\Manufacturers\EditRequest;
 use App\Http\Requests\Admin\Manufacturers\StoreRequest;
@@ -66,11 +68,11 @@ class ManufacturersController extends Controller
                 $seo_sitemap = 1;
             }
 
-            $this->manufacturerRepository->create(array_merge($request->all(), [
+            $this->manufacturerRepository->create(ArrayData::from(array_merge($request->validated(), [
                 'image' => $originName ?? null,
                 'published' => $published,
                 'seo_sitemap' => $seo_sitemap,
-            ]));
+            ])));
         } catch (Exception $e) {
             report($e);
 
@@ -129,11 +131,11 @@ class ManufacturersController extends Controller
                 $seo_sitemap = 1;
             }
 
-            $this->manufacturerRepository->updateWithMapping($request->id, array_merge($request->all(), [
+            $this->manufacturerRepository->updateWithMapping($request->id, ArrayData::from(array_merge($request->validated(), [
                 'seo_sitemap' => $seo_sitemap,
                 'image' => $originName ?? null,
                 'published' => $published,
-            ]));
+            ])));
         } catch (Exception $e) {
             report($e);
 

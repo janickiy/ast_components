@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DTO\ArrayData;
+
 use App\Http\Requests\Admin\News\DeleteRequest;
 use App\Repositories\RedirectRepository;
 use App\Http\Requests\Admin\Redirect\EditRequest;
@@ -43,7 +45,7 @@ class RedirectController extends Controller
     public function store(StoreRequest $request): RedirectResponse
     {
         try {
-            $this->redirectRepository->create($request->all());
+            $this->redirectRepository->create(ArrayData::from($request->validated()));
         } catch (Exception $e) {
             report($e);
 
@@ -76,7 +78,7 @@ class RedirectController extends Controller
     public function update(EditRequest $request): RedirectResponse
     {
         try {
-            $this->redirectRepository->updateWithMapping($request->id, $request->all());
+            $this->redirectRepository->updateWithMapping($request->id, ArrayData::from($request->validated()));
         } catch (Exception $e) {
             report($e);
 

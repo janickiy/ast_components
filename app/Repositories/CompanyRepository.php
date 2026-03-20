@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\DTO\DataTransferObjectInterface;
 use App\Models\Company;
 
 class CompanyRepository extends BaseRepository
@@ -16,7 +17,7 @@ class CompanyRepository extends BaseRepository
      * @param array $data
      * @return bool
      */
-    public function updateWithMapping(int $id, array $data): bool
+    public function updateWithMapping(int $id, array|DataTransferObjectInterface $data): bool
     {
         $model = $this->model->find($id);
 
@@ -30,7 +31,7 @@ class CompanyRepository extends BaseRepository
      * @param array $data
      * @return bool
      */
-    public function updateByCustomer(int $customerId, array $data): bool
+    public function updateByCustomer(int $customerId, array|DataTransferObjectInterface $data): ?Company
     {
         /** @var Company|null $company */
         $company = $this->model
@@ -38,14 +39,16 @@ class CompanyRepository extends BaseRepository
             ->first();
 
         if (!$company) {
-            return false;
+            return null;
         }
 
-        return $this->update($company->id, $data);
+        return parent::update($company->id, $this->mapping($data, $company)) ? $company->fresh() : null;
     }
 
-    private function mapping(array $data, Company $company): array
+    private function mapping(array|DataTransferObjectInterface $data, Company $company): array
     {
+        $data = $this->normalizeData($data);
+
         return collect($data)
             ->merge([
                 'name' => $data['name'] ?? $company->name,

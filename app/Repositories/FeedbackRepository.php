@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\DTO\FeedbackCreateData;
+use App\DTO\DataTransferObjectInterface;
 use App\Models\Feedback;
 
 class FeedbackRepository extends BaseRepository
@@ -33,7 +34,7 @@ class FeedbackRepository extends BaseRepository
      * @param array $data
      * @return bool
      */
-    public function updateWithMapping(int $id, array $data): bool
+    public function updateWithMapping(int $id, array|DataTransferObjectInterface $data): bool
     {
         return $this->update($id, $this->mapping($data));
     }
@@ -42,8 +43,9 @@ class FeedbackRepository extends BaseRepository
      * @param array $data
      * @return array
      */
-    private function mapping(array $data): array
+    private function mapping(array|DataTransferObjectInterface $data): array
     {
+        $data = $this->normalizeData($data);
         return collect($data)
             ->only($this->model->getFillable())
             ->map(function ($value, $key) {

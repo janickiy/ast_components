@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\DTO\DataTransferObjectInterface;
 use App\Models\Catalog;
 use App\Models\Manufacturers;
 use Illuminate\Support\Collection;
@@ -19,7 +20,7 @@ class CatalogRepository extends BaseRepository
      * @param array $data
      * @return bool
      */
-    public function updateWithMapping(int $id, array $data): bool
+    public function updateWithMapping(int $id, array|DataTransferObjectInterface $data): bool
     {
         return $this->update($id, $this->mapping($data));
     }
@@ -132,8 +133,9 @@ class CatalogRepository extends BaseRepository
             ->get();
     }
 
-    private function mapping(array $data): array
+    private function mapping(array|DataTransferObjectInterface $data): array
     {
+        $data = $this->normalizeData($data);
         return collect($data)
             ->merge([
                 'meta_title' => $data['meta_title'] ?? null,

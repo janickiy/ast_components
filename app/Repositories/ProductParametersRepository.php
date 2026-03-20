@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\DTO\DataTransferObjectInterface;
 use App\Models\ProductParameters;
 
 class ProductParametersRepository extends BaseRepository
@@ -25,8 +26,9 @@ class ProductParametersRepository extends BaseRepository
      * @param array $data
      * @return array
      */
-    private function mapping(array $data): array
+    private function mapping(array|DataTransferObjectInterface $data): array
     {
+        $data = $this->normalizeData($data);
         return collect($data)
             ->only($this->model->getFillable())
             ->map(function ($value, $key) {

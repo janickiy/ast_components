@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DTO\ArrayData;
+
 use App\Models\User;
 use App\Repositories\UserRepository;
 use App\Http\Requests\Admin\Users\EditRequest;
@@ -48,7 +50,7 @@ class UsersController extends Controller
     public function store(StoreRequest $request): RedirectResponse
     {
         try {
-            $this->userRepository->create(array_merge($request->all(), ['password' => Hash::make($request->password)]));
+            $this->userRepository->create(ArrayData::from(array_merge($request->validated(), ['password' => Hash::make($request->password)])));
         } catch (Exception $e) {
             report($e);
 
@@ -83,7 +85,7 @@ class UsersController extends Controller
     public function update(EditRequest $request): RedirectResponse
     {
         try {
-            $this->userRepository->update($request->id, $request->all());
+            $this->userRepository->update($request->id, ArrayData::from($request->validated()));
         } catch (Exception $e) {
             report($e);
 

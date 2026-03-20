@@ -2,7 +2,7 @@
 
 namespace App\DTO;
 
-final class RequestsCreateData
+final class RequestsCreateData implements DataTransferObjectInterface
 {
     public function __construct(
         public readonly string  $name,
@@ -19,4 +19,11 @@ final class RequestsCreateData
     )
     {
     }
+
+
+    public function toArray(): array
+    {
+        return get_object_vars($this);
+    }
+
 }

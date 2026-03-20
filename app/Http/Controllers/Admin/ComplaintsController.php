@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DTO\ArrayData;
+
 
 use App\Http\Requests\Admin\Complaints\DeleteRequest;
 use App\Http\Requests\Admin\Complaints\EditRequest;
@@ -46,7 +48,7 @@ class ComplaintsController extends Controller
      */
     public function update(EditRequest $request): RedirectResponse
     {
-        $this->complaintsRepository->updateWithMapping($request->id, $request->all());
+        $this->complaintsRepository->updateWithMapping($request->id, ArrayData::from($request->validated()));
 
         return redirect()->route('admin.complaints.index')->with('success', 'Данные успешно обновлены');
     }

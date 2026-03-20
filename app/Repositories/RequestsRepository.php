@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\DTO\RequestsCreateData;
 use App\Enums\RequestStatus;
+use App\DTO\DataTransferObjectInterface;
 use App\Models\Requests;
 
 class RequestsRepository extends BaseRepository
@@ -43,7 +44,7 @@ class RequestsRepository extends BaseRepository
      * @param array $data
      * @return bool
      */
-    public function updateWithMapping(int $id, array $data): bool
+    public function updateWithMapping(int $id, array|DataTransferObjectInterface $data): bool
     {
         return $this->update($id, $this->mapping($data));
     }
@@ -65,8 +66,9 @@ class RequestsRepository extends BaseRepository
      * @param array $data
      * @return array
      */
-    private function mapping(array $data): array
+    private function mapping(array|DataTransferObjectInterface $data): array
     {
+        $data = $this->normalizeData($data);
         return collect($data)
             ->only($this->model->getFillable())
             ->map(function ($value, $key) {

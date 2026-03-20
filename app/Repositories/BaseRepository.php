@@ -2,66 +2,43 @@
 
 namespace App\Repositories;
 
+use App\DTO\DataTransferObjectInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 abstract class BaseRepository implements RepositoryInterface
 {
-
-    /**
-     * @param Model $model
-     */
     public function __construct(protected Model $model)
     {
     }
 
-    /**
-     * @param array $data
-     * @return Model
-     */
-    public function create(array $data): Model
+    public function create(array|DataTransferObjectInterface $data): Model
     {
-        return $this->model->create($data);
+        return $this->model->create($this->normalizeData($data));
     }
 
-    /**
-     * @param int $id
-     * @param array $data
-     * @return bool
-     */
-    public function update(int $id, array $data): bool
+    public function update(int $id, array|DataTransferObjectInterface $data): bool
     {
         $model = $this->model->find($id);
 
         if ($model) {
-            return $model->fill($data)->save();
+            return $model->fill($this->normalizeData($data))->save();
         }
 
         return false;
     }
 
-    /**
-     * @return Collection
-     */
     public function all(): Collection
     {
         return $this->model->all();
     }
 
-    /**
-     * @param int $id
-     * @return Model|null
-     */
     public function find(int $id): ?Model
     {
         return $this->model->find($id);
     }
 
-    /**
-     * @param int $id
-     * @return bool
-     */
     public function delete(int $id): bool
     {
         $model = $this->model->find($id);
@@ -72,12 +49,6 @@ abstract class BaseRepository implements RepositoryInterface
         return false;
     }
 
-    /**
-     * @param int $customerId
-     * @param int $perPage
-     * @param array $filters
-     * @return LengthAwarePaginator
-     */
     public function paginateByCustomer(
         int   $customerId,
         int   $perPage = 10,
@@ -86,9 +57,8 @@ abstract class BaseRepository implements RepositoryInterface
     {
         $q = $this->model->newQuery()
             ->where('customer_id', $customerId)
-            ->orderByDesc('created_at'); // или created_at
+            ->orderByDesc('created_at');
 
-        // Примеры фильтров (по желанию)
         if (!empty($filters['status'])) {
             $q->where('status', $filters['status']);
         }
@@ -102,5 +72,10 @@ abstract class BaseRepository implements RepositoryInterface
         }
 
         return $q->paginate($perPage);
+    }
+
+    protected function normalizeData(array|DataTransferObjectInterface $data): array
+    {
+        return $data instanceof DataTransferObjectInterface ? $data->toArray() : $data;
     }
 }

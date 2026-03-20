@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DTO\ArrayData;
+
 
 use App\Repositories\CustomerRepository;
 use App\Http\Requests\Admin\Customers\EditRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class CustomersController extends Controller
@@ -45,9 +46,9 @@ class CustomersController extends Controller
      * @param EditRequest $request
      * @return RedirectResponse
      */
-    public function update(Request $request): RedirectResponse
+    public function update(EditRequest $request): RedirectResponse
     {
-        $this->customerRepository->updateWithMapping($request->id, $request->all());
+        $this->customerRepository->updateWithMapping($request->id, ArrayData::from($request->validated()));
 
         return redirect()->route('cp.customers.index')->with('success', 'Данные успешно обновлены!');
     }

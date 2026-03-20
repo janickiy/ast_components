@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\DTO\DataTransferObjectInterface;
 use App\Models\Complaints;
 use App\Models\Customers;
 use App\Models\OrderProduct;
@@ -20,7 +21,7 @@ class CustomerRepository extends BaseRepository
      * @param array $data
      * @return bool
      */
-    public function updateWithMapping(int $id, array $data): bool
+    public function updateWithMapping(int $id, array|DataTransferObjectInterface $data): bool
     {
         return $this->update($id, $this->mapping($data));
     }
@@ -74,11 +75,14 @@ class CustomerRepository extends BaseRepository
      * @param array $data
      * @return array
      */
-    private function mapping(array $data): array
+    private function mapping(array|DataTransferObjectInterface $data): array
     {
+        $data = $this->normalizeData($data);
         return collect($data)
             ->merge([
+                'name' => $data['name'] ?? null,
                 'phone' => $data['phone'] ?? null,
+                'email' => $data['email'] ?? null,
             ])
             ->only($this->model->getFillable())
             ->all();

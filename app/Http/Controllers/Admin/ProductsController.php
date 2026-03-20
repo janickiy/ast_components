@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DTO\ArrayData;
+
 use App\Repositories\CatalogRepository;
 use App\Repositories\ProductsRepository;
 use App\Repositories\ManufacturerRepository;
@@ -70,11 +72,11 @@ class ProductsController extends Controller
                 $seo_sitemap = 1;
             }
 
-            $this->productRepository->create(array_merge($request->all(), [
+            $this->productRepository->create(ArrayData::from(array_merge($request->validated(), [
                 'thumbnail' => $thumbnailFileNameToStore ?? null,
                 'origin' => $fileNameToStore ?? null,
                 'seo_sitemap' => $seo_sitemap,
-            ]));
+            ])));
         } catch (Exception $e) {
             report($e);
 
@@ -134,11 +136,11 @@ class ProductsController extends Controller
                 $seo_sitemap = 1;
             }
 
-            $this->productRepository->updateWithMapping($request->id, array_merge($request->all(), [
+            $this->productRepository->updateWithMapping($request->id, ArrayData::from(array_merge($request->validated(), [
                 'in_stock' => $in_stock,
                 'under_order' => $under_order,
                 'seo_sitemap' => $seo_sitemap,
-            ]));
+            ])));
         } catch (Exception $e) {
             report($e);
 

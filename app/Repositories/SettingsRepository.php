@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\DTO\DataTransferObjectInterface;
 use App\Models\Settings;
 
 class SettingsRepository extends BaseRepository
@@ -16,7 +17,7 @@ class SettingsRepository extends BaseRepository
      * @param array $data
      * @return bool
      */
-    public function updateWithMapping(int $id, array $data): bool
+    public function updateWithMapping(int $id, array|DataTransferObjectInterface $data): bool
     {
        return $this->update($id, $this->mapping($data));
     }
@@ -34,8 +35,9 @@ class SettingsRepository extends BaseRepository
         }
     }
 
-    private function mapping(array $data): array
+    private function mapping(array|DataTransferObjectInterface $data): array
     {
+        $data = $this->normalizeData($data);
         return collect($data)
             ->merge([
                 'key_cd' => $data['key_cd'] ?? null,
