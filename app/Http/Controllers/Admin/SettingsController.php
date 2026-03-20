@@ -1,138 +1,125 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\DTO\ArrayData;
-
-use App\Services\SettingsService;
-use App\Repositories\SettingsRepository;
-use App\Http\Requests\Admin\Settings\StoreRequest;
-use App\Http\Requests\Admin\Settings\EditRequest;
 use App\Http\Requests\Admin\Settings\DeleteRequest;
+use App\Http\Requests\Admin\Settings\EditRequest;
+use App\Http\Requests\Admin\Settings\StoreRequest;
+use App\Repositories\SettingsRepository;
+use App\Services\SettingsService;
+use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use Exception;
 
 class SettingsController extends Controller
 {
-    /**
-     * @param SettingsService $settingsService
-     * @param SettingsRepository $settingsRepository
-     */
     public function __construct(
-        private SettingsService    $settingsService,
-        private SettingsRepository $settingsRepository)
-    {
+        private readonly SettingsService $settingsService,
+        private readonly SettingsRepository $settingsRepository,
+    ) {
         parent::__construct();
     }
 
-    /**
-     * @return View
-     */
     public function index(): View
     {
-        return view('cp.settings.index')->with('title', 'Настройки');
+        return view('cp.settings.index', [
+            'title' => 'Настройки',
+        ]);
     }
 
-    /**
-     * @param string $type
-     * @return View
-     */
     public function create(string $type): View
     {
-        return view('cp.settings.create_edit', compact('type'))->with('title', 'Добавление настроек');
+        return view('cp.settings.create_edit', [
+            'type' => $type,
+            'title' => 'Добавление настроек',
+        ]);
     }
 
-    /**
-     * @param StoreRequest $request
-     * @return RedirectResponse
-     */
     public function store(StoreRequest $request): RedirectResponse
     {
         try {
+            $value = $request->input('value');
+
             if ($request->hasFile('value')) {
-                $res = $this->settingsService->storeFile($request);
+                $value = $this->settingsService->storeFile($request);
             }
 
-            $published = 0;
+            $this->settingsRepository->create(
+                ArrayData::from([
+                    ...$request->validated(),
+                    'value' => $value,
+                    'published' => $request->boolean('published'),
+                ]),
+            );
+        } catch (Exception $exception) {
+            report($exception);
 
-            if ($request->input('published')) {
-                $published = 1;
-            }
-
-            $this->settingsRepository->create(ArrayData::from(array_merge($request->validated(), [
-                'value' => $res ?? $request->input('value'),
-                'published' => $published,
-            ])));
-        } catch (Exception $e) {
-            report($e);
-
-            return redirect()
-                ->back()
-                ->with('error', $e->getMessage())
-                ->withInput();
+            return back()
+                ->withInput()
+                ->with('error', $exception->getMessage());
         }
 
-        return redirect()->route('admin.settings.index')->with('success', 'Информация успешно добавлена');
+        return redirect()
+            ->route('admin.settings.index')
+            ->with('success', 'Информация успешно добавлена');
     }
 
-    /**
-     * @param int $id
-     * @return View
-     */
     public function edit(int $id): View
     {
         $row = $this->settingsRepository->find($id);
 
-        if (!$row) abort(404);
+        abort_if($row === null, 404);
 
-        $type = $row->type;
-
-        return view('cp.settings.create_edit', compact('row', 'type'))->with('title', 'Редактирование настроек');
+        return view('cp.settings.create_edit', [
+            'row' => $row,
+            'type' => $row->type,
+            'title' => 'Редактирование настроек',
+        ]);
     }
 
-    /**
-     * @param EditRequest $request
-     * @return RedirectResponse
-     */
     public function update(EditRequest $request): RedirectResponse
     {
         try {
             $settings = $this->settingsRepository->find($request->id);
 
-            $published = 0;
+            abort_if($settings === null, 404);
 
-            if ($request->input('published')) {
-                $published = 1;
-            }
+            $value = $request->input('value');
 
             if ($request->hasFile('value')) {
-                $res = $this->settingsService->updateFile($settings, $request);
+                $value = $this->settingsService->updateFile($settings, $request);
 
-                if ($res === false) {
-                    return redirect()->route('admin.settings.index')->with('error', 'Не удалось сохранить файл!');
+                if ($value === false) {
+                    return redirect()
+                        ->route('admin.settings.index')
+                        ->with('error', 'Не удалось сохранить файл!');
                 }
             }
-            $this->settingsRepository->updateWithMapping($request->id, ArrayData::from(array_merge($request->validated(), [
-                'value' => $res ?? $request->input('value'),
-                'published' => $published,
-            ])));
-        } catch (Exception $e) {
-            report($e);
 
-            return redirect()
-                ->back()
-                ->with('error', $e->getMessage())
-                ->withInput();
+            $this->settingsRepository->updateWithMapping(
+                $request->id,
+                ArrayData::from([
+                    ...$request->validated(),
+                    'value' => $value,
+                    'published' => $request->boolean('published'),
+                ]),
+            );
+        } catch (Exception $exception) {
+            report($exception);
+
+            return back()
+                ->withInput()
+                ->with('error', $exception->getMessage());
         }
 
-        return redirect()->route('admin.settings.index')->with('success', 'Данные обновлены');
+        return redirect()
+            ->route('admin.settings.index')
+            ->with('success', 'Данные обновлены');
     }
 
-    /**
-     * @param DeleteRequest $request
-     * @return void
-     */
     public function destroy(DeleteRequest $request): void
     {
         $this->settingsRepository->remove($request->id);

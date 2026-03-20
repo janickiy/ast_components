@@ -6,9 +6,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\DTO\ArrayData;
 use App\Helpers\StringHelper;
+use App\Http\Requests\Admin\ProductDocuments\DeleteRequest;
 use App\Http\Requests\Admin\ProductDocuments\EditRequest;
 use App\Http\Requests\Admin\ProductDocuments\StoreRequest;
-use App\Http\Requests\Admin\ProductParameters\DeleteRequest;
 use App\Repositories\ProductDocumentsRepository;
 use App\Repositories\ProductsRepository;
 use App\Services\ProductDocumentsService;
@@ -32,12 +32,13 @@ class ProductDocumentsController extends Controller
 
         abort_if($product === null, 404);
 
-        $breadcrumbs = [
-            ['url' => route('admin.products.index'), 'title' => 'Продукция'],
-        ];
-
-        return view('cp.product_documents.index', compact('product_id', 'breadcrumbs'))
-            ->with('title', 'Список документации: ' . $product->title);
+        return view('cp.product_documents.index', [
+            'product_id' => $product_id,
+            'breadcrumbs' => [
+                ['url' => route('admin.products.index'), 'title' => 'Продукция'],
+            ],
+            'title' => 'Список документации: ' . $product->title,
+        ]);
     }
 
     public function create(int $product_id): View
@@ -46,15 +47,18 @@ class ProductDocumentsController extends Controller
 
         abort_if($product === null, 404);
 
-        $breadcrumbs = [
-            ['url' => route('admin.products.index'), 'title' => 'Продукция'],
-            ['url' => route('admin.product_documents.index', ['product_id' => $product_id]), 'title' => $product->title],
-        ];
-
-        $maxUploadFileSize = StringHelper::maxUploadFileSize();
-
-        return view('cp.product_documents.create_edit', compact('product_id', 'maxUploadFileSize', 'breadcrumbs'))
-            ->with('title', 'Добавление документации');
+        return view('cp.product_documents.create_edit', [
+            'product_id' => $product_id,
+            'maxUploadFileSize' => StringHelper::maxUploadFileSize(),
+            'breadcrumbs' => [
+                ['url' => route('admin.products.index'), 'title' => 'Продукция'],
+                [
+                    'url' => route('admin.product_documents.index', ['product_id' => $product_id]),
+                    'title' => $product->title,
+                ],
+            ],
+            'title' => 'Добавление документации',
+        ]);
     }
 
     public function store(StoreRequest $request): RedirectResponse
@@ -87,16 +91,19 @@ class ProductDocumentsController extends Controller
 
         abort_if($row === null, 404);
 
-        $product_id = $row->product_id;
-        $maxUploadFileSize = StringHelper::maxUploadFileSize();
-
-        $breadcrumbs = [
-            ['url' => route('admin.products.index'), 'title' => 'Продукция'],
-            ['url' => route('admin.product_documents.index', ['product_id' => $row->product_id]), 'title' => $row->product->title],
-        ];
-
-        return view('cp.product_documents.create_edit', compact('row', 'product_id', 'maxUploadFileSize', 'breadcrumbs'))
-            ->with('title', 'Редактирование списка документации');
+        return view('cp.product_documents.create_edit', [
+            'row' => $row,
+            'product_id' => $row->product_id,
+            'maxUploadFileSize' => StringHelper::maxUploadFileSize(),
+            'breadcrumbs' => [
+                ['url' => route('admin.products.index'), 'title' => 'Продукция'],
+                [
+                    'url' => route('admin.product_documents.index', ['product_id' => $row->product_id]),
+                    'title' => $row->product->title,
+                ],
+            ],
+            'title' => 'Редактирование списка документации',
+        ]);
     }
 
     public function update(EditRequest $request): RedirectResponse

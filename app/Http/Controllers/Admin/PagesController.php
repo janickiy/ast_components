@@ -23,16 +23,17 @@ class PagesController extends Controller
 
     public function index(): View
     {
-        return view('cp.pages.index')
-            ->with('title', 'Страницы и разделы');
+        return view('cp.pages.index', [
+            'title' => 'Страницы и разделы',
+        ]);
     }
 
     public function create(): View
     {
-        $options = $this->pageRepository->getOption();
-
-        return view('cp.pages.create_edit', compact('options'))
-            ->with('title', 'Добавление раздела');
+        return view('cp.pages.create_edit', [
+            'options' => $this->pageRepository->getOption(),
+            'title' => 'Добавление раздела',
+        ]);
     }
 
     public function store(StoreRequest $request): RedirectResponse
@@ -65,10 +66,11 @@ class PagesController extends Controller
 
         abort_if($row === null, 404);
 
-        $options = $this->pageRepository->getOption();
-
-        return view('cp.pages.create_edit', compact('row', 'options'))
-            ->with('title', 'Редактирование раздела');
+        return view('cp.pages.create_edit', [
+            'row' => $row,
+            'options' => $this->pageRepository->getOption(),
+            'title' => 'Редактирование раздела',
+        ]);
     }
 
     public function update(EditRequest $request): RedirectResponse

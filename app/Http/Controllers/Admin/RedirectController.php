@@ -1,100 +1,91 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\DTO\ArrayData;
-
-use App\Http\Requests\Admin\News\DeleteRequest;
-use App\Repositories\RedirectRepository;
+use App\Http\Requests\Admin\Redirect\DeleteRequest;
 use App\Http\Requests\Admin\Redirect\EditRequest;
 use App\Http\Requests\Admin\Redirect\StoreRequest;
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
+use App\Repositories\RedirectRepository;
 use Exception;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class RedirectController extends Controller
 {
-    /**
-     * @param RedirectRepository $redirectRepository
-     */
-    public function __construct(private RedirectRepository $redirectRepository)
-    {
+    public function __construct(
+        private readonly RedirectRepository $redirectRepository,
+    ) {
         parent::__construct();
     }
 
-    /**
-     * @return View
-     */
     public function index(): View
     {
-        return view('cp.redirect.index')->with('title', 'Редиректы');
+        return view('cp.redirect.index', [
+            'title' => 'Редиректы',
+        ]);
     }
 
-    /**
-     * @return View
-     */
     public function create(): View
     {
-        return view('cp.redirect.create_edit')->with('title', 'Добавление редиректа');
+        return view('cp.redirect.create_edit', [
+            'title' => 'Добавление редиректа',
+        ]);
     }
 
-    /**
-     * @param StoreRequest $request
-     * @return RedirectResponse
-     */
     public function store(StoreRequest $request): RedirectResponse
     {
         try {
-            $this->redirectRepository->create(ArrayData::from($request->validated()));
-        } catch (Exception $e) {
-            report($e);
+            $this->redirectRepository->create(
+                ArrayData::from($request->validated()),
+            );
+        } catch (Exception $exception) {
+            report($exception);
 
-            return redirect()
-                ->back()
-                ->with('error', $e->getMessage())
-                ->withInput();
+            return back()
+                ->withInput()
+                ->with('error', $exception->getMessage());
         }
 
-        return redirect()->route('admin.redirect.index')->with('success', 'Информация успешно добавлена');
+        return redirect()
+            ->route('admin.redirect.index')
+            ->with('success', 'Информация успешно добавлена');
     }
 
-    /**
-     * @param int $id
-     * @return View
-     */
     public function edit(int $id): View
     {
         $row = $this->redirectRepository->find($id);
 
-        if (!$row) abort(404);
+        abort_if($row === null, 404);
 
-        return view('cp.redirect.create_edit', compact('row'))->with('title', 'Редактирование редиректы');
+        return view('cp.redirect.create_edit', [
+            'row' => $row,
+            'title' => 'Редактирование редиректа',
+        ]);
     }
 
-    /**
-     * @param EditRequest $request
-     * @return RedirectResponse
-     */
     public function update(EditRequest $request): RedirectResponse
     {
         try {
-            $this->redirectRepository->updateWithMapping($request->id, ArrayData::from($request->validated()));
-        } catch (Exception $e) {
-            report($e);
+            $this->redirectRepository->updateWithMapping(
+                $request->id,
+                ArrayData::from($request->validated()),
+            );
+        } catch (Exception $exception) {
+            report($exception);
 
-            return redirect()
-                ->back()
-                ->with('error', $e->getMessage())
-                ->withInput();
+            return back()
+                ->withInput()
+                ->with('error', $exception->getMessage());
         }
 
-        return redirect()->route('admin.redirect.index')->with('success', 'Данные успешно обновлены');
+        return redirect()
+            ->route('admin.redirect.index')
+            ->with('success', 'Данные успешно обновлены');
     }
 
-    /**
-     * @param DeleteRequest $request
-     * @return void
-     */
     public function destroy(DeleteRequest $request): void
     {
         $this->redirectRepository->delete($request->id);

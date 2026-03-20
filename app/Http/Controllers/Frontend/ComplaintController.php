@@ -1,36 +1,35 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Frontend;
 
-
-use App\Repositories\ComplaintsRepository;
-use App\Services\ComplaintService;
 use App\DTO\ComplaintCreateData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Frontend\Complaints\StoreRequest;
 use App\Models\Customers;
+use App\Repositories\ComplaintsRepository;
+use App\Services\ComplaintService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Throwable;
 
 class ComplaintController extends Controller
 {
-
-    public function __construct(private ComplaintsRepository $complaintsRepository, private ComplaintService $complaintService)
-    {
+    public function __construct(
+        private readonly ComplaintsRepository $complaintsRepository,
+        private readonly ComplaintService $complaintService,
+    ) {
         $this->middleware('auth:customer');
     }
 
-    /**
-     * @param StoreRequest $request
-     * @return RedirectResponse
-     */
     public function store(StoreRequest $request): RedirectResponse
     {
         /** @var Customers $customer */
         $customer = Auth::guard('customer')->user();
 
         try {
+            $blank = null;
 
             if ($request->hasFile('blank')) {
                 $blank = $this->complaintService->storeBlank($request);
@@ -42,15 +41,14 @@ class ComplaintController extends Controller
                 productId: (int) $request->input('product_id'),
                 returnCount: (int) $request->input('return_count'),
                 customerId: (int) $customer->id,
-                blank: $blank ?? null
+                blank: $blank,
             ));
         } catch (Throwable $exception) {
             report($exception);
 
-            return redirect()
-                ->back()
-                ->with('complaint', 'Не удалось создать претензию. Попробуйте позже.')
-                ->withInput();
+            return back()
+                ->withInput()
+                ->with('complaint', 'Не удалось создать претензию. Попробуйте позже.');
         }
 
         return redirect()

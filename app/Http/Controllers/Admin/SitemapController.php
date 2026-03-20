@@ -1,54 +1,48 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\Admin\Sitemap\EditRequest;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\View\View;
 
 class SitemapController extends Controller
 {
-    /**
-     * @return View
-     */
     public function index(): View
     {
-        return view('cp.sitemap.index')->with('title', 'Загрузка и выгрузка файла карты сайта sitemap.xml');
+        return view('cp.sitemap.index', [
+            'title' => 'Загрузка и выгрузка файла карты сайта sitemap.xml',
+        ]);
     }
 
-    /**
-     * @param Request $request
-     * @return mixed
-     */
-    public function export(Request $request)
+    public function export(): Response
     {
-        $file = public_path() . "/sitemap.xml";
+        $file = public_path('sitemap.xml');
 
-        $headers = ['Content-Type: text/xml'];
-
-        return response()->download($file, 'sitemap.xml', $headers);
+        return response()->download(
+            $file,
+            'sitemap.xml',
+            ['Content-Type' => 'text/xml'],
+        );
     }
 
-    /**
-     * @return View
-     */
     public function importForm(): View
     {
-        return view('cp.sitemap.import')->with('title', 'Выгрузка карты sitemap.xml');
+        return view('cp.sitemap.import', [
+            'title' => 'Выгрузка карты sitemap.xml',
+        ]);
     }
 
-    /**
-     * @param EditRequest $request
-     * @return RedirectResponse
-     */
     public function import(EditRequest $request): RedirectResponse
     {
-        if ($request->isMethod('post') && $request->hasFile('file')) {
-            $file = $request->file('file');
-            $file->move(public_path(), 'sitemap.xml');
-        }
+        $request->file('file')->move(public_path(), 'sitemap.xml');
 
-        return redirect()->route('admin.sitemap.index')->with('success', 'Данные обновлены');
+        return redirect()
+            ->route('admin.sitemap.index')
+            ->with('success', 'Данные обновлены');
     }
 }

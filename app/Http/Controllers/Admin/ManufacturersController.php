@@ -26,16 +26,17 @@ class ManufacturersController extends Controller
 
     public function index(): View
     {
-        return view('cp.manufacturers.index')
-            ->with('title', 'Производители');
+        return view('cp.manufacturers.index', [
+            'title' => 'Производители',
+        ]);
     }
 
     public function create(): View
     {
-        $maxUploadFileSize = StringHelper::maxUploadFileSize();
-
-        return view('cp.manufacturers.create_edit', compact('maxUploadFileSize'))
-            ->with('title', 'Добавление производителя');
+        return view('cp.manufacturers.create_edit', [
+            'maxUploadFileSize' => StringHelper::maxUploadFileSize(),
+            'title' => 'Добавление производителя',
+        ]);
     }
 
     public function store(StoreRequest $request): RedirectResponse
@@ -72,10 +73,11 @@ class ManufacturersController extends Controller
 
         abort_if($row === null, 404);
 
-        $maxUploadFileSize = StringHelper::maxUploadFileSize();
-
-        return view('cp.manufacturers.create_edit', compact('row', 'maxUploadFileSize'))
-            ->with('title', 'Редактирование производителя');
+        return view('cp.manufacturers.create_edit', [
+            'row' => $row,
+            'maxUploadFileSize' => StringHelper::maxUploadFileSize(),
+            'title' => 'Редактирование производителя',
+        ]);
     }
 
     public function update(EditRequest $request): RedirectResponse

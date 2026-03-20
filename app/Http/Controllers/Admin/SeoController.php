@@ -1,63 +1,60 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\DTO\ArrayData;
-
+use App\Http\Requests\Admin\Seo\EditRequest;
 use App\Repositories\SeoRepository;
-use Illuminate\Http\Request;
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use Exception;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class SeoController extends Controller
 {
-    /**
-     * @param SeoRepository $seoRepository
-     */
-    public function __construct(private SeoRepository $seoRepository)
-    {
+    public function __construct(
+        private readonly SeoRepository $seoRepository,
+    ) {
         parent::__construct();
     }
 
-    /**
-     * @return View
-     */
     public function index(): View
     {
-        return view('cp.seo.index')->with('title', 'Seo');
+        return view('cp.seo.index', [
+            'title' => 'Seo',
+        ]);
     }
 
-    /**
-     * @param int $id
-     * @return View
-     */
     public function edit(int $id): View
     {
         $row = $this->seoRepository->find($id);
 
-        if (!$row) abort(404);
+        abort_if($row === null, 404);
 
-        return view('cp.seo.edit', compact('row'))->with('title', 'Редактирование seo');
+        return view('cp.seo.edit', [
+            'row' => $row,
+            'title' => 'Редактирование seo',
+        ]);
     }
 
-    /**
-     * @param Request $request
-     * @return RedirectResponse
-     */
-    public function update(Request $request): RedirectResponse
+    public function update(EditRequest $request): RedirectResponse
     {
         try {
-            $this->seoRepository->updateWithMapping($request->id, ArrayData::from($request->all()));
-        } catch (Exception $e) {
-            report($e);
+            $this->seoRepository->updateWithMapping(
+                $request->id,
+                ArrayData::from($request->validated()),
+            );
+        } catch (Exception $exception) {
+            report($exception);
 
-            return redirect()
-                ->back()
-                ->with('error', $e->getMessage())
-                ->withInput();
+            return back()
+                ->withInput()
+                ->with('error', $exception->getMessage());
         }
 
-        return redirect()->route('admin.seo.index')->with('success', 'Данные успешно обновлены');
+        return redirect()
+            ->route('admin.seo.index')
+            ->with('success', 'Данные успешно обновлены');
     }
 }

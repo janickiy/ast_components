@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Frontend;
 
 use App\DTO\RequestsCreateData;
@@ -9,56 +11,41 @@ use App\Models\Customers;
 use App\Models\Seo;
 use App\Repositories\RequestsRepository;
 use App\Services\RequestsService;
+use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
-use Exception;
 
 class RequestsController extends Controller
 {
     public function __construct(
-        private RequestsRepository $requestsRepository,
-        private RequestsService $requestsService)
-    {
+        private readonly RequestsRepository $requestsRepository,
+        private readonly RequestsService $requestsService,
+    ) {
     }
 
-    /**
-     * Запрос номенклатуры
-     *
-     * @return View
-     */
     public function index(): View
     {
         $seo = Seo::getSeo('frontend.nomenclature_request', 'Запрос номенклатуры');
-        $title = $seo['title'];
-        $meta_description = $seo['meta_description'];
-        $meta_keywords = $seo['meta_keywords'];
-        $meta_title = $seo['meta_title'];
-        $seo_url_canonical = $seo['seo_url_canonical'];
-        $h1 = $seo['h1'];
 
-        return view('frontend.nomenclature_request.index', compact(
-                'meta_description',
-                'meta_keywords',
-                'meta_title',
-                'h1',
-                'seo_url_canonical',
-            )
-        )->with('title', $title);
+        return view('frontend.nomenclature_request.index', [
+            'meta_description' => $seo['meta_description'],
+            'meta_keywords' => $seo['meta_keywords'],
+            'meta_title' => $seo['meta_title'],
+            'h1' => $seo['h1'],
+            'seo_url_canonical' => $seo['seo_url_canonical'],
+            'title' => $seo['title'],
+        ]);
     }
 
-    /**
-     * Добавляем запрос на номенклатуру
-     *
-     * @param AddRequest $request
-     * @return RedirectResponse
-     */
     public function add(AddRequest $request): RedirectResponse
     {
-        /** @var Customers $customer */
+        /** @var Customers|null $customer */
         $customer = Auth::guard('customer')->user();
 
         try {
+            $attach = null;
+
             if ($request->hasFile('attach')) {
                 $attach = $this->requestsService->storeFile($request);
             }
@@ -72,23 +59,21 @@ class RequestsController extends Controller
                 phone: $request->input('phone'),
                 message: $request->input('message'),
                 nomenclature: $request->input('nomenclature'),
-                count: (int)$request->input('count'),
-                unit: (int)$request->input('unit', 0),
-                attach: $attach ?? null,
+                count: (int) $request->input('count'),
+                unit: (int) $request->input('unit', 0),
+                attach: $attach,
                 ip: $request->ip(),
-                customerId: $customer?->id ?? null,
+                customerId: $customer?->id,
             ));
-        } catch (Exception $e) {
-            report($e);
+        } catch (Exception $exception) {
+            report($exception);
 
-            return redirect()
-                ->back()
-                ->with('error', 'Не удалось создать запрос номенклатуры. Попробуйте позже.')
-                ->withInput();
+            return back()
+                ->withInput()
+                ->with('error', 'Не удалось создать запрос номенклатуры. Попробуйте позже.');
         }
 
-        return redirect()
-            ->back()
-            ->with('success', 'Запрос номенклатуры успешно создана.');
+        return back()
+            ->with('success', 'Запрос номенклатуры успешно создан.');
     }
 }

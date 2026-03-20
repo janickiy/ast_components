@@ -20,8 +20,9 @@ class CustomersController extends Controller
 
     public function index(): View
     {
-        return view('cp.customers.index')
-            ->with('title', 'Пользователи');
+        return view('cp.customers.index', [
+            'title' => 'Пользователи',
+        ]);
     }
 
     public function edit(int $id): View
@@ -30,8 +31,10 @@ class CustomersController extends Controller
 
         abort_if($row === null, 404);
 
-        return view('cp.customers.edit', compact('row'))
-            ->with('title', 'Редактировать пользователя');
+        return view('cp.customers.edit', [
+            'row' => $row,
+            'title' => 'Редактировать пользователя',
+        ]);
     }
 
     public function update(EditRequest $request): RedirectResponse

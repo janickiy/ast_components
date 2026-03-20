@@ -22,8 +22,9 @@ class ComplaintsController extends Controller
 
     public function index(): View
     {
-        return view('cp.complaints.index')
-            ->with('title', 'Претензии');
+        return view('cp.complaints.index', [
+            'title' => 'Претензии',
+        ]);
     }
 
     public function edit(int $id): View
@@ -32,16 +33,17 @@ class ComplaintsController extends Controller
 
         abort_if($row === null, 404);
 
-        $options = Complaints::getOption();
-
         $title = sprintf(
             'Редактирование претензии: #%d %s',
             $row->id,
             $row->customer?->name ?? '',
         );
 
-        return view('cp.complaints.edit', compact('row', 'options'))
-            ->with('title', trim($title));
+        return view('cp.complaints.edit', [
+            'row' => $row,
+            'options' => Complaints::getOption(),
+            'title' => trim($title),
+        ]);
     }
 
     public function update(EditRequest $request): RedirectResponse
@@ -56,12 +58,8 @@ class ComplaintsController extends Controller
             ->with('success', 'Данные успешно обновлены');
     }
 
-    public function destroy(DeleteRequest $request): RedirectResponse
+    public function destroy(DeleteRequest $request): void
     {
         $this->complaintsRepository->remove($request->id);
-
-        return redirect()
-            ->route('admin.complaints.index')
-            ->with('success', 'Данные успешно удалены');
     }
 }

@@ -15,7 +15,9 @@ class CustomerLogsController extends Controller
 
         abort_if($customer === null, 404);
 
-        return view('cp.customer_log.index', compact('customer_id'))
-            ->with('title', 'Логи: ' . $customer->name);
+        return view('cp.customer_log.index', [
+            'customer_id' => $customer_id,
+            'title' => 'Логи: ' . $customer->name,
+        ]);
     }
 }

@@ -21,7 +21,9 @@ class OrderProductController extends Controller
 
         abort_if($order === null, 404);
 
-        return view('cp.order_product.index', compact('order_id'))
-            ->with('title', 'Заказ: #' . $order_id);
+        return view('cp.order_product.index', [
+            'order_id' => $order_id,
+            'title' => 'Заказ: #' . $order_id,
+        ]);
     }
 }

@@ -29,12 +29,13 @@ class ProductParametersController extends Controller
 
         abort_if($product === null, 404);
 
-        $breadcrumbs = [
-            ['url' => route('admin.products.index'), 'title' => 'Продукция'],
-        ];
-
-        return view('cp.product_parameters.index', compact('product_id', 'breadcrumbs'))
-            ->with('title', 'Технические характеристики: ' . $product->title);
+        return view('cp.product_parameters.index', [
+            'product_id' => $product_id,
+            'breadcrumbs' => [
+                ['url' => route('admin.products.index'), 'title' => 'Продукция'],
+            ],
+            'title' => 'Технические характеристики: ' . $product->title,
+        ]);
     }
 
     public function create(int $product_id): View
@@ -43,13 +44,17 @@ class ProductParametersController extends Controller
 
         abort_if($product === null, 404);
 
-        $breadcrumbs = [
-            ['url' => route('admin.products.index'), 'title' => 'Продукция'],
-            ['url' => route('admin.product_parameters.index', ['product_id' => $product_id]), 'title' => $product->title],
-        ];
-
-        return view('cp.product_parameters.create_edit', compact('product_id', 'breadcrumbs'))
-            ->with('title', 'Добавление параметра');
+        return view('cp.product_parameters.create_edit', [
+            'product_id' => $product_id,
+            'breadcrumbs' => [
+                ['url' => route('admin.products.index'), 'title' => 'Продукция'],
+                [
+                    'url' => route('admin.product_parameters.index', ['product_id' => $product_id]),
+                    'title' => $product->title,
+                ],
+            ],
+            'title' => 'Добавление параметра',
+        ]);
     }
 
     public function store(StoreRequest $request): RedirectResponse
@@ -80,15 +85,18 @@ class ProductParametersController extends Controller
 
         abort_if($row === null, 404);
 
-        $product_id = $row->product_id;
-
-        $breadcrumbs = [
-            ['url' => route('admin.products.index'), 'title' => 'Продукция'],
-            ['url' => route('admin.product_parameters.index', ['product_id' => $product_id]), 'title' => $row->product->title],
-        ];
-
-        return view('cp.product_parameters.create_edit', compact('row', 'product_id', 'breadcrumbs'))
-            ->with('title', 'Редактирование параметра');
+        return view('cp.product_parameters.create_edit', [
+            'row' => $row,
+            'product_id' => $row->product_id,
+            'breadcrumbs' => [
+                ['url' => route('admin.products.index'), 'title' => 'Продукция'],
+                [
+                    'url' => route('admin.product_parameters.index', ['product_id' => $row->product_id]),
+                    'title' => $row->product->title,
+                ],
+            ],
+            'title' => 'Редактирование параметра',
+        ]);
     }
 
     public function update(EditRequest $request): RedirectResponse

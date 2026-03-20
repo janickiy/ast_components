@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Frontend;
 
 use App\DTO\InvitesCreateData;
@@ -9,52 +11,33 @@ use App\Models\Invites;
 use App\Models\Seo;
 use App\Repositories\InvitesRepository;
 use App\Services\InvitesService;
+use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use Exception;
 
 class InvitesController extends Controller
 {
     public function __construct(
-        private InvitesRepository $invitesRepository,
-        private InvitesService $invitesService)
-    {
+        private readonly InvitesRepository $invitesRepository,
+        private readonly InvitesService $invitesService,
+    ) {
     }
 
-    /**
-     * Запрос номенклатуры
-     *
-     * @return View
-     */
     public function index(): View
     {
         $seo = Seo::getSeo('frontend.invite', 'Пригласить АСТ Компонентс к участию в тендере');
-        $title = $seo['title'];
-        $meta_description = $seo['meta_description'];
-        $meta_keywords = $seo['meta_keywords'];
-        $meta_title = $seo['meta_title'];
-        $seo_url_canonical = $seo['seo_url_canonical'];
-        $h1 = $seo['h1'];
 
-        $options = Invites::getPlatformList();
-
-        return view('frontend.invite.index', compact(
-                'meta_description',
-                'meta_keywords',
-                'meta_title',
-                'h1',
-                'seo_url_canonical',
-                'options',
-            )
-        )->with('title', $title);
+        return view('frontend.invite.index', [
+            'meta_description' => $seo['meta_description'],
+            'meta_keywords' => $seo['meta_keywords'],
+            'meta_title' => $seo['meta_title'],
+            'h1' => $seo['h1'],
+            'seo_url_canonical' => $seo['seo_url_canonical'],
+            'options' => Invites::getPlatformList(),
+            'title' => $seo['title'],
+        ]);
     }
 
-    /**
-     * Добавляем запрос на номенклатуру
-     *
-     * @param SendRequest $request
-     * @return RedirectResponse
-     */
     public function add(SendRequest $request): RedirectResponse
     {
         try {
@@ -70,17 +53,15 @@ class InvitesController extends Controller
                 numb: $request->input('numb'),
                 platform: $request->input('platform'),
             ));
-        } catch (Exception $e) {
-            report($e);
+        } catch (Exception $exception) {
+            report($exception);
 
-            return redirect()
-                ->back()
-                ->with('error', 'Не удалось создать запрос номенклатуры. Попробуйте позже.' . $e->getMessage())
-                ->withInput();
+            return back()
+                ->withInput()
+                ->with('error', 'Не удалось создать запрос номенклатуры. Попробуйте позже.' . $exception->getMessage());
         }
 
-        return redirect()
-            ->back()
+        return back()
             ->with('success', 'Ваше приглашение успешно отправлено');
     }
 }

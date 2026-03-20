@@ -20,7 +20,7 @@ use Illuminate\View\View;
 class ProductsController extends Controller
 {
     public function __construct(
-        private readonly ProductsRepository $productRepository,
+        private readonly ProductsRepository $productsRepository,
         private readonly ProductsService $productService,
         private readonly CatalogRepository $categoryRepository,
         private readonly ManufacturerRepository $manufacturerRepository,
@@ -57,7 +57,7 @@ class ProductsController extends Controller
                 $thumbnail = 'thumbnail_' . $filename;
             }
 
-            $this->productRepository->create(
+            $this->productsRepository->create(
                 ArrayData::from([
                     ...$request->validated(),
                     'thumbnail' => $thumbnail,
@@ -80,7 +80,7 @@ class ProductsController extends Controller
 
     public function edit(int $id): View
     {
-        $row = $this->productRepository->find($id);
+        $row = $this->productsRepository->find($id);
 
         abort_if($row === null, 404);
 
@@ -96,7 +96,7 @@ class ProductsController extends Controller
     public function update(EditRequest $request): RedirectResponse
     {
         try {
-            $product = $this->productRepository->find($request->id);
+            $product = $this->productsRepository->find($request->id);
 
             abort_if($product === null, 404);
 
@@ -104,7 +104,7 @@ class ProductsController extends Controller
                 $this->productService->updateImage($request, $product);
             }
 
-            $this->productRepository->updateWithMapping(
+            $this->productsRepository->updateWithMapping(
                 $request->id,
                 ArrayData::from([
                     ...$request->validated(),
@@ -128,6 +128,6 @@ class ProductsController extends Controller
 
     public function destroy(DeleteRequest $request): void
     {
-        $this->productRepository->remove($request->id);
+        $this->productsRepository->remove($request->id);
     }
 }

@@ -25,8 +25,9 @@ class OrdersController extends Controller
 
     public function index(): View
     {
-        return view('cp.orders.index')
-            ->with('title', 'Заказы');
+        return view('cp.orders.index', [
+            'title' => 'Заказы',
+        ]);
     }
 
     public function edit(int $id): View
@@ -35,11 +36,12 @@ class OrdersController extends Controller
 
         abort_if($row === null, 404);
 
-        $maxUploadFileSize = StringHelper::maxUploadFileSize();
-        $options = Orders::getOption();
-
-        return view('cp.orders.edit', compact('row', 'maxUploadFileSize', 'options'))
-            ->with('title', 'Редактирование заказа: #' . $row->id);
+        return view('cp.orders.edit', [
+            'row' => $row,
+            'maxUploadFileSize' => StringHelper::maxUploadFileSize(),
+            'options' => Orders::getOption(),
+            'title' => 'Редактирование заказа: #' . $row->id,
+        ]);
     }
 
     public function update(EditRequest $request): RedirectResponse

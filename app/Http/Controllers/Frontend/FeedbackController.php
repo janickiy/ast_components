@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\Frontend;
+declare(strict_types=1);
 
+namespace App\Http\Controllers\Frontend;
 
 use App\DTO\FeedbackCreateData;
 use App\Http\Controllers\Controller;
@@ -9,45 +10,32 @@ use App\Http\Requests\Frontend\Contacts\FeedbackRequest;
 use App\Models\Seo;
 use App\Repositories\FeedbackRepository;
 use App\Services\FeedbackService;
+use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use Exception;
 
 class FeedbackController extends Controller
 {
     public function __construct(
-        private FeedbackRepository $feedbackRepository,
-        private FeedbackService $feedbackService)
-    {
+        private readonly FeedbackRepository $feedbackRepository,
+        private readonly FeedbackService $feedbackService,
+    ) {
     }
 
-    /**
-     * @return View
-     */
     public function index(): View
     {
         $seo = Seo::getSeo('frontend.contacts', 'Контакты');
-        $title = $seo['title'];
-        $meta_description = $seo['meta_description'];
-        $meta_keywords = $seo['meta_keywords'];
-        $meta_title = $seo['meta_title'];
-        $seo_url_canonical = $seo['seo_url_canonical'];
-        $h1 = $seo['h1'];
 
-        return view('frontend.contacts', compact(
-                'meta_description',
-                'meta_keywords',
-                'meta_title',
-                'h1',
-                'seo_url_canonical'
-            )
-        )->with('title', $title);
+        return view('frontend.contacts', [
+            'meta_description' => $seo['meta_description'],
+            'meta_keywords' => $seo['meta_keywords'],
+            'meta_title' => $seo['meta_title'],
+            'h1' => $seo['h1'],
+            'seo_url_canonical' => $seo['seo_url_canonical'],
+            'title' => $seo['title'],
+        ]);
     }
 
-    /**
-     * @param FeedbackRequest $request
-     * @return RedirectResponse
-     */
     public function send(FeedbackRequest $request): RedirectResponse
     {
         try {
@@ -60,15 +48,15 @@ class FeedbackController extends Controller
                 ip: $request->ip(),
                 message: $request->input('message'),
             ));
-        } catch (Exception $e) {
-            report($e);
+        } catch (Exception $exception) {
+            report($exception);
 
-            return redirect()
-                ->back()
-                ->with('error', 'Ошибка отправки сообщения.')
-                ->withInput();
+            return back()
+                ->withInput()
+                ->with('error', 'Ошибка отправки сообщения.');
         }
 
-        return redirect()->back()->with('success', 'Ваш запрос успешно отправлен');
+        return back()
+            ->with('success', 'Ваш запрос успешно отправлен');
     }
 }

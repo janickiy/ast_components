@@ -22,8 +22,9 @@ class FeedbackController extends Controller
 
     public function index(): View
     {
-        return view('cp.feedback.index')
-            ->with('title', 'Сообщения с сайта');
+        return view('cp.feedback.index', [
+            'title' => 'Сообщения с сайта',
+        ]);
     }
 
     public function edit(int $id): View
@@ -32,10 +33,11 @@ class FeedbackController extends Controller
 
         abort_if($row === null, 404);
 
-        $options = Feedback::getOption();
-
-        return view('cp.feedback.edit', compact('row', 'options'))
-            ->with('title', 'Редактирование');
+        return view('cp.feedback.edit', [
+            'row' => $row,
+            'options' => Feedback::getOption(),
+            'title' => 'Редактирование',
+        ]);
     }
 
     public function update(EditRequest $request): RedirectResponse

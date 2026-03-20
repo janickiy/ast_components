@@ -1,47 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Frontend;
 
-
-use App\Models\Customers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Frontend\ResetPassword\ResetRequest;
-use Illuminate\Http\RedirectResponse;
+use App\Models\Customers;
+use Exception;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Auth\Events\PasswordReset;
-
 
 class ResetPasswordController extends Controller
 {
-    /**
-     * @return View
-     */
     public function index(): View
     {
-        return view('frontend.auth.index')->with('title', 'Сброс пароля');
+        return view('frontend.auth.index', [
+            'title' => 'Сброс пароля',
+        ]);
     }
 
-    /**
-     * Сброс пароля (reset password).
-     *
-     * @param string $token
-     * @param string $email
-     * @return View
-     */
     public function form(string $token, string $email): View
     {
         return view('frontend.auth.reset_password', [
             'token' => $token,
             'email' => $email,
-        ])->with('title', 'Сброс пароля');
+            'title' => 'Сброс пароля',
+        ]);
     }
 
-    /**
-     * @param ResetRequest $request
-     * @return RedirectResponse
-     */
     public function reset(ResetRequest $request): RedirectResponse
     {
         try {
@@ -51,32 +41,30 @@ class ResetPasswordController extends Controller
                     'email' => $request->email,
                     'password' => $request->password,
                 ],
-
-                function (Customers $customer, string $password) {
+                function (Customers $customer, string $password): void {
                     $customer->forceFill([
                         'password' => Hash::make($password),
                     ])->save();
 
                     event(new PasswordReset($customer));
-                }
+                },
             );
 
             if ($status === Password::PASSWORD_RESET) {
-                return redirect()->route('frontend.password.reset')->with('success', 'Пароль успешно изменен');
+                return redirect()
+                    ->route('frontend.password.reset')
+                    ->with('success', 'Пароль успешно изменен');
             }
 
-            return redirect()
-                ->back()
-                ->with('error', 'Ошибка изменения пароля')
-                ->withInput();
+            return back()
+                ->withInput()
+                ->with('error', 'Ошибка изменения пароля');
+        } catch (Exception $exception) {
+            report($exception);
 
-        } catch (\Exception $e) {
-            report($e);
-
-            return redirect()
-                ->back()
-                ->with('error', $e->getMessage())
-                ->withInput();
+            return back()
+                ->withInput()
+                ->with('error', $exception->getMessage());
         }
     }
 }

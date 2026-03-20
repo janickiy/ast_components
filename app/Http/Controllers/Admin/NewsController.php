@@ -26,16 +26,17 @@ class NewsController extends Controller
 
     public function index(): View
     {
-        return view('cp.news.index')
-            ->with('title', 'Новости');
+        return view('cp.news.index', [
+            'title' => 'Новости',
+        ]);
     }
 
     public function create(): View
     {
-        $maxUploadFileSize = StringHelper::maxUploadFileSize();
-
-        return view('cp.news.create_edit', compact('maxUploadFileSize'))
-            ->with('title', 'Добавление новости');
+        return view('cp.news.create_edit', [
+            'maxUploadFileSize' => StringHelper::maxUploadFileSize(),
+            'title' => 'Добавление новости',
+        ]);
     }
 
     public function store(StoreRequest $request): RedirectResponse
@@ -70,10 +71,11 @@ class NewsController extends Controller
 
         abort_if($row === null, 404);
 
-        $maxUploadFileSize = StringHelper::maxUploadFileSize();
-
-        return view('cp.news.create_edit', compact('row', 'maxUploadFileSize'))
-            ->with('title', 'Редактирование новости');
+        return view('cp.news.create_edit', [
+            'row' => $row,
+            'maxUploadFileSize' => StringHelper::maxUploadFileSize(),
+            'title' => 'Редактирование новости',
+        ]);
     }
 
     public function update(EditRequest $request): RedirectResponse
