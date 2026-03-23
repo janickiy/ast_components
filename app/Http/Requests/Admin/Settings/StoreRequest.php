@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Admin\Settings;
 
 use App\Models\Settings;
@@ -7,25 +9,19 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
     public function rules(): array
     {
         return [
-            'value'  => 'required',
-            'key_cd' => 'required|unique:' . Settings::getTableName() . '|max:255',
-            'type'   => 'required',
+            'key_cd' => 'required|max:255|unique:' . Settings::getTableName() . ',key_cd',
+            'name' => 'nullable|max:255',
+            'type' => 'required|string|max:255',
+            'value' => 'required',
+            'display_value' => 'nullable|max:255',
         ];
     }
 }
