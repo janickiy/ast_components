@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Users;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class EditRequest extends FormRequest
@@ -22,11 +23,11 @@ class EditRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'login' => 'required|max:255|unique:users,login,' . $this->id,
+            'login' => 'required|max:255|unique:' . User::getTableName() . ',login,' . $this->id,
             'name' => 'required',
             'password' => 'min:6|nullable',
             'password_again' => 'min:6|same:password|nullable',
-            'id' => 'required|integer|exists:users,id',
+            'id' => 'required|integer|exists:' . User::getTableName() . ',id',
         ];
     }
 }

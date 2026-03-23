@@ -96,7 +96,7 @@ class ProductsController extends Controller
     public function update(EditRequest $request): RedirectResponse
     {
         try {
-            $product = $this->productsRepository->find($request->id);
+            $product = $this->productsRepository->find((int) $request->id);
 
             abort_if($product === null, 404);
 
@@ -105,7 +105,7 @@ class ProductsController extends Controller
             }
 
             $this->productsRepository->updateWithMapping(
-                $request->id,
+                (int) $request->id,
                 ArrayData::from([
                     ...$request->validated(),
                     'in_stock' => $request->boolean('in_stock'),
@@ -128,6 +128,6 @@ class ProductsController extends Controller
 
     public function destroy(DeleteRequest $request): void
     {
-        $this->productsRepository->remove($request->id);
+        $this->productsRepository->remove((int) $request->id);
     }
 }

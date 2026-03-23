@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Frontend\Cart;
 
+use App\Models\Products;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -15,7 +16,7 @@ class AddRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'product_id' => 'required|integer|exists:products,id',
+            'product_id' => 'required|integer|exists:' . Products::getTableName() . ',id',
             'qty' => 'nullable|integer',
         ];
     }

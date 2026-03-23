@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Catalog;
 
+use App\Models\Catalog;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreRequest extends FormRequest
@@ -23,7 +24,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'slug' => 'required|unique:catalogs',
+            'slug' => 'required|unique:' . Catalog::getTableName() . '',
             'parent_id' => 'integer|nullable',
         ];
     }

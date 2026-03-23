@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Settings;
 
+use App\Models\Settings;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreRequest extends FormRequest
@@ -23,7 +24,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'value'  => 'required',
-            'key_cd' => 'required|unique:settings|max:255',
+            'key_cd' => 'required|unique:' . Settings::getTableName() . '|max:255',
             'type'   => 'required',
         ];
     }

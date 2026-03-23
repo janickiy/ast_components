@@ -43,7 +43,7 @@ class FeedbackController extends Controller
     public function update(EditRequest $request): RedirectResponse
     {
         $this->feedbackRepository->updateWithMapping(
-            $request->id,
+            (int) $request->id,
             ArrayData::from($request->validated()),
         );
 
@@ -54,6 +54,6 @@ class FeedbackController extends Controller
 
     public function destroy(DeleteRequest $request): void
     {
-        $this->feedbackRepository->delete($request->id);
+        $this->feedbackRepository->delete((int) $request->id);
     }
 }

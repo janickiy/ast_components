@@ -92,7 +92,7 @@ class CatalogController extends Controller
     {
         try {
             $this->categoryRepository->updateWithMapping(
-                $request->id,
+                (int) $request->id,
                 ArrayData::from([
                     ...$request->validated(),
                     'seo_sitemap' => $request->boolean('seo_sitemap'),

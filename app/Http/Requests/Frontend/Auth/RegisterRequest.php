@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Frontend\Auth;
 
+use App\Models\Customers;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RegisterRequest extends FormRequest
@@ -25,7 +26,7 @@ class RegisterRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:customers,email|max:255',
+            'email' => 'required|email|unique:' . Customers::getTableName() . ',email|max:255',
             'password' => 'required|string|min:8',
             'password-again' => 'required|string|min:8|same:password',
             'agreement' => 'accepted',

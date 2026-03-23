@@ -77,7 +77,7 @@ class PagesController extends Controller
     {
         try {
             $this->pageRepository->updateWithMapping(
-                $request->id,
+                (int) $request->id,
                 ArrayData::from([
                     ...$request->validated(),
                     'published' => $request->boolean('published'),
@@ -100,6 +100,6 @@ class PagesController extends Controller
 
     public function destroy(DeleteRequest $request): void
     {
-        $this->pageRepository->delete($request->id);
+        $this->pageRepository->delete((int) $request->id);
     }
 }

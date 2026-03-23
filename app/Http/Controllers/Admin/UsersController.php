@@ -78,7 +78,7 @@ class UsersController extends Controller
     {
         try {
             $this->userRepository->update(
-                $request->id,
+                (int) $request->id,
                 ArrayData::from($request->validated()),
             );
         } catch (Exception $exception) {
@@ -96,8 +96,8 @@ class UsersController extends Controller
 
     public function destroy(DeleteRequest $request): void
     {
-        if ($request->id !== Auth::id()) {
-            $this->userRepository->delete($request->id);
+        if ((int) $request->id !== Auth::id()) {
+            $this->userRepository->delete((int) $request->id);
         }
     }
 }

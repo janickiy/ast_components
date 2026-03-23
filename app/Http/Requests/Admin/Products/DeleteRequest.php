@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Products;
 
+use App\Models\Products;
 use Illuminate\Foundation\Http\FormRequest;
 
 class DeleteRequest extends FormRequest
@@ -22,7 +23,7 @@ class DeleteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => 'required|integer|exists:products,id',
+            'id' => 'required|integer|exists:' . Products::getTableName() . ',id',
         ];
     }
 }

@@ -2,6 +2,9 @@
 
 namespace App\Http\Requests\Admin\Products;
 
+use App\Models\Catalog;
+use App\Models\Manufacturers;
+use App\Models\Products;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreRequest extends FormRequest
@@ -24,12 +27,12 @@ class StoreRequest extends FormRequest
         return [
             'title'       => 'required',
             'description' => 'required',
-            'article'     => 'required|unique:products',
+            'article'     => 'required|unique:' . Products::getTableName() . '',
             'n_number'    => 'required|integer',
-            'slug'        => 'required|unique:products',
+            'slug'        => 'required|unique:' . Products::getTableName() . '',
             'image'       => 'nullable|image|mimes:jpeg,jpg,png,gif|max:2048',
-            'catalog_id'  => 'integer|required|exists:catalogs,id',
-            'manufacturer_id' => 'integer|required|exists:manufacturers,id',
+            'catalog_id'  => 'integer|required|exists:' . Catalog::getTableName() . ',id',
+            'manufacturer_id' => 'integer|required|exists:' . Manufacturers::getTableName() . ',id',
             'in_stock'    => 'nullable|integer',
             'under_order' => 'nullable|integer',
         ];

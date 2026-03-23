@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Orders;
 
+use App\Models\Orders;
 use Illuminate\Foundation\Http\FormRequest;
 
 class EditRequest extends FormRequest
@@ -22,7 +23,7 @@ class EditRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id'    => 'required|integer|exists:orders,id',
+            'id'    => 'required|integer|exists:' . Orders::getTableName() . ',id',
             'status' => 'required|integer',
             'delivery_date' => 'nullable|date_format:d/m/Y',
             'invoice' => ['nullable', 'file', 'mimes:pdf,doc,docx,jpg,jpeg,png',]

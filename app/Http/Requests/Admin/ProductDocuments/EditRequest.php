@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Admin\ProductDocuments;
 
+use App\Models\ProductDocuments;
+use App\Models\Products;
 use Illuminate\Foundation\Http\FormRequest;
 
 class EditRequest extends FormRequest
@@ -22,10 +24,10 @@ class EditRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id'         => 'required|integer|exists:product_documents,id',
+            'id'         => 'required|integer|exists:' . ProductDocuments::getTableName() . ',id',
             'file'       => 'nullable|file',
             'name'       => 'required',
-            'product_id' => 'required|integer|exists:products,id',
+            'product_id' => 'required|integer|exists:' . Products::getTableName() . ',id',
         ];
     }
 }

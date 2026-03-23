@@ -81,7 +81,7 @@ class NewsController extends Controller
     public function update(EditRequest $request): RedirectResponse
     {
         try {
-            $news = $this->newsRepository->find($request->id);
+            $news = $this->newsRepository->find((int) $request->id);
 
             abort_if($news === null, 404);
 
@@ -92,7 +92,7 @@ class NewsController extends Controller
             }
 
             $this->newsRepository->updateWithMapping(
-                $request->id,
+                (int) $request->id,
                 ArrayData::from([
                     ...$request->validated(),
                     'image' => $image,
@@ -113,6 +113,6 @@ class NewsController extends Controller
 
     public function destroy(DeleteRequest $request): void
     {
-        $this->newsRepository->remove($request->id);
+        $this->newsRepository->remove((int) $request->id);
     }
 }

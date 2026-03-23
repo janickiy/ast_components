@@ -101,13 +101,13 @@ class ProductParametersController extends Controller
 
     public function update(EditRequest $request): RedirectResponse
     {
-        $row = $this->productParametersRepository->find($request->id);
+        $row = $this->productParametersRepository->find((int) $request->id);
 
         abort_if($row === null, 404);
 
         try {
             $this->productParametersRepository->updateWithMapping(
-                $request->id,
+                (int) $request->id,
                 ArrayData::from($request->validated()),
             );
         } catch (Exception $exception) {
@@ -125,6 +125,6 @@ class ProductParametersController extends Controller
 
     public function destroy(DeleteRequest $request): void
     {
-        $this->productParametersRepository->delete($request->id);
+        $this->productParametersRepository->delete((int) $request->id);
     }
 }

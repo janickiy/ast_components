@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Manufacturers;
 
+use App\Models\Manufacturers;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreRequest extends FormRequest
@@ -23,7 +24,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'title' => 'required',
-            'slug' => 'required|unique:manufacturers',
+            'slug' => 'required|unique:' . Manufacturers::getTableName() . '',
             'image' => 'image|mimes:jpeg,jpg,png,gif|max:2048|nullable',
         ];
     }

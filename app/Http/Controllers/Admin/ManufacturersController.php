@@ -83,7 +83,7 @@ class ManufacturersController extends Controller
     public function update(EditRequest $request): RedirectResponse
     {
         try {
-            $row = $this->manufacturerRepository->find($request->id);
+            $row = $this->manufacturerRepository->find((int) $request->id);
 
             abort_if($row === null, 404);
 
@@ -99,7 +99,7 @@ class ManufacturersController extends Controller
             }
 
             $this->manufacturerRepository->updateWithMapping(
-                $request->id,
+                (int) $request->id,
                 ArrayData::from([
                     ...$request->validated(),
                     'image' => $image,
@@ -122,6 +122,6 @@ class ManufacturersController extends Controller
 
     public function destroy(DeleteRequest $request): void
     {
-        $this->manufacturerRepository->remove($request->id);
+        $this->manufacturerRepository->remove((int) $request->id);
     }
 }

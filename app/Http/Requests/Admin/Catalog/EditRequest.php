@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Catalog;
 
+use App\Models\Catalog;
 use Illuminate\Foundation\Http\FormRequest;
 
 class EditRequest extends FormRequest
@@ -22,10 +23,10 @@ class EditRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id'   => 'required|integer|exists:catalogs,id',
+            'id'   => 'required|integer|exists:' . Catalog::getTableName() . ',id',
             'name' => 'required',
-            'slug' => 'required|unique:catalogs,slug,' . $this->id,
-            'parent_id' => $this->parent_id > 0 ? 'nullable|integer|exists:catalogs,id' : 'nullable|integer',
+            'slug' => 'required|unique:' . Catalog::getTableName() . ',slug,' . $this->id,
+            'parent_id' => $this->parent_id > 0 ? 'nullable|integer|exists:' . Catalog::getTableName() . ',id' : 'nullable|integer',
         ];
     }
 }

@@ -40,7 +40,7 @@ class CustomersController extends Controller
     public function update(EditRequest $request): RedirectResponse
     {
         $this->customerRepository->updateWithMapping(
-            $request->id,
+            (int) $request->id,
             ArrayData::from($request->validated()),
         );
 

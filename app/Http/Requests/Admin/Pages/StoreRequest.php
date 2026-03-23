@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Pages;
 
+use App\Models\Pages;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreRequest extends FormRequest
@@ -24,7 +25,7 @@ class StoreRequest extends FormRequest
         return [
             'title' => 'required',
             'text'  => 'required',
-            'slug'  => 'required|unique:pages',
+            'slug'  => 'required|unique:' . Pages::getTableName() . '',
             'main'  => 'integer|nullable'
         ];
     }

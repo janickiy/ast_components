@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Frontend\Auth;
 
+use App\Models\Customers;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ForgotPasswordRequest extends FormRequest
@@ -24,7 +25,7 @@ class ForgotPasswordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|email|exists:customers,email',
+            'email' => 'required|email|exists:' . Customers::getTableName() . ',email',
         ];
     }
 

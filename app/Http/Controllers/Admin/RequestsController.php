@@ -45,7 +45,7 @@ class RequestsController extends Controller
     {
         try {
             $this->requestsRepository->updateWithMapping(
-                $request->id,
+                (int) $request->id,
                 ArrayData::from($request->validated()),
             );
         } catch (Exception $exception) {
@@ -63,6 +63,6 @@ class RequestsController extends Controller
 
     public function destroy(DeleteRequest $request): void
     {
-        $this->requestsRepository->remove($request->id);
+        $this->requestsRepository->remove((int) $request->id);
     }
 }

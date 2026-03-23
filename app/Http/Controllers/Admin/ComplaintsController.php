@@ -49,7 +49,7 @@ class ComplaintsController extends Controller
     public function update(EditRequest $request): RedirectResponse
     {
         $this->complaintsRepository->updateWithMapping(
-            $request->id,
+            (int) $request->id,
             ArrayData::from($request->validated()),
         );
 
@@ -60,6 +60,6 @@ class ComplaintsController extends Controller
 
     public function destroy(DeleteRequest $request): void
     {
-        $this->complaintsRepository->remove($request->id);
+        $this->complaintsRepository->remove((int) $request->id);
     }
 }

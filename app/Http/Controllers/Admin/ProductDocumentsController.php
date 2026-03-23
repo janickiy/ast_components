@@ -109,7 +109,7 @@ class ProductDocumentsController extends Controller
     public function update(EditRequest $request): RedirectResponse
     {
         try {
-            $row = $this->productDocumentsRepository->find($request->id);
+            $row = $this->productDocumentsRepository->find((int) $request->id);
 
             abort_if($row === null, 404);
 
@@ -120,7 +120,7 @@ class ProductDocumentsController extends Controller
             }
 
             $this->productDocumentsRepository->updateWithMapping(
-                $request->id,
+                (int) $request->id,
                 ArrayData::from([
                     ...$request->validated(),
                     'file' => $file,
@@ -141,10 +141,10 @@ class ProductDocumentsController extends Controller
 
     public function destroy(DeleteRequest $request): void
     {
-        $row = $this->productDocumentsRepository->find($request->id);
+        $row = $this->productDocumentsRepository->find((int) $request->id);
 
         abort_if($row === null, 404);
 
-        $this->productDocumentsRepository->remove($request->id);
+        $this->productDocumentsRepository->remove((int) $request->id);
     }
 }

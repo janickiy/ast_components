@@ -23,7 +23,7 @@ class EditRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id'   => 'required|integer|exists:feedback,id',
+            'id'   => 'required|integer|exists:' . Feedback::getTableName() . ',id',
             'status' => 'required|integer|in:' . implode(',',array_keys(Feedback::getOption())),
         ];
     }

@@ -70,7 +70,7 @@ class RedirectController extends Controller
     {
         try {
             $this->redirectRepository->updateWithMapping(
-                $request->id,
+                (int) $request->id,
                 ArrayData::from($request->validated()),
             );
         } catch (Exception $exception) {
@@ -88,6 +88,6 @@ class RedirectController extends Controller
 
     public function destroy(DeleteRequest $request): void
     {
-        $this->redirectRepository->delete($request->id);
+        $this->redirectRepository->delete((int) $request->id);
     }
 }

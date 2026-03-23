@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\News;
 
+use App\Models\News;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreRequest extends FormRequest
@@ -23,7 +24,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'title'   => 'required',
-            'slug'    => 'required|unique:news',
+            'slug'    => 'required|unique:' . News::getTableName() . '',
             'preview' => 'required',
             'text'    => 'required',
             'image'   => 'image|mimes:jpeg,jpg,png|max:2048|nullable',

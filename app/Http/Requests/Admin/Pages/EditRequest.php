@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Pages;
 
+use App\Models\Pages;
 use Illuminate\Foundation\Http\FormRequest;
 
 class EditRequest extends FormRequest
@@ -22,10 +23,10 @@ class EditRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id'    => 'required|integer|exists:pages,id',
+            'id'    => 'required|integer|exists:' . Pages::getTableName() . ',id',
             'title' => 'required',
             'text'  => 'required',
-            'slug'  => 'required|unique:pages,slug,' . $this->id,
+            'slug'  => 'required|unique:' . Pages::getTableName() . ',slug,' . $this->id,
             'main'  => 'integer|nullable'
         ];
     }

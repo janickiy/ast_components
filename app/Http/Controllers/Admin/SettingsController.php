@@ -83,7 +83,7 @@ class SettingsController extends Controller
     public function update(EditRequest $request): RedirectResponse
     {
         try {
-            $settings = $this->settingsRepository->find($request->id);
+            $settings = $this->settingsRepository->find((int) $request->id);
 
             abort_if($settings === null, 404);
 
@@ -100,7 +100,7 @@ class SettingsController extends Controller
             }
 
             $this->settingsRepository->updateWithMapping(
-                $request->id,
+                (int) $request->id,
                 ArrayData::from([
                     ...$request->validated(),
                     'value' => $value,
@@ -122,6 +122,6 @@ class SettingsController extends Controller
 
     public function destroy(DeleteRequest $request): void
     {
-        $this->settingsRepository->remove($request->id);
+        $this->settingsRepository->remove((int) $request->id);
     }
 }

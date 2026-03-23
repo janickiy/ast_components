@@ -47,7 +47,7 @@ class OrdersController extends Controller
     public function update(EditRequest $request): RedirectResponse
     {
         try {
-            $order = $this->ordersRepository->find($request->id);
+            $order = $this->ordersRepository->find((int) $request->id);
 
             abort_if($order === null, 404);
 
@@ -58,7 +58,7 @@ class OrdersController extends Controller
             }
 
             $this->ordersRepository->updateWithMapping(
-                $request->id,
+                (int) $request->id,
                 ArrayData::from([
                     ...$request->validated(),
                     'invoice' => $invoice,

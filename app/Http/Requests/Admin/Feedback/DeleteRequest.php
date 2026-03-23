@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Feedback;
 
+use App\Models\Feedback;
 use Illuminate\Foundation\Http\FormRequest;
 
 class DeleteRequest extends FormRequest
@@ -22,7 +23,7 @@ class DeleteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => 'required|integer|exists:feedback,id',
+            'id' => 'required|integer|exists:' . Feedback::getTableName() . ',id',
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Settings;
 
+use App\Models\Settings;
 use Illuminate\Foundation\Http\FormRequest;
 
 class EditRequest extends FormRequest
@@ -23,8 +24,8 @@ class EditRequest extends FormRequest
     {
         return [
             'value'  => $this->type == 'FILE' ? 'nullable' : 'required',
-            'key_cd' => 'required|max:255|unique:settings,key_cd,' . $this->id,
-            'id'     => 'required|integer|exists:settings,id',
+            'key_cd' => 'required|max:255|unique:' . Settings::getTableName() . ',key_cd,' . $this->id,
+            'id'     => 'required|integer|exists:' . Settings::getTableName() . ',id',
         ];
     }
 }

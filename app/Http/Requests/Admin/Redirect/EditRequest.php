@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Redirect;
 
+use App\Models\Redirect;
 use Illuminate\Foundation\Http\FormRequest;
 
 class EditRequest extends FormRequest
@@ -22,7 +23,7 @@ class EditRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id'   => 'required|integer|exists:redirect,id',
+            'id'   => 'required|integer|exists:' . Redirect::getTableName() . ',id',
             'from' => 'required',
             'to' => 'required',
             'status' => 'required|in:301,302',

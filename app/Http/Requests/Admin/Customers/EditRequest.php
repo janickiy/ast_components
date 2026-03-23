@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Customers;
 
+use App\Models\Customers;
 use Illuminate\Foundation\Http\FormRequest;
 
 class EditRequest extends FormRequest
@@ -22,9 +23,9 @@ class EditRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|email|max:255|unique:customers,email,' . $this->id,
+            'email' => 'required|email|max:255|unique:' . Customers::getTableName() . ',email,' . $this->id,
             'name' => 'required',
-            'id' => 'required|integer|exists:customers,id',
+            'id' => 'required|integer|exists:' . Customers::getTableName() . ',id',
         ];
     }
 }

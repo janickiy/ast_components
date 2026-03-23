@@ -37,6 +37,6 @@ class InvitesController extends Controller
 
     public function destroy(DeleteRequest $request): void
     {
-        $this->invitesRepository->delete($request->id);
+        $this->invitesRepository->delete((int) $request->id);
     }
 }

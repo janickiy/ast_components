@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\News;
 
+use App\Models\News;
 use Illuminate\Foundation\Http\FormRequest;
 
 class EditRequest extends FormRequest
@@ -22,9 +23,9 @@ class EditRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id'      => 'required|integer|exists:news,id',
+            'id'      => 'required|integer|exists:' . News::getTableName() . ',id',
             'title'   => 'required',
-            'slug'  => 'required|unique:manufacturers,slug,' . $this->id,
+            'slug'  => 'required|unique:' . News::getTableName() . ',slug,' . $this->id,
             'preview' => 'required',
             'text'    => 'required',
             'image'   => 'image|mimes:jpeg,jpg,png|min:800,max:2048|nullable',

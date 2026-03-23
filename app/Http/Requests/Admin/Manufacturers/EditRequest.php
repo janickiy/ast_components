@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Manufacturers;
 
+use App\Models\Manufacturers;
 use Illuminate\Foundation\Http\FormRequest;
 
 class EditRequest extends FormRequest
@@ -22,9 +23,9 @@ class EditRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id'   => 'required|integer|exists:manufacturers,id',
+            'id'   => 'required|integer|exists:' . Manufacturers::getTableName() . ',id',
             'title' => 'required',
-            'slug'  => 'required|unique:manufacturers,slug,' . $this->id,
+            'slug'  => 'required|unique:' . Manufacturers::getTableName() . ',slug,' . $this->id,
             'image' => 'image|mimes:jpeg,jpg,png,gif|max:2048|nullable',
         ];
     }

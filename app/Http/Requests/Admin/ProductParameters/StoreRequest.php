@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\ProductParameters;
 
+use App\Models\Products;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreRequest extends FormRequest
@@ -24,7 +25,7 @@ class StoreRequest extends FormRequest
         return [
             'name' => 'required',
             'value' => 'required',
-            'product_id' => 'required|integer|exists:products,id',
+            'product_id' => 'required|integer|exists:' . Products::getTableName() . ',id',
         ];
     }
 }

@@ -42,7 +42,7 @@ class SeoController extends Controller
     {
         try {
             $this->seoRepository->updateWithMapping(
-                $request->id,
+                (int) $request->id,
                 ArrayData::from($request->validated()),
             );
         } catch (Exception $exception) {

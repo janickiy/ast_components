@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Users;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreRequest extends FormRequest
@@ -22,7 +23,7 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'login' => 'required|unique:users|min:3|max:255',
+            'login' => 'required|unique:' . User::getTableName() . '|min:3|max:255',
             'name' => 'required',
             'role' => 'required',
             'password' => 'required|min:6',
