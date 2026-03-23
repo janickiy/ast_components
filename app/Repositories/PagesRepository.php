@@ -19,7 +19,9 @@ class PagesRepository extends BaseRepository
      */
     public function updateWithMapping(int $id, array|DataTransferObjectInterface $data): bool
     {
-        if ($data['main'] === 1) {
+        $data = $this->normalizeData($data);
+
+        if ((int) ($data['main'] ?? 0) === 1) {
             $this->model->where('main', 1)->update(['main' => 0]);
         }
 
@@ -52,7 +54,7 @@ class PagesRepository extends BaseRepository
                 'seo_url_canonical' => $data['seo_url_canonical'] ?? null,
                 'seo_sitemap' => $data['seo_sitemap'] ?? 1,
             ])
-            ->when(!isset($data['invoice']), function ($collection) {
+            ->when(!isset($data['image']), function ($collection) {
                 return $collection->forget('image');
             })
             ->only($this->model->getFillable())
