@@ -171,10 +171,10 @@ class Products extends Model
     public function scopeRemove(): void
     {
         self::deleteFile($this->thumbnail, $this->table);
-        self::deleteFile($this->origi, $this->table);
+        self::deleteFile($this->origin, $this->table);
 
         foreach ($this->documents as $document) {
-            self::deleteFile($document->path, $this->table);
+            self::deleteFile($document->file, ProductDocuments::getTableName());
         }
 
         $this->documents()->delete();

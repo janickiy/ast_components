@@ -9,31 +9,31 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
     public function rules(): array
     {
         return [
-            'title'       => 'required',
+            'title' => 'required',
             'description' => 'required',
-            'article'     => 'required|unique:' . Products::getTableName() . '',
-            'n_number'    => 'required|integer',
-            'slug'        => 'required|unique:' . Products::getTableName() . '',
-            'image'       => 'nullable|image|mimes:jpeg,jpg,png,gif|max:2048',
-            'catalog_id'  => 'integer|required|exists:' . Catalog::getTableName() . ',id',
+            'article' => 'required|unique:' . Products::getTableName(),
+            'n_number' => 'required|integer',
+            'slug' => 'required|unique:' . Products::getTableName(),
+            'meta_title' => 'nullable|string',
+            'meta_description' => 'nullable|string',
+            'meta_keywords' => 'nullable|string',
+            'seo_h1' => 'nullable|string',
+            'seo_url_canonical' => 'nullable|string',
+            'image_title' => 'nullable|string',
+            'image_alt' => 'nullable|string',
+            'price' => 'nullable|numeric',
+            'image' => 'nullable|image|mimes:jpeg,jpg,png,gif|max:2048',
+            'catalog_id' => 'integer|required|exists:' . Catalog::getTableName() . ',id',
             'manufacturer_id' => 'integer|required|exists:' . Manufacturers::getTableName() . ',id',
-            'in_stock'    => 'nullable|integer',
+            'in_stock' => 'nullable|integer',
             'under_order' => 'nullable|integer',
         ];
     }

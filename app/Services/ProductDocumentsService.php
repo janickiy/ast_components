@@ -37,7 +37,7 @@ class ProductDocumentsService
      */
     public function updateFile(ProductDocuments $productDocument, Request $request): string
     {
-        self::deleteFile($productDocument->path, ProductDocuments::getTableName());
+        self::deleteFile($productDocument->file, ProductDocuments::getTableName());
 
         $extension = $request->file('file')->getClientOriginalExtension();
         $filename = time() . '.' . $extension;

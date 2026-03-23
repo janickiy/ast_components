@@ -7,28 +7,27 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class EditRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
     public function rules(): array
     {
         return [
-            'id'      => 'required|integer|exists:' . News::getTableName() . ',id',
-            'title'   => 'required',
-            'slug'  => 'required|unique:' . News::getTableName() . ',slug,' . $this->id,
+            'id' => 'required|integer|exists:' . News::getTableName() . ',id',
+            'title' => 'required',
+            'slug' => 'required|unique:' . News::getTableName() . ',slug,' . $this->id,
             'preview' => 'required',
-            'text'    => 'required',
-            'image'   => 'image|mimes:jpeg,jpg,png|min:800,max:2048|nullable',
+            'text' => 'required',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string',
+            'meta_keywords' => 'nullable|string|max:255',
+            'seo_h1' => 'nullable|string',
+            'seo_url_canonical' => 'nullable|string',
+            'image_title' => 'nullable|string|max:80',
+            'image_alt' => 'nullable|string|max:80',
+            'image' => 'image|mimes:jpeg,jpg,png|max:2048|nullable',
         ];
     }
 }
